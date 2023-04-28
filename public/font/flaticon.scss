@@ -1,0 +1,105 @@
+$flaticon-font: "flaticon";
+
+@font-face {
+    font-family: $flaticon-font;
+    src: url("./flaticon.ttf?48f322258ffda237fd8435fb9f46e416") format("truetype"),
+url("./flaticon.woff?48f322258ffda237fd8435fb9f46e416") format("woff"),
+url("./flaticon.woff2?48f322258ffda237fd8435fb9f46e416") format("woff2"),
+url("./flaticon.eot?48f322258ffda237fd8435fb9f46e416#iefix") format("embedded-opentype"),
+url("./flaticon.svg?48f322258ffda237fd8435fb9f46e416#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+$flaticon-map: (
+    "flame": "\f101",
+    "ring": "\f102",
+    "soccer-faults-cards-couple": "\f103",
+    "sprout": "\f104",
+    "token": "\f105",
+    "telegram": "\f106",
+    "twitter": "\f107",
+    "chat": "\f108",
+    "magnifier": "\f109",
+    "medium": "\f10a",
+    "upload": "\f10b",
+    "download": "\f10c",
+    "right-arrow": "\f10d",
+    "right-arrow-1": "\f10e",
+    "left-arrow": "\f10f",
+    "left-arrow-1": "\f110",
+    "left-arrow-2": "\f111",
+    "right-arrow-2": "\f112",
+    "menu": "\f113",
+    "close": "\f114",
+);
+
+.flaticon-flame:before {
+    content: map-get($flaticon-map, "flame");
+}
+.flaticon-ring:before {
+    content: map-get($flaticon-map, "ring");
+}
+.flaticon-soccer-faults-cards-couple:before {
+    content: map-get($flaticon-map, "soccer-faults-cards-couple");
+}
+.flaticon-sprout:before {
+    content: map-get($flaticon-map, "sprout");
+}
+.flaticon-token:before {
+    content: map-get($flaticon-map, "token");
+}
+.flaticon-telegram:before {
+    content: map-get($flaticon-map, "telegram");
+}
+.flaticon-twitter:before {
+    content: map-get($flaticon-map, "twitter");
+}
+.flaticon-chat:before {
+    content: map-get($flaticon-map, "chat");
+}
+.flaticon-magnifier:before {
+    content: map-get($flaticon-map, "magnifier");
+}
+.flaticon-medium:before {
+    content: map-get($flaticon-map, "medium");
+}
+.flaticon-upload:before {
+    content: map-get($flaticon-map, "upload");
+}
+.flaticon-download:before {
+    content: map-get($flaticon-map, "download");
+}
+.flaticon-right-arrow:before {
+    content: map-get($flaticon-map, "right-arrow");
+}
+.flaticon-right-arrow-1:before {
+    content: map-get($flaticon-map, "right-arrow-1");
+}
+.flaticon-left-arrow:before {
+    content: map-get($flaticon-map, "left-arrow");
+}
+.flaticon-left-arrow-1:before {
+    content: map-get($flaticon-map, "left-arrow-1");
+}
+.flaticon-left-arrow-2:before {
+    content: map-get($flaticon-map, "left-arrow-2");
+}
+.flaticon-right-arrow-2:before {
+    content: map-get($flaticon-map, "right-arrow-2");
+}
+.flaticon-menu:before {
+    content: map-get($flaticon-map, "menu");
+}
+.flaticon-close:before {
+    content: map-get($flaticon-map, "close");
+}

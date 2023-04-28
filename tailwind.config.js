@@ -1,18 +1,27 @@
+import { screens as _screens } from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
-  theme: {
-    extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-      },
+export const content = [
+  './pages/**/*.{js,ts,jsx,tsx,mdx}',
+  './components/**/*.{js,ts,jsx,tsx,mdx}',
+  './layouts/**/*.{js,ts,jsx,tsx,mdx}',
+];
+export const theme = {
+  extend: {
+    colors: {
+      backgroundBody: '#2d093e',
+      backgroundSidebar: '#3c154e',
+      backgroundHeader: '#532968',
+      backgroundContainer: '#15002240',
+      pink: '#f0398c',
     },
   },
-  plugins: [],
-}
+  screens: {
+    xxxs: '320px',
+    xxs: '375px',
+    xs: '480px',
+    ..._screens,
+    '3xl': '1740px',
+  },
+};
+export const plugins = [];

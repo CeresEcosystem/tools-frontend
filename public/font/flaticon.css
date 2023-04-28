@@ -1,0 +1,80 @@
+@font-face {
+    font-family: "flaticon";
+    src: url("./flaticon.ttf?48f322258ffda237fd8435fb9f46e416") format("truetype"),
+url("./flaticon.woff?48f322258ffda237fd8435fb9f46e416") format("woff"),
+url("./flaticon.woff2?48f322258ffda237fd8435fb9f46e416") format("woff2"),
+url("./flaticon.eot?48f322258ffda237fd8435fb9f46e416#iefix") format("embedded-opentype"),
+url("./flaticon.svg?48f322258ffda237fd8435fb9f46e416#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-flame:before {
+    content: "\f101";
+}
+.flaticon-ring:before {
+    content: "\f102";
+}
+.flaticon-soccer-faults-cards-couple:before {
+    content: "\f103";
+}
+.flaticon-sprout:before {
+    content: "\f104";
+}
+.flaticon-token:before {
+    content: "\f105";
+}
+.flaticon-telegram:before {
+    content: "\f106";
+}
+.flaticon-twitter:before {
+    content: "\f107";
+}
+.flaticon-chat:before {
+    content: "\f108";
+}
+.flaticon-magnifier:before {
+    content: "\f109";
+}
+.flaticon-medium:before {
+    content: "\f10a";
+}
+.flaticon-upload:before {
+    content: "\f10b";
+}
+.flaticon-download:before {
+    content: "\f10c";
+}
+.flaticon-right-arrow:before {
+    content: "\f10d";
+}
+.flaticon-right-arrow-1:before {
+    content: "\f10e";
+}
+.flaticon-left-arrow:before {
+    content: "\f10f";
+}
+.flaticon-left-arrow-1:before {
+    content: "\f110";
+}
+.flaticon-left-arrow-2:before {
+    content: "\f111";
+}
+.flaticon-right-arrow-2:before {
+    content: "\f112";
+}
+.flaticon-menu:before {
+    content: "\f113";
+}
+.flaticon-close:before {
+    content: "\f114";
+}

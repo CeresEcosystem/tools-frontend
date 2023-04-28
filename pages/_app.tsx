@@ -1,6 +1,24 @@
-import '@/styles/globals.css'
-import type { AppProps } from 'next/app'
+import '@styles/globals.css';
+import BaseLayout from '@layouts/base_layout';
+import type { AppProps } from 'next/app';
+import { Sora } from 'next/font/google';
+
+const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
 
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <>
+      <style jsx global>{`
+        html {
+          font-family: ${sora.style.fontFamily};
+        }
+        .Toastify__toast {
+          font-family: ${sora.style.fontFamily};
+        }
+      `}</style>
+      <BaseLayout>
+        <Component {...pageProps} />
+      </BaseLayout>
+    </>
+  );
 }
