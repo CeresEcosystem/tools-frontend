@@ -14,8 +14,10 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
         setSidebarOpen={setSidebarOpen}
       />
       <SideBarDesktop />
-      <Header setSidebarOpen={setSidebarOpen} />
-      <div className="lg:pl-72">{children}</div>
+      <div className="lg:pl-72">
+        <Header setSidebarOpen={setSidebarOpen} />
+        {children}
+      </div>
     </>
   );
 }

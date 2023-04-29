@@ -20,7 +20,7 @@ export default function SideBar({
   const router = useRouter();
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-backgroundSidebar px-6 pb-4">
+    <div className="flex grow gutter flex-col gap-y-5 overscroll-contain overflow-y-auto bg-backgroundSidebar pl-6 pb-6 lg:overflow-y-hidden hover:lg:overflow-y-auto">
       <div className="flex h-24 shrink-0 items-center">
         <Link
           href="/"

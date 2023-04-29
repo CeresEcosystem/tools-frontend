@@ -2,7 +2,7 @@
 
 :root {
   --primary: #3c154e;
-  --secondary: #f0398c;
+  --secondary: #532968;
 }
 
 /* Firefox */
@@ -35,7 +35,6 @@
 body {
   background: #2d093e;
   height: 100vh;
-  overflow: hidden;
 }
 
 .flaticon-chart {
@@ -44,4 +43,15 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: left center;
+}
+
+.gutter {
+  padding-right: 24px;
+}
+
+@supports (scrollbar-gutter: stable) {
+  .gutter {
+    scrollbar-gutter: stable;
+    padding-right: 12px;
+  }
 }
