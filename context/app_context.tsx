@@ -1,5 +1,4 @@
 import { API } from '@constants/index';
-import axios from 'axios';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface Banner {
@@ -20,9 +19,11 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [banners, setBanners] = useState<Banner[]>([]);
 
   useEffect(() => {
-    axios
-      .get(`${API}/banners`)
-      .then((response) => setBanners(response.data))
+    fetch(`${API}/banners`)
+      .then(async (response) => {
+        const json = await response.json();
+        setBanners(json);
+      })
       .catch(() => {});
   }, []);
 

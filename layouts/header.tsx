@@ -28,23 +28,29 @@ export default function Header({
             showArrows={false}
             emulateTouch={false}
           >
-            {appContext?.banners.map((banner, index) => (
+            {appContext?.banners?.map((banner, index) => (
               <Link key={index.toString()} href={banner.link} target="_blank">
-                <div className="h-full">
-                  <img
+                <div className="h-[84px] relative">
+                  <Image
                     src={banner.sm}
                     alt={banner.title}
-                    className="w-full mx-auto h-[84px] md:!hidden"
+                    className="mx-auto md:!hidden"
+                    fill
+                    priority
                   />
-                  <img
+                  <Image
                     src={banner.md}
                     alt={banner.title}
-                    className="!hidden w-auto mx-auto h-[84px] object-contain md:!inline-block lg:!hidden"
+                    className="!hidden mx-auto md:!inline-block lg:!hidden"
+                    fill
+                    priority
                   />
-                  <img
+                  <Image
                     src={banner.lg}
                     alt={banner.title}
-                    className="!hidden w-auto mx-auto h-[84px] object-contain lg:!inline-block"
+                    className="!hidden mx-auto object-contain lg:!inline-block"
+                    fill
+                    priority
                   />
                 </div>
               </Link>
