@@ -31,10 +31,10 @@
 @tailwind utilities;
 
 @import url('@public/font/flaticon.css');
+@import url('react-responsive-carousel/lib/styles/carousel.min.css');
 
 body {
   background: #2d093e;
-  height: 100vh;
 }
 
 .flaticon-chart {

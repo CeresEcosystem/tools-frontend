@@ -1,11 +1,11 @@
+import Container from '@components/container';
+
 export default function Home() {
   return (
-    <main className={`flex flex-col items-center justify-between p-24`}>
-      <div className="h-96 bg-purple-600 w-full" />
-      <div className="h-96 bg-purple-600 w-full" />
-      <div className="h-96 bg-purple-600 w-full" />
-      <div className="h-96 bg-purple-600 w-full" />
-      <div className="h-96 bg-purple-600 w-full" />
-    </main>
+    <Container>
+      <div className="bg-backgroundHeader bg-opacity-10 w-full h-24">
+        <p className="text-white">Srdjan</p>
+      </div>
+    </Container>
   );
 }

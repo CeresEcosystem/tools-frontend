@@ -12,7 +12,6 @@ export const theme = {
       backgroundBody: '#2d093e',
       backgroundSidebar: '#3c154e',
       backgroundHeader: '#532968',
-      backgroundContainer: '#15002240',
       pink: '#f0398c',
     },
   },

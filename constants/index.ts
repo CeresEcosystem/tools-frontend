@@ -1,0 +1,1 @@
+export const API = 'https://cerestoken.io/api';
