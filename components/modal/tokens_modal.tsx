@@ -5,7 +5,6 @@ import { LockToken } from '@hooks/use_token_locks';
 import { Token } from '@hooks/use_tokens';
 import { formatDateFromTimestamp, formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import Image from 'next/image';
 
 const labelStyle = 'text-white text-opacity-50 text-base block';
 
@@ -25,11 +24,9 @@ export default function TokensModal({
   return (
     <Modal showModal={showModal} closeModal={closeModal}>
       <div className="flex items-center">
-        <Image
-          className="rounded-full"
+        <img
+          className="rounded-full w-12 h-12"
           src={`${ASSET_URL}/${token?.token}.svg`}
-          width={48}
-          height={48}
           alt=""
         />
         <h4 className="pl-4 text-base font-bold text-white line-clamp-1 sm:text-lg">
@@ -50,20 +47,20 @@ export default function TokensModal({
               >
                 <span className={labelStyle}>Account</span>
                 <Clipboard text={lockToken.account}>
-                  <span className="text-white cursor-pointer text-xs font-medium line-clamp-2">
+                  <span className="text-white block break-words cursor-pointer text-xs font-medium">
                     {lockToken.account}
                   </span>
                 </Clipboard>
                 <div className="grid grid-cols-6 mt-3">
-                  <div className="flex flex-col col-span-2">
+                  <div className="col-span-3 flex flex-col sm:col-span-2">
                     <span className={labelStyle}>Locked</span>
-                    <span className="text-white text-sm font-medium line-clamp-2">
+                    <span className="text-xs text-white font-medium sm:text-sm">
                       {formatNumber(formatter, lockToken.locked)}
                     </span>
                   </div>
-                  <div className="flex flex-col col-span-4">
+                  <div className="col-span-3 flex flex-col sm:col-span-4">
                     <span className={labelStyle}>Unlock time</span>
-                    <span className="text-white text-sm font-medium line-clamp-2">
+                    <span className="text-white text-xs font-medium sm:text-sm">
                       {formatDateFromTimestamp(lockToken.timestamp)}
                     </span>
                   </div>

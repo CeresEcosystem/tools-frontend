@@ -1,10 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import { useAppContext } from '@context/app_context';
 import Link from 'next/link';
 import { Carousel } from 'react-responsive-carousel';
-import CeresHorizontalWhite from '@public/ceres-horisontal-white.svg';
-import Image from 'next/image';
 
 export default function Header({
   setSidebarOpen,
@@ -31,26 +28,20 @@ export default function Header({
             {appContext?.banners?.map((banner, index) => (
               <Link key={index.toString()} href={banner.link} target="_blank">
                 <div className="h-[84px] relative">
-                  <Image
+                  <img
                     src={banner.sm}
                     alt={banner.title}
-                    className="mx-auto md:!hidden"
-                    fill
-                    priority
+                    className="mx-auto h-[84px] md:!hidden"
                   />
-                  <Image
+                  <img
                     src={banner.md}
                     alt={banner.title}
-                    className="!hidden mx-auto md:!inline-block lg:!hidden"
-                    fill
-                    priority
+                    className="!hidden mx-auto h-[84px] md:!inline-block lg:!hidden"
                   />
-                  <Image
+                  <img
                     src={banner.lg}
                     alt={banner.title}
-                    className="!hidden mx-auto object-contain lg:!inline-block"
-                    fill
-                    priority
+                    className="!hidden mx-auto h-[84px] object-contain lg:!inline-block"
                   />
                 </div>
               </Link>
@@ -67,11 +58,10 @@ export default function Header({
             }
           }}
         >
-          <Image
+          <img
             className="h-14 w-auto"
-            src={CeresHorizontalWhite}
-            alt=""
-            priority
+            src={'/ceres-horisontal-white.svg'}
+            alt="Ceres"
           />
         </Link>
         <button

@@ -1,7 +1,4 @@
 import classNames from 'classnames';
-import Image from 'next/image';
-import CeresHorizontalWhite from '@public/ceres-horisontal-white.svg';
-import Polkaswap from '@public/polkaswap_logo.png';
 import Link from 'next/link';
 import {
   docs,
@@ -30,11 +27,10 @@ export default function SideBar({
             }
           }}
         >
-          <Image
+          <img
             className="h-14 w-auto"
-            src={CeresHorizontalWhite}
-            alt=""
-            priority
+            src={'/ceres-horisontal-white.svg'}
+            alt="Ceres"
           />
         </Link>
       </div>
@@ -83,7 +79,7 @@ export default function SideBar({
                       'text-white opacity-70 hover:opacity-100 hover:bg-backgroundHeader flex gap-x-4 rounded-md p-2 font-medium'
                     }
                   >
-                    <Image
+                    <img
                       className="h-6 w-6 shrink-0"
                       src={website.icon}
                       alt=""
@@ -97,7 +93,7 @@ export default function SideBar({
           <li className="mt-auto mb-6 flex flex-col gap-y-4 items-center">
             <div className="w-2/3">
               <Link href="https://polkaswap.io/#/swap" target="_blank">
-                <Image src={Polkaswap} alt="" />
+                <img src={'/polkaswap_logo.png'} alt="" />
               </Link>
             </div>
             <hr className="w-full border border-white border-opacity-10" />
@@ -118,7 +114,7 @@ export default function SideBar({
             <div className="flex gap-x-3">
               {docs.map((doc) => (
                 <Link key={doc.href} href={doc.href} target="_blank">
-                  <Image src={doc.icon} alt="" className="h-9 w-9" />
+                  <img src={doc.icon} alt={doc.href} className="h-9 w-9" />
                 </Link>
               ))}
             </div>

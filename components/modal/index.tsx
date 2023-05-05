@@ -24,7 +24,7 @@ export default function Modal({
         >
           <div className="fixed inset-0 bg-black bg-opacity-40 transition-opacity" />
         </Transition.Child>
-        <div className="fixed inset-0 overflow-y-auto lg:pl-72">
+        <div className="fixed inset-0 overflow-y-auto overscroll-contain lg:pl-72">
           <div className="px-2 my-12 max-w-xl mx-auto sm:px-6">
             <Transition.Child
               as={Fragment}

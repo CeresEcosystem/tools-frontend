@@ -27,12 +27,10 @@ export default function TokensList({
           <div className="flex-col items-start w-full flex gap-x-2 justify-between xs:flex-row xs:items-center">
             <div className="flex flex-1">
               <div className="mr-4 flex-shrink-0 self-center">
-                <Image
-                  className="rounded-full"
+                <img
+                  className="rounded-full w-12 h-12"
                   src={`${ASSET_URL}/${token.token}.svg`}
-                  width={48}
-                  height={48}
-                  alt=""
+                  alt={token.fullName}
                 />
               </div>
               <div className="w-full">
