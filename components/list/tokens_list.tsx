@@ -5,12 +5,20 @@ import { formatWalletAddress, formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
+import Clipboard from '@components/clipboard';
 
-export default function TokensList({ tokens }: { tokens: Token[] }) {
+export default function TokensList({
+  tokens,
+  showModal,
+}: {
+  tokens: Token[];
+  // eslint-disable-next-line no-unused-vars
+  showModal: (show: boolean, token: Token) => void;
+}) {
   const format = useFormatter();
 
   return (
-    <ul role="list" className="space-y-2">
+    <ul role="list" className="space-y-2 mt-8">
       {tokens.map((token) => (
         <li
           key={`${token.assetId}+${token.fullName}`}
@@ -31,9 +39,17 @@ export default function TokensList({ tokens }: { tokens: Token[] }) {
                 <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">
                   {token.fullName}
                 </h4>
-                <span className="text-sm pb-1 block text-white text-opacity-50">{`AssetID: ${formatWalletAddress(
-                  token.assetId
-                )}`}</span>
+                <Clipboard
+                  textToCopy={token.assetId}
+                  text={formatWalletAddress(token.assetId)}
+                >
+                  <span className="text-sm pb-1 block text-white text-opacity-50">
+                    {'AssetID: '}
+                    <span className="cursor-pointer hover:text-white hover:underline">
+                      {formatWalletAddress(token.assetId)}
+                    </span>
+                  </span>
+                </Clipboard>
                 <span className="text-lg text-pink font-bold xs:hidden">
                   {formatToCurrency(format, token.price)}
                 </span>
@@ -45,7 +61,10 @@ export default function TokensList({ tokens }: { tokens: Token[] }) {
               </span>
               <div className="hidden md:flex">
                 <VerticalSeparator />
-                <button className="rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20">
+                <button
+                  onClick={() => showModal(true, token)}
+                  className="rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+                >
                   <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
                   View locks
                 </button>
@@ -54,7 +73,10 @@ export default function TokensList({ tokens }: { tokens: Token[] }) {
           </div>
           <div className="md:hidden">
             <hr className="w-full my-4 border border-white border-opacity-5" />
-            <button className="w-full max-w-md mx-auto rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20">
+            <button
+              onClick={() => showModal(true, token)}
+              className="w-full max-w-md mx-auto rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+            >
               <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
               View locks
             </button>

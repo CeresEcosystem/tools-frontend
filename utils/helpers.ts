@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const formatWalletAddress = (
   address: string | undefined,
   formatDelimiter = 7
@@ -40,9 +42,22 @@ export function formatToCurrency(format: any, number: number) {
   return `$0`;
 }
 
+export function formatNumber(format: any, number: number, decimal = 2) {
+  return format.number(number, {
+    style: 'decimal',
+    minimumFractionDigits: decimal,
+    maximumFractionDigits: decimal,
+  });
+}
+
 export function scrollToTop() {
   const isBrowser = () => typeof window !== 'undefined';
 
   if (!isBrowser()) return;
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+export const formatDateFromTimestamp = (timestamp: number) => {
+  const date = moment(new Date(timestamp), 'YYYY-MM-DD HH:MM');
+  return `${date.format('MMMM DD, YYYY')} ${date.format('HH:mm')}`;
+};
