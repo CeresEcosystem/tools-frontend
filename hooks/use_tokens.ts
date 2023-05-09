@@ -1,3 +1,5 @@
+import { formatToCurrency, formatWalletAddress } from '@utils/helpers';
+import { useFormatter } from 'next-intl';
 import { ChangeEvent, useRef, useState } from 'react';
 
 export interface Token {
@@ -6,6 +8,8 @@ export interface Token {
   assetId: string;
   fullName: string;
   lockedTokens: number;
+  assetIdFormatted: string | '';
+  priceFormatted: string | '';
 }
 
 interface TokensReturnType {
@@ -23,12 +27,29 @@ interface TokensReturnType {
 const limiter = 10;
 
 const useTokens = (data?: Token[]): TokensReturnType => {
-  const tokens = useRef(data);
+  const format = useFormatter();
 
-  const [tokenSlice, setTokenSlice] = useState(data?.slice(0, limiter) ?? []);
+  const allTokens = useRef<Token[]>(
+    data
+      ? data.map((t) => {
+          return {
+            ...t,
+            assetIdFormatted: formatWalletAddress(t.assetId),
+            priceFormatted: formatToCurrency(format, t.price),
+          };
+        })
+      : []
+  );
+  const tokens = useRef(allTokens.current);
+
+  const [tokenSlice, setTokenSlice] = useState(
+    allTokens.current.slice(0, limiter) ?? []
+  );
 
   const currentPage = useRef(0);
-  const totalPages = useRef(data ? Math.ceil(data.length / limiter) : 0);
+  const totalPages = useRef(
+    allTokens.current ? Math.ceil(allTokens.current.length / limiter) : 0
+  );
 
   const goToFirstPage = () => {
     if (currentPage.current > 0) {
@@ -62,21 +83,26 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     if (currentPage.current + 1 < totalPages.current) {
       currentPage.current = totalPages.current - 1;
       setTokenSlice(
-        tokens.current!.slice((totalPages.current - 1) * limiter, tokens.current?.length)
+        tokens.current!.slice(
+          (totalPages.current - 1) * limiter,
+          tokens.current?.length
+        )
       );
     }
   };
 
   const resetData = () => {
-    tokens.current = data;
+    tokens.current = allTokens.current;
     currentPage.current = 0;
-    totalPages.current = data ? Math.ceil(data.length / limiter) : 0;
-    setTokenSlice(data?.slice(0, limiter) ?? []);
+    totalPages.current = allTokens.current
+      ? Math.ceil(allTokens.current.length / limiter)
+      : 0;
+    setTokenSlice(allTokens.current.slice(0, limiter) ?? []);
   };
 
   const handleTokenSearch = (search: ChangeEvent<HTMLInputElement>) => {
     if (search.target.value !== '') {
-      tokens.current = data?.filter(
+      tokens.current = allTokens.current?.filter(
         (token) =>
           token.assetId
             .toUpperCase()

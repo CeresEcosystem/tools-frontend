@@ -3,8 +3,6 @@ import Modal from '@components/modal';
 import { ASSET_URL } from '@constants/index';
 import { LockToken } from '@hooks/use_token_locks';
 import { Token } from '@hooks/use_tokens';
-import { formatDateFromTimestamp, formatNumber } from '@utils/helpers';
-import { useFormatter } from 'next-intl';
 
 const labelStyle = 'text-white text-opacity-50 text-base block';
 
@@ -19,8 +17,6 @@ export default function TokensModal({
   token: Token | null;
   locks: LockToken[];
 }) {
-  const formatter = useFormatter();
-
   return (
     <Modal showModal={showModal} closeModal={closeModal}>
       <div className="flex items-center">
@@ -33,7 +29,7 @@ export default function TokensModal({
           {token?.token}
         </h4>
       </div>
-      <div className="mt-8">
+      <div className="mt-8 overflow-y-auto overscroll-contain h-full">
         {locks.length === 0 ? (
           <span className="block text-white text-base text-center">
             Token has no lockups.
@@ -55,13 +51,13 @@ export default function TokensModal({
                   <div className="col-span-3 flex flex-col sm:col-span-2">
                     <span className={labelStyle}>Locked</span>
                     <span className="text-xs text-white font-medium sm:text-sm">
-                      {formatNumber(formatter, lockToken.locked)}
+                      {lockToken.lockedFormatted}
                     </span>
                   </div>
                   <div className="col-span-3 flex flex-col sm:col-span-4">
                     <span className={labelStyle}>Unlock time</span>
                     <span className="text-white text-xs font-medium sm:text-sm">
-                      {formatDateFromTimestamp(lockToken.timestamp)}
+                      {lockToken.timestampFormatted}
                     </span>
                   </div>
                 </div>

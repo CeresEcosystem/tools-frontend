@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 export const formatWalletAddress = (
   address: string | undefined,
@@ -14,7 +14,7 @@ export const formatWalletAddress = (
   return '';
 };
 
-export function formatToCurrency(format: any, number: number) {
+export function formatToCurrency(format: any, number: number): string {
   if (number !== null) {
     const numberString = number.toString();
 
@@ -31,7 +31,7 @@ export function formatToCurrency(format: any, number: number) {
       });
       return `${firstPart}.${numberSplit[1]}`;
     }
-    
+
     return format.number(number, {
       style: 'currency',
       currency: 'USD',
@@ -42,7 +42,7 @@ export function formatToCurrency(format: any, number: number) {
   return `$0`;
 }
 
-export function formatNumber(format: any, number: number, decimal = 2) {
+export function formatNumber(format: any, number: number, decimal = 2): string {
   return format.number(number, {
     style: 'decimal',
     minimumFractionDigits: decimal,

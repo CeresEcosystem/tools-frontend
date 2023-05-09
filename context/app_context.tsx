@@ -10,13 +10,13 @@ interface Banner {
 }
 
 interface AppContextType {
-  banners: Banner[];
+  banners: Banner[] | null;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 const AppProvider = ({ children }: { children: React.ReactNode }) => {
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setBanners] = useState<Banner[] | null>(null);
 
   useEffect(() => {
     fetch(`${API}/banners`)

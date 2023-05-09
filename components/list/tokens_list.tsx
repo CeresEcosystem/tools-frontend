@@ -1,8 +1,6 @@
 import VerticalSeparator from '@components/separator/vertical_separator';
 import { ASSET_URL } from '@constants/index';
 import { Token } from '@hooks/use_tokens';
-import { formatWalletAddress, formatToCurrency } from '@utils/helpers';
-import { useFormatter } from 'next-intl';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import Clipboard from '@components/clipboard';
@@ -15,8 +13,6 @@ export default function TokensList({
   // eslint-disable-next-line no-unused-vars
   showModal: (show: boolean, token: Token) => void;
 }) {
-  const format = useFormatter();
-
   return (
     <ul role="list" className="space-y-2 mt-8">
       {tokens.map((token) => (
@@ -39,23 +35,23 @@ export default function TokensList({
                 </h4>
                 <Clipboard
                   textToCopy={token.assetId}
-                  text={formatWalletAddress(token.assetId)}
+                  text={token.assetIdFormatted}
                 >
                   <span className="text-sm pb-1 block text-white text-opacity-50">
                     {'AssetID: '}
                     <span className="cursor-pointer hover:text-white hover:underline">
-                      {formatWalletAddress(token.assetId)}
+                      {token.assetIdFormatted}
                     </span>
                   </span>
                 </Clipboard>
                 <span className="text-lg text-pink font-bold xs:hidden">
-                  {formatToCurrency(format, token.price)}
+                  {token.priceFormatted}
                 </span>
               </div>
             </div>
             <div className="hidden flex-shrink-0 justify-end items-center xs:flex">
               <span className="text-lg text-pink font-bold sm:text-xl">
-                {formatToCurrency(format, token.price)}
+                {token.priceFormatted}
               </span>
               <div className="hidden md:flex">
                 <VerticalSeparator />
