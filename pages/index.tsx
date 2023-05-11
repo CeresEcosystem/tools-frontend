@@ -4,7 +4,7 @@ import TokensList from '@components/list/tokens_list';
 import TokensModal from '@components/modal/tokens_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import { NEW_API_URL } from '@constants/index';
-import useTokenLocks, { LockToken } from '@hooks/use_token_locks';
+import useLocks, { Lock } from '@hooks/use_locks';
 import useTokens, { Token } from '@hooks/use_tokens';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 interface Modal {
   show: boolean;
   item: Token | null;
-  locks: LockToken[];
+  locks: Lock[];
 }
 
 export default function Tokens({ data }: { data?: Token[] }) {
@@ -27,7 +27,7 @@ export default function Tokens({ data }: { data?: Token[] }) {
     handleTokenSearch,
   } = useTokens(data);
 
-  const { getTokenLocks } = useTokenLocks();
+  const { getLocks } = useLocks();
 
   const [showLocks, setShowLocks] = useState<Modal>({
     show: false,
@@ -40,7 +40,7 @@ export default function Tokens({ data }: { data?: Token[] }) {
   }, [tokens]);
 
   const fetchData = async (show: boolean, token: Token) => {
-    const response = await getTokenLocks(token?.token);
+    const response = await getLocks(undefined, token?.token);
     setShowLocks({
       show,
       item: token,

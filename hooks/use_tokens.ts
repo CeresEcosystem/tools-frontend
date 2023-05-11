@@ -2,6 +2,8 @@ import { formatToCurrency, formatWalletAddress } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { ChangeEvent, useRef, useState } from 'react';
 
+const limiter = 10;
+
 export interface Token {
   token: string;
   price: number;
@@ -23,8 +25,6 @@ interface TokensReturnType {
   // eslint-disable-next-line no-unused-vars
   handleTokenSearch: (search: ChangeEvent<HTMLInputElement>) => void;
 }
-
-const limiter = 10;
 
 const useTokens = (data?: Token[]): TokensReturnType => {
   const format = useFormatter();

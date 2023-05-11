@@ -1,38 +1,45 @@
 import Clipboard from '@components/clipboard';
 import Modal from '@components/modal';
 import { ASSET_URL } from '@constants/index';
+import { Pair } from '@hooks/use_pairs';
 import { Lock } from '@hooks/use_locks';
-import { Token } from '@hooks/use_tokens';
 
 const labelStyle = 'text-white text-opacity-50 text-base block';
 
-export default function TokensModal({
+export default function PairsModal({
   showModal,
   closeModal,
-  token,
+  pair,
   locks,
 }: {
   showModal: boolean;
   closeModal: () => void;
-  token: Token | null;
+  pair: Pair | null;
   locks: Lock[];
 }) {
   return (
     <Modal showModal={showModal} closeModal={closeModal}>
       <div className="flex items-center">
-        <img
-          className="rounded-full w-12 h-12"
-          src={`${ASSET_URL}/${token?.token}.svg`}
-          alt=""
-        />
-        <h4 className="pl-4 text-base font-bold text-white line-clamp-1 sm:text-lg">
-          {token?.token}
+        <div className="mr-4 flex flex-shrink-0">
+          <img
+            className="rounded-full w-12 h-12 -mr-4 z-10"
+            src={`${ASSET_URL}/${pair?.baseAsset}.svg`}
+            alt={pair?.baseAsset}
+          />
+          <img
+            className="rounded-full left-8 w-12 h-12"
+            src={`${ASSET_URL}/${pair?.token}.svg`}
+            alt={pair?.baseAsset}
+          />
+        </div>
+        <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">
+          {`${pair?.baseAsset} / ${pair?.token}`}
         </h4>
       </div>
       <div className="mt-8 overflow-y-auto overscroll-contain h-full">
         {locks.length === 0 ? (
           <span className="block text-white text-base text-center">
-            Token has no lockups.
+            Pair has no liquidity lockups.
           </span>
         ) : (
           <ul role="list" className="space-y-2">
@@ -51,7 +58,7 @@ export default function TokensModal({
                   <div className="col-span-3 flex flex-col sm:col-span-2">
                     <span className={labelStyle}>Locked</span>
                     <span className="text-xs text-white font-medium sm:text-sm">
-                      {lockToken.lockedFormatted}
+                      {`${lockToken.lockedFormatted}%`}
                     </span>
                   </div>
                   <div className="col-span-3 flex flex-col sm:col-span-4">
