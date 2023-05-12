@@ -16,7 +16,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
       <SideBarDesktop />
       <div className="lg:pl-72">
         <Header setSidebarOpen={setSidebarOpen} />
-        {children}
+        <div className="backgroundContent">{children}</div>
       </div>
     </>
   );

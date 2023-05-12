@@ -12,11 +12,11 @@ export default function PairsStats({
 }) {
   return (
     <div className="grid mb-8 gap-4 xxs:grid-cols-2 md:gap-x-8">
-      <div className="flex-col bg-backgroundHeader bg-opacity-20 px-3 py-8 rounded-xl flex justify-center items-center">
+      <div className="flex-col bg-backgroundItem bg-opacity-20 backdrop-blur-lg px-3 py-8 rounded-xl flex justify-center items-center">
         <span className={labelStyle}>Total liquidity</span>
         <h1 className={numberStyle}>{totalLiquidity}</h1>
       </div>
-      <div className="flex-col bg-backgroundHeader bg-opacity-20 px-3 py-8 rounded-xl flex justify-center items-center">
+      <div className="flex-col bg-backgroundItem bg-opacity-20 backdrop-blur-lg px-3 py-8 rounded-xl flex justify-center items-center">
         <span className={labelStyle}>Total volume</span>
         <h1 className={numberStyle}>{totalVolume}</h1>
       </div>

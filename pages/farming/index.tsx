@@ -14,7 +14,7 @@ const rewardStyle = 'font-bold text-pink';
 export default function Farming({ reward }: { reward?: Reward }) {
   return (
     <Container>
-      <div className="bg-backgroundHeader bg-opacity-20 px-4 py-8 rounded-xl flex flex-col items-center sm:py-12">
+      <div className="bg-backgroundItem bg-opacity-20 backdrop-blur-lg px-4 py-8 rounded-xl flex flex-col items-center sm:py-12">
         <span className={textStyle}>
           Every 1 XOR in PSWAP/VAL/ETH/DAI/XST pool yields about{' '}
           <span className={rewardStyle}>{reward?.rewardsDouble}</span> PSWAP per

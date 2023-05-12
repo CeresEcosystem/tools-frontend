@@ -49,6 +49,26 @@ body {
   background: #2d093e;
 }
 
+@media only screen and (min-width: 1024px) {
+  .backgroundContent {
+    position: relative;
+  }
+
+  .backgroundContent::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-color: #2d093e;
+    background-image: url('/background.webp');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: luminosity;
+    background-position: bottom bottom;
+    opacity: 0.2;
+    z-index: -1;
+  }
+}
+
 .flaticon-chart {
   background-image: url('/chart.svg');
   height: 24px;

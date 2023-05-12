@@ -20,7 +20,7 @@ export default function PairsList({
       {pairs.map((pair) => (
         <li
           key={`${pair.baseAssetId}+${pair.tokenAssetId}`}
-          className="bg-backgroundHeader bg-opacity-20 p-4 rounded-xl flex flex-col items-center space-y-4 sm:space-x-4 sm:space-y-0 sm:flex-row sm:items-stretch"
+          className="bg-backgroundItem bg-opacity-20 backdrop-blur-lg p-4 rounded-xl flex flex-col items-center space-y-4 sm:space-x-4 sm:space-y-0 sm:flex-row sm:items-stretch"
         >
           <div className="flex w-full justify-between items-end sm:items-start">
             <div className="flex flex-col space-y-6">
