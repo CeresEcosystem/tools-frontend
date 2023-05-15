@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-export const formatWalletAddress = (
+export function formatWalletAddress(
   address: string | undefined,
   formatDelimiter = 7
-) => {
+) {
   if (address && address.length > 20) {
     return `${address.substring(0, formatDelimiter)}-${address.substring(
       address.length - formatDelimiter,
@@ -12,7 +12,7 @@ export const formatWalletAddress = (
   }
 
   return '';
-};
+}
 
 export function formatToCurrency(format: any, number: number): string {
   if (number !== null) {
@@ -57,7 +57,39 @@ export function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-export const formatDateFromTimestamp = (timestamp: number) => {
+export function formatDateFromTimestamp(timestamp: number) {
   const date = moment(new Date(timestamp), 'YYYY-MM-DD HH:MM');
   return `${date.format('MMMM DD, YYYY')} ${date.format('HH:mm')}`;
-};
+}
+
+export function formatTimeFrame(time: string): string {
+  switch (time) {
+    case '24':
+      return '24h';
+    case '7':
+      return '7d';
+    case '30':
+      return '30d';
+    case '-1':
+      return 'all';
+    default:
+      return '';
+  }
+}
+
+export function getBlockLimiter(timeFrame: string, last?: number): number {
+  if (last != null) {
+    switch (timeFrame) {
+      case '24':
+        return last - 14400;
+      case '7':
+        return last - 100800;
+      case '30':
+        return last - 432000;
+      default:
+        return -1;
+    }
+  }
+
+  return -1;
+}

@@ -4,16 +4,11 @@ import TokensList from '@components/list/tokens_list';
 import TokensModal from '@components/modal/tokens_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import { NEW_API_URL } from '@constants/index';
-import useLocks, { Lock } from '@hooks/use_locks';
-import useTokens, { Token } from '@hooks/use_tokens';
+import useLocks from '@hooks/use_locks';
+import useTokens from '@hooks/use_tokens';
+import { ModalTokens, Token } from '@interfaces/index';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
-
-interface Modal {
-  show: boolean;
-  item: Token | null;
-  locks: Lock[];
-}
 
 export default function Tokens({ data }: { data?: Token[] }) {
   const {
@@ -29,7 +24,7 @@ export default function Tokens({ data }: { data?: Token[] }) {
 
   const { getLocks } = useLocks();
 
-  const [showLocks, setShowLocks] = useState<Modal>({
+  const [showLocks, setShowLocks] = useState<ModalTokens>({
     show: false,
     item: null,
     locks: [],

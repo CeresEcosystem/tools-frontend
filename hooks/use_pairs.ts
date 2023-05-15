@@ -1,52 +1,10 @@
 import { formatNumber, formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { ChangeEvent, useRef, useState } from 'react';
+import usePagination from '@hooks/use_pagination';
+import { Pair, PairData, PairsReturnType } from '@interfaces/index';
 
 const limiter = 10;
-
-export interface Pair {
-  token: string;
-  tokenFullName: string;
-  tokenAssetId: string;
-  baseAsset: string;
-  baseAssetFullName: string;
-  baseAssetId: string;
-  liquidity?: number;
-  baseAssetLiq: number;
-  targetAssetLiq: number;
-  lockedLiquidity: number;
-  volume?: number;
-  baseLiquidityFormatted: string | '';
-  tokenLiquidityFormatted: string | '';
-  liquidityFormatted: string | '';
-  volumeFormatted: string | '';
-  lockedLiquidityFormatted: string;
-}
-
-interface PairData {
-  allData: Pair[];
-  liquidity: string;
-  volume: string;
-  baseAssets: string[];
-}
-
-interface PairsReturnType {
-  pairs: Pair[];
-  totalPages: number;
-  currentPage: number;
-  totalLiquidity: string;
-  totalVolume: string;
-  baseAssets: string[];
-  selectedBaseAsset: string;
-  // eslint-disable-next-line no-unused-vars
-  handleBaseAssetChange: (bAsset: string) => void;
-  goToFirstPage: () => void;
-  goToPreviousPage: () => void;
-  goToNextPage: () => void;
-  goToLastPage: () => void;
-  // eslint-disable-next-line no-unused-vars
-  handlePairSearch: (search: ChangeEvent<HTMLInputElement>) => void;
-}
 
 const usePairs = (data?: Pair[]): PairsReturnType => {
   const format = useFormatter();
@@ -65,7 +23,10 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
           tokenLiquidityFormatted: formatNumber(format, pair.targetAssetLiq),
           liquidityFormatted: formatToCurrency(format, pair.liquidity ?? 0),
           volumeFormatted: formatToCurrency(format, pair.volume ?? 0),
-          lockedLiquidityFormatted: `${formatNumber(format, pair.lockedLiquidity)}%`,
+          lockedLiquidityFormatted: `${formatNumber(
+            format,
+            pair.lockedLiquidity
+          )}%`,
         });
         baseAssets.add(pair.baseAsset);
         if (pair.liquidity) {
@@ -100,45 +61,15 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
     Math.ceil(allPairs.current.allData.length / limiter)
   );
 
-  const goToFirstPage = () => {
-    if (currentPage.current > 0) {
-      currentPage.current = 0;
-      setPairsSlice(pairs.current.slice(0, limiter));
-    }
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage.current > 0) {
-      currentPage.current--;
-      setPairsSlice(
-        pairs.current.slice(
-          currentPage.current * limiter,
-          (currentPage.current + 1) * limiter
-        )
-      );
-    }
-  };
-
-  const goToNextPage = () => {
-    const nextLimit = (currentPage.current + 1) * limiter;
-
-    if (currentPage.current + 1 < totalPages.current) {
-      currentPage.current++;
-      setPairsSlice(pairs.current.slice(nextLimit, nextLimit + limiter));
-    }
-  };
-
-  const goToLastPage = () => {
-    if (currentPage.current + 1 < totalPages.current) {
-      currentPage.current = totalPages.current - 1;
-      setPairsSlice(
-        pairs.current.slice(
-          (totalPages.current - 1) * limiter,
-          pairs.current.length
-        )
-      );
-    }
-  };
+  const { goToFirstPage, goToPreviousPage, goToNextPage, goToLastPage } =
+    usePagination<Pair>(
+      currentPage.current,
+      totalPages.current,
+      pairs.current,
+      (cp: number) => (currentPage.current = cp),
+      (array: Array<Pair>) => setPairsSlice(array),
+      limiter,
+    );
 
   const setPage = () => {
     currentPage.current = 0;

@@ -1,12 +1,6 @@
 import { NEW_API_URL } from '@constants/index';
 import Container from '@components/container';
-
-interface Reward {
-  apr: string;
-  rewards: number;
-  aprDouble: string;
-  rewardsDouble: string;
-}
+import { Reward } from '@interfaces/index';
 
 const textStyle = 'text-base text-white text-center max-w-2xl block sm:text-xl';
 const rewardStyle = 'font-bold text-pink';

@@ -6,16 +6,11 @@ import PairsModal from '@components/modal/pairs_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import PairsStats from '@components/stats/pairs_stats';
 import { NEW_API_URL } from '@constants/index';
-import useLocks, { Lock } from '@hooks/use_locks';
-import usePairs, { Pair } from '@hooks/use_pairs';
+import useLocks from '@hooks/use_locks';
+import usePairs from '@hooks/use_pairs';
+import { Pair, ModalPairs } from '@interfaces/index';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
-
-interface Modal {
-  show: boolean;
-  item: Pair | null;
-  locks: Lock[];
-}
 
 export default function Pairs({ data }: { data?: Pair[] }) {
   const {
@@ -36,7 +31,7 @@ export default function Pairs({ data }: { data?: Pair[] }) {
 
   const { getLocks } = useLocks();
 
-  const [showLocks, setShowLocks] = useState<Modal>({
+  const [showLocks, setShowLocks] = useState<ModalPairs>({
     show: false,
     item: null,
     locks: [],

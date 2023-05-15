@@ -1,8 +1,7 @@
 import Clipboard from '@components/clipboard';
 import Modal from '@components/modal';
 import { ASSET_URL } from '@constants/index';
-import { Pair } from '@hooks/use_pairs';
-import { Lock } from '@hooks/use_locks';
+import { Lock, Pair } from '@interfaces/index';
 
 const labelStyle = 'text-white text-opacity-50 text-base block';
 

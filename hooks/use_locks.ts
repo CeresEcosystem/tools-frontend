@@ -1,14 +1,7 @@
 import { LOCK_API_URL } from '@constants/index';
+import { Lock } from '@interfaces/index';
 import { formatDateFromTimestamp, formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-
-export interface Lock {
-  account: string;
-  locked: number;
-  timestamp: number;
-  lockedFormatted: string | '';
-  timestampFormatted: string | '';
-}
 
 const useLocks = () => {
   const format = useFormatter();

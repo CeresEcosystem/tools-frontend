@@ -1,7 +1,7 @@
 import { ASSET_URL } from '@constants/index';
-import { Pair } from '@hooks/use_pairs';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
+import { Pair } from '@interfaces/index';
 
 const labelStyle =
   'text-xs text-white text-opacity-50 text-right block sm:text-sm';

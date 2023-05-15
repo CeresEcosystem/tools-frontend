@@ -1,9 +1,9 @@
 import VerticalSeparator from '@components/separator/vertical_separator';
 import { ASSET_URL } from '@constants/index';
-import { Token } from '@hooks/use_tokens';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import Clipboard from '@components/clipboard';
+import { Token } from '@interfaces/index';
 
 export default function TokensList({
   tokens,

@@ -11,6 +11,7 @@ export default function ListPagination({
   goToPreviousPage,
   goToNextPage,
   goToLastPage,
+  small = false,
 }: {
   currentPage: number;
   totalPages: number;
@@ -18,25 +19,67 @@ export default function ListPagination({
   goToPreviousPage: () => void;
   goToNextPage: () => void;
   goToLastPage: () => void;
+  small?: boolean;
 }) {
   return (
-    <div className="flex gap-x-3 justify-center mt-8">
-      <button onClick={() => goToFirstPage()} className={buttonStyle}>
-        <i className={classNames(iconStyle, 'flaticon-left-arrow-1')}></i>
+    <div className={'flex space-x-2 justify-center mt-8'}>
+      <button
+        onClick={() => goToFirstPage()}
+        className={classNames(buttonStyle, small && 'h-6 w-6')}
+      >
+        <i
+          className={classNames(
+            iconStyle,
+            'flaticon-left-arrow-1',
+            small && 'text-sm'
+          )}
+        ></i>
       </button>
-      <button onClick={() => goToPreviousPage()} className={buttonStyle}>
-        <i className={classNames(iconStyle, 'flaticon-left-arrow')}></i>
+      <button
+        onClick={() => goToPreviousPage()}
+        className={classNames(buttonStyle, small && 'h-6 w-6')}
+      >
+        <i
+          className={classNames(
+            iconStyle,
+            'flaticon-left-arrow',
+            small && 'text-sm'
+          )}
+        ></i>
       </button>
-      <div className="h-9 px-4 bg-pink rounded-lg flex items-center">
-        <span className="text-white text-base">{`${
-          currentPage + 1
-        } / ${totalPages}`}</span>
+      <div
+        className={classNames(
+          'h-9 px-4 bg-pink rounded-lg flex items-center',
+          small && 'h-6'
+        )}
+      >
+        <span
+          className={classNames('text-white text-base', small && 'text-sm')}
+        >{`${currentPage + 1} / ${totalPages}`}</span>
       </div>
-      <button onClick={() => goToNextPage()} className={buttonStyle}>
-        <i className={classNames(iconStyle, 'flaticon-right-arrow-1')}></i>
+      <button
+        onClick={() => goToNextPage()}
+        className={classNames(buttonStyle, small && 'h-6 w-6')}
+      >
+        <i
+          className={classNames(
+            iconStyle,
+            'flaticon-right-arrow-1',
+            small && 'text-sm'
+          )}
+        ></i>
       </button>
-      <button onClick={() => goToLastPage()} className={buttonStyle}>
-        <i className={classNames(iconStyle, 'flaticon-right-arrow')}></i>
+      <button
+        onClick={() => goToLastPage()}
+        className={classNames(buttonStyle, small && 'h-6 w-6')}
+      >
+        <i
+          className={classNames(
+            iconStyle,
+            'flaticon-right-arrow',
+            small && 'text-sm'
+          )}
+        ></i>
       </button>
     </div>
   );
