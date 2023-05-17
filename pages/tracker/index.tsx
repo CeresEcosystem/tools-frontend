@@ -4,7 +4,9 @@ import Socials from '@components/socials';
 import SponsoredByPococo from '@components/sponsors/pococo';
 import Title from '@components/title';
 import Burning from '@components/tracker/burning';
+import BurningChart from '@components/tracker/burning_chart';
 import GrossTable from '@components/tracker/gross_table';
+import SupplyChart from '@components/tracker/supply_chart';
 import TableGrid from '@components/tracker/table_grid';
 import XorSpent from '@components/tracker/xor_spent';
 import { NEW_API_URL } from '@constants/index';
@@ -22,11 +24,8 @@ export default function Tracker({ data }: { data?: TrackerData }) {
         </div>
         <GrossTable blocks={data?.blocks} />
       </TableGrid>
-      <Title
-        title="Frequently Asked Questions"
-        subtitle="Here's most asked questions"
-        topMargin
-      />
+      <BurningChart burning={data?.graphBurning} />
+      <SupplyChart supply={data?.graphSupply} />
       <Faqs faqs={PSWAPTrackerQuestions} />
       <Socials />
       <SponsoredByPococo />

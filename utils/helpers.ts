@@ -42,7 +42,7 @@ export function formatToCurrency(format: any, number: number): string {
   return `$0`;
 }
 
-export function formatNumber(format: any, number: number, decimal = 2): string {
+export function formatNumber(format: any, number: number | string, decimal = 2): string {
   return format.number(number, {
     style: 'decimal',
     minimumFractionDigits: decimal,
