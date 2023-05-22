@@ -1,9 +1,10 @@
 import Spinner from '@components/spinner';
-import { usePolkadot } from '@context/polkadot_context';
 import useDemeterFarming from '@hooks/use_demeter_farming';
 import FarmingHeading from '@components/farming/farming_heading';
+import FarmContainer from './farm_container';
+import FarmItem from './farm_item';
 
-function HermesFarmingData() {
+export default function HermesFarming() {
   const { farmsAndPools } = useDemeterFarming(true);
 
   if (farmsAndPools.farms?.length > 0 && farmsAndPools.pools?.length > 0) {
@@ -14,31 +15,32 @@ function HermesFarmingData() {
           link="https://hermes-dao.io/rewards/farm"
           linkText="Farm on Hermes DAO platform"
         />
-        {farmsAndPools.farms.map((farm) => (
-          <div key={farm.baseAsset + farm.poolAsset + farm.rewardAsset}>
-            <span>{`${farm.baseAsset} ${farm.token} ${farm.apr}`}</span>
-          </div>
-        ))}
+        <FarmContainer>
+          {farmsAndPools.farms.map((farm) => (
+            <FarmItem
+              key={farm.baseAsset + farm.poolAsset + farm.rewardAsset}
+              item={farm}
+            />
+          ))}
+        </FarmContainer>
         <FarmingHeading
           title="Staking"
           link="https://hermes-dao.io/rewards/staking"
           linkText="Stake on Hermes DAO platform"
           topMargin
         />
-        {farmsAndPools.pools.map((pool) => (
-          <div key={pool.poolAsset + pool.rewardAsset}>
-            <span>{`${pool.token} ${pool.apr}`}</span>
-          </div>
-        ))}
+        <FarmContainer>
+          {farmsAndPools.pools.map((pool) => (
+            <FarmItem
+              key={pool.poolAsset + pool.rewardAsset}
+              item={pool}
+              isFarm={false}
+            />
+          ))}
+        </FarmContainer>
       </>
     );
   }
 
   return <Spinner />;
-}
-
-export default function HermesFarming() {
-  const polkadot = usePolkadot();
-
-  return polkadot?.loading ? <Spinner /> : <HermesFarmingData />;
 }

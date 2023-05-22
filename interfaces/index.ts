@@ -221,3 +221,13 @@ export interface Pool {
   depositFee: number;
   totalStaked: number;
 }
+
+export interface TokenInfoObject {
+  tokenPerBlock: string;
+  farmsAllocation: string;
+  stakingAllocation: string;
+}
+
+export interface TokenInfo {
+  [key: string]: TokenInfoObject;
+}

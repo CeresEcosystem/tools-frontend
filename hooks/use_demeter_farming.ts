@@ -1,5 +1,4 @@
 import { DEMETER_API, HMX_ADDRESS, NEW_API_URL } from '@constants/index';
-import { usePolkadot } from '@context/polkadot_context';
 import {
   Farm,
   FarmAndPoolData,
@@ -8,13 +7,12 @@ import {
   Pool,
   PoolData,
   Token,
+  TokenInfo,
 } from '@interfaces/index';
 import { useCallback, useEffect, useState } from 'react';
 
 const useDemeterFarming = (hermesFilter = false) => {
-  const polkadot = usePolkadot();
-
-  const [farmsAndPools, setFarmsAndPools] = useState<FarmAndPoolData>({
+ const [farmsAndPools, setFarmsAndPools] = useState<FarmAndPoolData>({
     farms: [],
     pools: [],
   });
@@ -27,6 +25,14 @@ const useDemeterFarming = (hermesFilter = false) => {
       .catch(() => []);
   }, []);
 
+  const getTokenInfos = useCallback(async () => {
+    return fetch(`${DEMETER_API}/get-tokens-infos`)
+      .then(async (response) => {
+        return (await response.json()) as TokenInfo;
+      })
+      .catch(() => <TokenInfo>{});
+  }, []);
+
   const getTokens = useCallback(async () => {
     return fetch(`${NEW_API_URL}/prices`)
       .then(async (response) => {
@@ -36,7 +42,7 @@ const useDemeterFarming = (hermesFilter = false) => {
   }, []);
 
   const getFarms = useCallback(
-    async (pairs: Pair[], tokens: Token[]) => {
+    async (pairs: Pair[], tokens: Token[], tokenInfos: TokenInfo) => {
       if (pairs && tokens) {
         return fetch(`${DEMETER_API}/get-farms`)
           .then(async (response) => {
@@ -64,12 +70,7 @@ const useDemeterFarming = (hermesFilter = false) => {
                   const totalLiquidity =
                     Number(farm.tvlPercent) * (pair?.liquidity! / 100);
 
-                  const tokenInfoResponse =
-                    await polkadot?.api?.query?.demeterFarmingPlatform?.tokenInfos(
-                      rewardToken?.assetId
-                    );
-
-                  const tokenInfo = tokenInfoResponse?.toHuman();
+                    const tokenInfo = tokenInfos[rewardToken!.assetId];
 
                   const tokenPerBlock =
                     /* @ts-ignore */
@@ -110,11 +111,11 @@ const useDemeterFarming = (hermesFilter = false) => {
         return [];
       }
     },
-    [polkadot?.api?.query?.demeterFarmingPlatform, hermesFilter]
+    [hermesFilter]
   );
 
   const getPools = useCallback(
-    async (tokens: Token[]) => {
+    async (tokens: Token[], tokenInfos: TokenInfo) => {
       if (tokens) {
         return fetch(`${DEMETER_API}/get-pools`)
           .then(async (response) => {
@@ -140,12 +141,7 @@ const useDemeterFarming = (hermesFilter = false) => {
 
                   const stakedTotal = pool?.totalStaked * token!.price;
 
-                  const tokenInfoResponse =
-                    await polkadot?.api?.query?.demeterFarmingPlatform?.tokenInfos(
-                      rewardToken?.assetId
-                    );
-
-                  const tokenInfo = tokenInfoResponse?.toHuman();
+                  const tokenInfo = tokenInfos[rewardToken!.assetId];
 
                   const tokenPerBlock =
                     /* @ts-ignore */
@@ -187,17 +183,18 @@ const useDemeterFarming = (hermesFilter = false) => {
         return [];
       }
     },
-    [polkadot?.api?.query?.demeterFarmingPlatform, hermesFilter]
+    [hermesFilter]
   );
 
   const init = useCallback(async () => {
-    Promise.all([getPairs(), getTokens()]).then(async (responseAPI) => {
+    Promise.all([getPairs(), getTokens(), getTokenInfos()]).then(async (responseAPI) => {
       const pairs: Pair[] = responseAPI[0];
       const tokens: Token[] = responseAPI[1];
+      const tokenInfos: TokenInfo = responseAPI[2];
 
       const responseFarmsAndPools = (await Promise.all([
-        getFarms(pairs, tokens),
-        getPools(tokens),
+        getFarms(pairs, tokens, tokenInfos),
+        getPools(tokens, tokenInfos),
       ])) as [FarmData[], PoolData[]];
 
       setFarmsAndPools({
@@ -205,7 +202,7 @@ const useDemeterFarming = (hermesFilter = false) => {
         pools: responseFarmsAndPools[1],
       });
     });
-  }, [getPairs, getTokens, getFarms, getPools]);
+  }, [getPairs, getTokens, getFarms, getPools, getTokenInfos]);
 
   useEffect(() => {
     init();

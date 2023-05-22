@@ -1,3 +1,4 @@
+import { ArrowTopRightOnSquareIcon } from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import Link from 'next/link';
 
@@ -21,7 +22,13 @@ export default function FarmingHeading({
     >
       <h1 className="text-3xl text-white font-bold">{title}</h1>
       <Link href={link} target="_blank">
-        <span className="text-white text-opacity-50 text-base">{linkText}</span>
+        <ArrowTopRightOnSquareIcon
+          aria-hidden="true"
+          className="h-6 w-6 sm:hidden text-white"
+        />
+        <span className="hidden text-white text-opacity-50 text-base sm:block">
+          {linkText}
+        </span>
       </Link>
     </div>
   );
