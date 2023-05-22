@@ -1,39 +1,36 @@
-import { NEW_API_URL } from '@constants/index';
 import Container from '@components/container';
-import { Reward } from '@interfaces/index';
+import DemeterFarming from '@components/farming/demeter_farming';
+import HermesFarming from '@components/farming/hermes_farming';
+import PSWAPFarming from '@components/farming/pswap_farming';
+import Tabs from '@components/tabs';
+import useFarming from '@hooks/use_farming';
 
-const textStyle = 'text-base text-white text-center max-w-2xl block sm:text-xl';
-const rewardStyle = 'font-bold text-pink';
+export default function Farming() {
+  const { tabs, selectedTab, onTabSelected, onChange, tvl, loading } =
+    useFarming();
 
-export default function Farming({ reward }: { reward?: Reward }) {
+  const renderFarmingBody = () => {
+    switch (selectedTab) {
+      case 'PSWAP':
+        return <PSWAPFarming />;
+      case 'DEMETER':
+        return <DemeterFarming />;
+      case 'HERMES':
+        return <HermesFarming />;
+    }
+  };
+
   return (
     <Container>
-      <div className="bg-backgroundItem bg-opacity-20 backdrop-blur-lg px-4 py-8 rounded-xl flex flex-col items-center sm:py-12">
-        <span className={textStyle}>
-          Every 1 XOR in PSWAP/VAL/ETH/DAI/XST pool yields about{' '}
-          <span className={rewardStyle}>{reward?.rewardsDouble}</span> PSWAP per
-          day or about{' '}
-          <span className={rewardStyle}>{`${reward?.aprDouble}% `}</span>
-          APR
-        </span>
-        <br />
-        <span className={textStyle}>
-          Every 1 XOR in other pool yields about{' '}
-          <span className={rewardStyle}>{reward?.rewards}</span> PSWAP per day
-          or about <span className={rewardStyle}>{`${reward?.apr}% `}</span> APR
-        </span>
-      </div>
+      <Tabs
+        tabs={tabs}
+        selectedTab={selectedTab}
+        onChange={onChange}
+        setSelectedTab={onTabSelected}
+        tvl={tvl}
+        loading={loading}
+      />
+      {renderFarmingBody()}
     </Container>
   );
-}
-
-export async function getServerSideProps() {
-  const res = await fetch(`${NEW_API_URL}/rewards`);
-  let data;
-
-  if (res.ok) {
-    data = (await res.json()) as Reward;
-  }
-
-  return { props: { reward: data } };
 }

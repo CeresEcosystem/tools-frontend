@@ -148,3 +148,76 @@ export interface FAQ {
   answer: string | string[];
   link?: string;
 }
+
+export interface Tab {
+  name: string;
+}
+
+export interface TVL {
+  maxSupply: number;
+  currentSupply: number;
+  tvl: number;
+  burned: number;
+}
+
+export interface FarmData {
+  poolAsset: string;
+  rewardAsset: string;
+  baseAssetId: string;
+  baseAsset: string;
+  multiplier: number;
+  isCore: boolean;
+  multiplierPercent: string;
+  isRemoved: boolean;
+  token: string;
+  apr: number;
+  earn: string;
+  totalLiquidity: number;
+  depositFee: number;
+}
+
+export interface PoolData {
+  poolAsset: string;
+  rewardAsset: string;
+  multiplier: number;
+  isCore: boolean;
+  multiplierPercent: string;
+  isRemoved: boolean;
+  depositFee: number;
+  totalStaked: number;
+  token: string;
+  earn: string;
+  stakedTotal: number;
+  apr: number;
+}
+
+export interface FarmAndPoolData {
+  farms: FarmData[];
+  pools: PoolData[];
+}
+
+export interface Farm {
+  poolAsset: string;
+  rewardAsset: string;
+  baseAssetId: string;
+  baseAsset: string;
+  multiplier: number;
+  isCore: boolean;
+  multiplierPercent: string;
+  isRemoved: boolean;
+  depositFee: number;
+  tvlPercent: string;
+  pooledTokens: number;
+  rewards: number;
+}
+
+export interface Pool {
+  poolAsset: string;
+  rewardAsset: string;
+  multiplier: number;
+  isCore: boolean;
+  multiplierPercent: string;
+  isRemoved: boolean;
+  depositFee: number;
+  totalStaked: number;
+}
