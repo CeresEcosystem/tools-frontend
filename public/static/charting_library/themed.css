@@ -1,0 +1,12 @@
+:root:not(.theme-dark) {
+  --tv-color-platform-background: rgb(29, 5, 42);
+  --tv-color-pane-background: rgb(29, 5, 42);
+  --tv-color-toolbar-button-background-hover: #532968;
+  --tv-color-toolbar-button-text: white;
+  --tv-color-toolbar-button-text-hover: white;
+  --tv-color-toolbar-button-text-active: white;
+  --tv-color-toolbar-button-text-active-hover: white;
+  --tv-color-item-active-text: white;
+  --tv-color-toolbar-toggle-button-background-active: white;
+  --tv-color-toolbar-toggle-button-background-active-hover: white;
+}

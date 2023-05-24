@@ -1,13 +1,13 @@
-import { DEMETER_API, HERMES_API } from '@constants/index';
+import { DEMETER_API, HERMES_API, NEW_API_URL } from '@constants/index';
 import { TVL, Tab } from '@interfaces/index';
 import { formatCurrencyWithDecimals } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const tabs: Tab[] = [
-  { name: 'PSWAP' },
   { name: 'DEMETER' },
   { name: 'HERMES' },
+  { name: 'PSWAP' },
 ];
 
 const useFarming = () => {
@@ -30,29 +30,20 @@ const useFarming = () => {
     setLoading(false);
   };
 
-  const fetchPSWAPTVL = useCallback(() => {
-    // TODO: Pozvati novi api kad bude gotov za dobijanje TVL-a
-  }, []);
-
-  const fetchDemeterTVL = () => {
-    fetch(`${DEMETER_API}/get-supply-data`)
-      .then(async (response) => {
+  const fetchTVL = (url: string, formatResponse = true) => {
+    fetch(url)
+    .then(async (response) => {
+      if (formatResponse) {
         const json = (await response.json()) as TVL;
         tvl.current = formatCurrencyWithDecimals(format, json.tvl);
-        setLoading(false);
-      })
-      .catch(() => onFetchError());
-  };
-
-  const fetchHermesTVL = () => {
-    fetch(`${HERMES_API}/supply/supply-data`)
-      .then(async (response) => {
-        const json = (await response.json()) as TVL;
-        tvl.current = formatCurrencyWithDecimals(format, json.tvl);
-        setLoading(false);
-      })
-      .catch(() => onFetchError());
-  };
+      } else {
+        const tvlResponse = await response.json();
+        tvl.current = formatCurrencyWithDecimals(format, tvlResponse);
+      }
+      setLoading(false);
+    })
+    .catch(() => onFetchError());
+  }
 
   useEffect(() => {
     if (!loading) {
@@ -61,13 +52,13 @@ const useFarming = () => {
 
     switch (selectedTab) {
       case 'PSWAP':
-        fetchPSWAPTVL();
+        fetchTVL(`${NEW_API_URL}/pairs/tvl`, false);
         break;
       case 'DEMETER':
-        fetchDemeterTVL();
+        fetchTVL(`${DEMETER_API}/get-supply-data`);
         break;
       case 'HERMES':
-        fetchHermesTVL();
+        fetchTVL(`${HERMES_API}/supply/supply-data`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTab]);
