@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const usePrices = () => {
-  const { query } = useRouter();
+  const { query, isReady } = useRouter();
 
   const prices = useRef<Token[]>([]);
 
@@ -34,13 +34,13 @@ const usePrices = () => {
   }, []);
 
   useEffect(() => {
-    if (query?.token) {
+    if (isReady) {
       const token = (query?.token as string) ?? 'CERES';
       getPrices(token);
     }
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query]);
+  }, [isReady]);
 
   return {
     currentToken,
