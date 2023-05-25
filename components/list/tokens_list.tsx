@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import Clipboard from '@components/clipboard';
 import { Token } from '@interfaces/index';
+import Link from 'next/link';
 
 export default function TokensList({
   tokens,
@@ -23,16 +24,24 @@ export default function TokensList({
           <div className="flex-col items-start w-full flex gap-x-2 justify-between xs:flex-row xs:items-center">
             <div className="flex flex-1">
               <div className="mr-4 flex-shrink-0 self-center">
-                <img
-                  className="rounded-full w-12 h-12"
-                  src={`${ASSET_URL}/${token.token}.svg`}
-                  alt={token.fullName}
-                />
+                <Link
+                  href={{ pathname: '/charts', query: { token: token.token } }}
+                >
+                  <img
+                    className="rounded-full w-12 h-12"
+                    src={`${ASSET_URL}/${token.token}.svg`}
+                    alt={token.fullName}
+                  />
+                </Link>
               </div>
               <div className="w-full">
-                <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">
-                  {token.fullName}
-                </h4>
+                <Link
+                  href={{ pathname: '/charts', query: { token: token.token } }}
+                >
+                  <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">
+                    {token.fullName}
+                  </h4>
+                </Link>
                 <Clipboard
                   textToCopy={token.assetId}
                   text={token.assetIdFormatted}

@@ -3,11 +3,19 @@ export const navigation = [
   { name: 'Pairs', href: '/pairs', icon: 'ring' },
   { name: 'Farming', href: '/farming', icon: 'sprout' },
   { name: 'Burning Tracker', href: '/tracker', icon: 'flame' },
-  { name: 'Charts', href: '/charts', icon: 'chart' },
+  {
+    name: 'Charts',
+    href: { pathname: '/charts', query: { token: 'CERES' } },
+    icon: 'chart',
+  },
 ];
 
 export const websites = [
-  { name: 'Ceres dApps', href: 'https://dapps.cerestoken.io', icon: '/dapps.png' },
+  {
+    name: 'Ceres dApps',
+    href: 'https://dapps.cerestoken.io',
+    icon: '/dapps.png',
+  },
   {
     name: 'Demeter Farming',
     href: 'https://farming.deotoken.io',
@@ -23,8 +31,17 @@ export const socials = [
 ];
 
 export const docs = [
-  { href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%20Litepaper.pdf', icon: '/ceres.svg' },
-  { href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Demeter%20Litepaper.pdf', icon: '/demeter.svg' },
-  { href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Hermes%20Litepaper.pdf', icon: '/hermes.svg' },
+  {
+    href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%20Litepaper.pdf',
+    icon: '/ceres.svg',
+  },
+  {
+    href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Demeter%20Litepaper.pdf',
+    icon: '/demeter.svg',
+  },
+  {
+    href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Hermes%20Litepaper.pdf',
+    icon: '/hermes.svg',
+  },
   { href: '/', icon: '/apollo.svg' },
 ];

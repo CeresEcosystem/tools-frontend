@@ -1,3 +1,4 @@
+import { NEW_API_URL } from '@constants/index';
 import {
   ChartingLibraryWidgetOptions,
   ResolutionString,
@@ -5,7 +6,14 @@ import {
 } from '@public/static/charting_library';
 import { useEffect, useRef } from 'react';
 
-export default function TradingViewChart() {
+export default function TradingViewChart({
+  symbol,
+  changeCurrentToken,
+}: {
+  symbol: string;
+  // eslint-disable-next-line no-unused-vars
+  changeCurrentToken: (symbolName: string) => void;
+}) {
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
 
@@ -13,20 +21,14 @@ export default function TradingViewChart() {
     const widgetOptions: ChartingLibraryWidgetOptions = {
       debug: false,
       autosize: true,
-      // timezone: 'Europe/Paris',
-      symbol: 'AAPL',
+      symbol,
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
-        'https://demo_feed.tradingview.com',
-        undefined,
-        {
-          maxResponseLength: 1000,
-          expectedOrder: 'latestFirst',
-        }
+        `${NEW_API_URL}/trading`,
+        30000
       ),
       interval: '30' as ResolutionString,
       library_path: '/static/charting_library/',
       locale: 'en',
-      charts_storage_api_version: '1.1',
       container: chartContainerRef.current,
       disabled_features: ['use_localstorage_for_settings'],
       loading_screen: {
@@ -47,7 +49,6 @@ export default function TradingViewChart() {
           title: 'All',
         },
       ],
-
       overrides: {
         'mainSeriesProperties.style': 8,
         'paneProperties.background': 'rgb(43, 10, 57)',
@@ -73,10 +74,22 @@ export default function TradingViewChart() {
 
     const tvWidget = new widget(widgetOptions);
 
+    tvWidget.onChartReady(() => {
+      tvWidget
+        .activeChart()
+        .onSymbolChanged()
+        .subscribe(
+          null,
+          // @ts-ignore
+          (symbolName) => changeCurrentToken(symbolName)
+        );
+    });
+
     return () => {
       tvWidget.remove();
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [symbol]);
 
   return <div ref={chartContainerRef} className="h-full" />;
 }

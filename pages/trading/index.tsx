@@ -1,17 +1,11 @@
 import TradingViewChartClient from '@components/charts/trading_view_chart_dynamic';
-import Price from '@components/stats/price';
 import usePrices from '@hooks/use_prices';
 import Script from 'next/script';
 import { useState } from 'react';
 
-export default function Charts() {
+export default function Trading() {
   const [isScriptReady, setIsScriptReady] = useState(false);
-  const {
-    currentToken,
-    changeCurrentToken,
-    prices,
-    changeCurrentTokenFromModal,
-  } = usePrices();
+  const { currentToken, changeCurrentToken } = usePrices();
 
   return (
     <>
@@ -24,12 +18,7 @@ export default function Charts() {
       />
       {isScriptReady && currentToken && (
         <>
-          <Price
-            token={currentToken}
-            prices={prices}
-            changeCurrentTokenFromModal={changeCurrentTokenFromModal}
-          />
-          <div className="h-[calc(100vh-84px)] py-8 sm:px-8">
+          <div className="h-[100vh] w-[100vw]">
             <TradingViewChartClient
               symbol={currentToken.token}
               changeCurrentToken={changeCurrentToken}

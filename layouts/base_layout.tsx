@@ -3,9 +3,16 @@ import { useState } from 'react';
 import SideBarTransition from './sidebar/sidebar_transition';
 import SideBarDesktop from '@layouts/sidebar/sidebar_desktop';
 import Header from '@layouts/header';
+import { useRouter } from 'next/router';
 
 function SideBarLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const { pathname } = useRouter();
+
+  if (pathname.includes('trading')) {
+    return <div className="backgroundContent">{children}</div>;
+  }
 
   return (
     <>

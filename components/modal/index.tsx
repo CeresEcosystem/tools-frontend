@@ -39,7 +39,7 @@ export default function Modal({
                 {children}
                 <button
                   onClick={closeModal}
-                  className="w-full mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm"
+                  className="w-full mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
                 >
                   Close
                 </button>

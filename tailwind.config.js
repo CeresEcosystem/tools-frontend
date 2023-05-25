@@ -14,6 +14,7 @@ export const theme = {
       backgroundHeader: '#532968',
       backgroundItem: '#150022',
       pink: '#f0398c',
+      cyan: '#4dd0e1',
     },
   },
   screens: {

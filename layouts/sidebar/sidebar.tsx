@@ -39,7 +39,10 @@ export default function SideBar({
           <li>
             <ul role="list" className="-mx-2 space-y-1">
               {navigation.map((item) => {
-                const active = router.pathname === item.href;
+                const active =
+                  typeof item.href === 'string'
+                    ? router.pathname === item.href
+                    : router.pathname === item.href.pathname;
 
                 return (
                   <li key={item.name}>
