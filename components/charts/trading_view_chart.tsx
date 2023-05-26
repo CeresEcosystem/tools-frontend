@@ -2,6 +2,7 @@ import { NEW_API_URL } from '@constants/index';
 import {
   ChartingLibraryWidgetOptions,
   ResolutionString,
+  TimezoneId,
   widget,
 } from '@public/static/charting_library';
 import { useEffect, useRef } from 'react';
@@ -29,6 +30,7 @@ export default function TradingViewChart({
       interval: '30' as ResolutionString,
       library_path: '/static/charting_library/',
       locale: 'en',
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as TimezoneId,
       container: chartContainerRef.current,
       disabled_features: ['use_localstorage_for_settings'],
       loading_screen: {

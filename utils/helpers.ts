@@ -111,10 +111,10 @@ export function getBlockLimiter(timeFrame: string, last?: number): number {
   return -1;
 }
 
-export const checkNumberValue = (number: any) => {
+export function checkNumberValue(number: any) {
   if (number && number !== 0 && number !== undefined && number !== Infinity) {
     return true;
   }
 
   return false;
-};
+}

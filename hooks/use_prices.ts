@@ -6,45 +6,62 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const usePrices = () => {
   const { query, isReady } = useRouter();
 
-  const prices = useRef<Token[]>([]);
+  const [prices, setPrices] = useState<Token[]>([]);
 
   const [currentToken, setCurrentToken] = useState<Token | undefined>();
 
-  const getPrices = useCallback(async (token: string) => {
+  const priceInterval = useRef<
+    ReturnType<typeof setInterval> | undefined
+  >();
+
+  const getPrices = useCallback(async (token?: string) => {
     return fetch(`${NEW_API_URL}/prices`)
       .then(async (response) => {
         if (response.ok) {
           const json = (await response.json()) as Token[];
-          prices.current = json;
+          setPrices(json);
 
-          const t = json.find((t) => t.token === token)!;
-          setCurrentToken(t);
+          if (token) {
+            const t = json.find((t) => t.token === token)!;
+            setCurrentToken(t);
+          }
         }
       })
       .catch(() => {});
   }, []);
 
   const changeCurrentToken = useCallback((token: any) => {
-    const t = prices.current.find((t) => t.token === token?.name)!;
+    const t = prices.find((t) => t.token === token?.name)!;
     setCurrentToken(t);
-  }, []);
+  }, [prices]);
 
   const changeCurrentTokenFromModal = useCallback((token: Token) => {
     setCurrentToken(token);
   }, []);
 
+  const setPriceInterval = useCallback(async () => {
+    priceInterval.current = setInterval(() => {
+      getPrices();
+    }, 30000);
+  }, [getPrices]);
+
   useEffect(() => {
     if (isReady) {
       const token = (query?.token as string) ?? 'CERES';
       getPrices(token);
+      setPriceInterval();
     }
+
+    return () => {
+      clearInterval(priceInterval.current);
+    };
     
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]);
 
   return {
     currentToken,
-    prices: prices.current,
+    prices,
     getPrices,
     changeCurrentToken,
     changeCurrentTokenFromModal,
