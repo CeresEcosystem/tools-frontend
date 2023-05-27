@@ -12,7 +12,7 @@ export const theme = {
       backgroundBody: '#2d093e',
       backgroundSidebar: '#3c154e',
       backgroundHeader: '#532968',
-      backgroundItem: '#150022',
+      backgroundItem: '#250936',
       pink: '#f0398c',
       cyan: '#4dd0e1',
     },

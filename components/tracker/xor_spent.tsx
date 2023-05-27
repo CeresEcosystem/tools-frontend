@@ -72,7 +72,7 @@ export default function XorSpent({
   last?: number;
 }) {
   return (
-    <div className="px-4 py-8 rounded-xl w-full bg-backgroundItem bg-opacity-20 backdrop-blur-lg">
+    <div className="px-4 py-8 rounded-xl w-full bg-backgroundItem">
       <XorSpentData blocks={blocks} last={last} />
     </div>
   );

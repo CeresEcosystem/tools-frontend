@@ -60,7 +60,7 @@ export default function PricesModal({
             <li
               key={`${token.fullName}+${token.assetId}`}
               onClick={() => onChangeCurrentTokenFromModal(token)}
-              className="bg-backgroundItem cursor-pointer bg-opacity-20 p-3 rounded-xl overflow-hidden flex items-center justify-between"
+              className="bg-backgroundItem cursor-pointer p-3 rounded-xl overflow-hidden flex items-center justify-between"
             >
               <div className="flex items-center">
                 <img

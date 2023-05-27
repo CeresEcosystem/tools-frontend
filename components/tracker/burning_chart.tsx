@@ -11,7 +11,7 @@ export default function BurningChart({ burning }: { burning?: Burning[] }) {
   return (
     <>
       <Title title="Track PSWAP burning" topMargin />
-      <div className="mt-16 p-4 rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg">
+      <div className="mt-16 p-4 rounded-xl bg-backgroundItem">
         {burning ? (
           <TrackerChart
             data={burning.map((point) => point.y)}

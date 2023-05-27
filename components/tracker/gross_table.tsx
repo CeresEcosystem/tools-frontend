@@ -82,7 +82,7 @@ function GrossTableData({ blocks }: { blocks?: Block[] }) {
 
 export default function GrossTable({ blocks }: { blocks?: Block[] }) {
   return (
-    <div className="px-4 py-8 max-w-full rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg md:col-span-2">
+    <div className="px-4 py-8 max-w-full rounded-xl bg-backgroundItem md:col-span-2">
       <GrossTableData blocks={blocks} />
     </div>
   );

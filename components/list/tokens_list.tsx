@@ -19,7 +19,7 @@ export default function TokensList({
       {tokens.map((token) => (
         <li
           key={`${token.assetId}+${token.fullName}`}
-          className="flex-col bg-backgroundItem bg-opacity-20 backdrop-blur-lg p-3 rounded-xl flex md:flex-row"
+          className="flex-col bg-backgroundItem p-3 rounded-xl flex md:flex-row"
         >
           <div className="flex-col items-start w-full flex gap-x-2 justify-between xs:flex-row xs:items-center">
             <div className="flex flex-1">

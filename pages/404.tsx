@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function NotFound() {
   return (
     <div className="mt-16 px-6">
-      <div className="mx-auto h-min max-w-max p-8 rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg">
+      <div className="mx-auto h-min max-w-max p-8 rounded-xl bg-backgroundItem">
         <div>
           <h1 className="text-4xl font-bold text-white text-center sm:text-5xl">
             Page not found

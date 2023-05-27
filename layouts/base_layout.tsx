@@ -124,7 +124,7 @@ export default function BaseLayout({
           name="msapplication-TileImage"
           content="/favicon/ms-icon-144x144.png"
         />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#2d093e" />
 
         <meta
           property="og:image"
