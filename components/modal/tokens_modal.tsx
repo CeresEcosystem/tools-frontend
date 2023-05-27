@@ -38,7 +38,7 @@ export default function TokensModal({
             {locks.map((lockToken) => (
               <li
                 key={`${lockToken.account}+${lockToken.timestamp}`}
-                className="bg-backgroundItem bg-opacity-20 p-3 rounded-xl overflow-hidden"
+                className="bg-backgroundItem p-3 rounded-xl overflow-hidden"
               >
                 <span className={labelStyle}>Account</span>
                 <Clipboard text={lockToken.account}>

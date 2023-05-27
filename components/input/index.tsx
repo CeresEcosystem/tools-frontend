@@ -7,7 +7,7 @@ export default function Input({
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div className="relative rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg">
+    <div className="relative rounded-xl bg-backgroundItem">
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
         <i className="flaticon-magnifier text-xl mt-1.5 text-white"></i>
       </div>

@@ -45,7 +45,7 @@ function BurnData({ burn }: { burn?: Burn }) {
 
 export default function Burning({ burn }: { burn?: Burn }) {
   return (
-    <div className="px-4 py-8 w-full rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg">
+    <div className="px-4 py-8 w-full rounded-xl bg-backgroundItem">
       <BurnData burn={burn} />
     </div>
   );

@@ -106,7 +106,7 @@ export default function FarmItem({
   };
 
   return (
-    <li className="p-2 rounded-xl flex flex-col bg-backgroundItem bg-opacity-20 backdrop-blur-lg md:p-4">
+    <li className="p-2 rounded-xl flex flex-col bg-backgroundItem md:p-4">
       <div className="inline-flex items-center justify-between">
         {renderImages()}
         <div className="flex flex-col items-end">

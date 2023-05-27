@@ -18,7 +18,7 @@ export default function Tabs({
   loading: boolean;
 }) {
   return (
-    <div className="mb-8 px-5 py-5 space-y-5 rounded-xl bg-backgroundItem bg-opacity-20 backdrop-blur-lg flex flex-col sm:items-center sm:justify-between sm:flex-row sm:py-0 sm:space-y-0 sm:mb-16">
+    <div className="mb-8 px-5 py-5 space-y-5 rounded-xl bg-backgroundItem flex flex-col sm:items-center sm:justify-between sm:flex-row sm:py-0 sm:space-y-0 sm:mb-16">
       <div>
         <div className="relative after:content-['▼'] after:top-3.5 after:text-white after:text-opacity-50 after:text-xs after:right-4 after:absolute sm:hidden">
           <label htmlFor="current-tab" className="sr-only">

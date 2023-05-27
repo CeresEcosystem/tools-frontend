@@ -24,7 +24,7 @@ export default function Price({
   return (
     <>
       <div className="w-full flex justify-center">
-        <div className="bg-backgroundItem space-x-10 flex bg-opacity-20 rounded-xl items-center backdrop-blur-lg mt-16 py-4 px-8">
+        <div className="bg-backgroundItem space-x-10 flex rounded-xl items-center mt-16 py-4 px-8">
           <div className="flex items-center">
             <img
               className="rounded-full w-12 h-12 mr-4"
