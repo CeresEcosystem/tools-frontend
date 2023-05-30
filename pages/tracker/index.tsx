@@ -1,6 +1,6 @@
 import Container from '@components/container';
 import Faqs from '@components/faqs';
-import Socials from '@components/socials';
+// import Socials from '@components/socials';
 import SponsoredByPococo from '@components/sponsors/pococo';
 import Title from '@components/title';
 import Burning from '@components/tracker/burning';
@@ -27,7 +27,7 @@ export default function Tracker({ data }: { data?: TrackerData }) {
       <BurningChart burning={data?.graphBurning} />
       <SupplyChart supply={data?.graphSupply} />
       <Faqs faqs={PSWAPTrackerQuestions} />
-      <Socials />
+      {/* <Socials /> */}
       <SponsoredByPococo />
     </Container>
   );

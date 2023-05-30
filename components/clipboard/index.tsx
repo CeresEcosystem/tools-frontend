@@ -21,7 +21,7 @@ export default function Clipboard({
         openOnClick
         delayHide={1000}
         place="top"
-        className="bg-pink rounded-lg"
+        className="!bg-pink rounded-lg"
       />
     </>
   );
