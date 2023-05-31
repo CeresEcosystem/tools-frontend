@@ -18,7 +18,7 @@ export default function Clipboard({
       <Tooltip
         id="clipboard"
         content="Copied!"
-        openOnClick
+        events={['click']}
         delayHide={1000}
         place="top"
         className="!bg-pink rounded-lg"
