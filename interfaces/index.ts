@@ -86,11 +86,12 @@ export interface TokensReturnType {
 
 export interface Block {
   blockNum: number;
-  pswapGrossBurn: number;
-  pswapNetBurn: number;
-  pswapRemintedLp: number;
-  pswapRemintedParliament: number;
+  grossBurn: number;
+  netBurn: number;
+  remintedLp: number;
+  remintedParliament: number;
   xorSpent: number;
+  xorDedicatedForBuyBack: number;
 }
 
 export interface BurnObject {
@@ -109,6 +110,7 @@ export interface Burning {
   lp: number;
   parl: number;
   net: number;
+  back: number;
 }
 
 export interface Supply {

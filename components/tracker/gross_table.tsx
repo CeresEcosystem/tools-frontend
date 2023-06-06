@@ -45,16 +45,16 @@ function GrossTableData({ blocks }: { blocks?: Block[] }) {
                     0
                   )}`}</td>
                   <td className={tableRowStyle}>
-                    {formatNumber(format, block.pswapGrossBurn, 3)}
+                    {formatNumber(format, block.grossBurn, 3)}
                   </td>
                   <td className={tableRowStyle}>
-                    {formatNumber(format, block.pswapRemintedLp, 3)}
+                    {formatNumber(format, block.remintedLp, 3)}
                   </td>
                   <td className={tableRowStyle}>
-                    {formatNumber(format, block.pswapRemintedParliament, 3)}
+                    {formatNumber(format, block.remintedParliament, 3)}
                   </td>
                   <td className={tableRowStyle}>
-                    {formatNumber(format, block.pswapNetBurn, 3)}
+                    {formatNumber(format, block.netBurn, 3)}
                   </td>
                 </tr>
               ))}

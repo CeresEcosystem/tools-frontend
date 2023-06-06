@@ -17,8 +17,8 @@ export default function SupplyChart({ supply }: { supply?: Supply[] }) {
             data={supply.map((point) => point.y)}
             labels={supply?.map((point) =>
               new Date(point.x).toLocaleDateString('en-US', {
-                day: '2-digit',
                 month: 'short',
+                year: 'numeric',
               })
             )}
             callbackTitle={(tooltipItems: any) => {
