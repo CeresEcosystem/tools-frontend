@@ -6,7 +6,13 @@ import TimeTab from '@components/tracker/time_tab';
 
 const labelStyle = 'text-white text-opacity-50 text-sm mb-1';
 
-function BurnData({ burn }: { burn?: Burn }) {
+function BurnData({
+  burn,
+  selectedToken,
+}: {
+  burn?: Burn;
+  selectedToken: string;
+}) {
   const [selectedTimeFrame, setSelectedTimeFrame] = useState('24');
 
   const format = useFormatter();
@@ -19,20 +25,20 @@ function BurnData({ burn }: { burn?: Burn }) {
           setSelectedTimeFrame={setSelectedTimeFrame}
         />
         <div className="px-2">
-          <p className={labelStyle}>PSWAP gross burn</p>
+          <p className={labelStyle}>{`${selectedToken} gross burn`}</p>
           <h5 className="text-2xl text-white font-bold xs:text-3xl">
             {formatNumber(format, burn[selectedTimeFrame].gross)}
             <span className="text-white font-medium text-opacity-50">
-              {' PSWAP'}
+              {` ${selectedToken}`}
             </span>
           </h5>
         </div>
         <div className="px-2">
-          <p className={labelStyle}>PSWAP net burn</p>
+          <p className={labelStyle}>{`${selectedToken} net burn`}</p>
           <h5 className="text-white font-bold text-lg">
             {formatNumber(format, burn[selectedTimeFrame].net)}
             <span className="text-white font-medium text-opacity-50">
-              {' PSWAP'}
+              {` ${selectedToken}`}
             </span>
           </h5>
         </div>
@@ -43,10 +49,16 @@ function BurnData({ burn }: { burn?: Burn }) {
   return <span className="text-white font-medium">No data</span>;
 }
 
-export default function Burning({ burn }: { burn?: Burn }) {
+export default function Burning({
+  burn,
+  selectedToken,
+}: {
+  burn?: Burn;
+  selectedToken: string;
+}) {
   return (
     <div className="px-4 py-8 w-full rounded-xl bg-backgroundItem">
-      <BurnData burn={burn} />
+      <BurnData burn={burn} selectedToken={selectedToken} />
     </div>
   );
 }

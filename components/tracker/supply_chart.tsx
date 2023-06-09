@@ -5,12 +5,18 @@ import { formatNumber } from '@utils/helpers';
 
 import { useFormatter } from 'next-intl';
 
-export default function SupplyChart({ supply }: { supply?: Supply[] }) {
+export default function SupplyChart({
+  supply,
+  selectedToken,
+}: {
+  supply?: Supply[];
+  selectedToken: string;
+}) {
   const format = useFormatter();
 
   return (
     <>
-      <Title title="Track PSWAP supply" topMargin />
+      <Title title={`Track ${selectedToken} supply`} topMargin />
       <div className="mt-16 p-4 rounded-xl bg-backgroundItem">
         {supply ? (
           <TrackerChart
@@ -32,7 +38,7 @@ export default function SupplyChart({ supply }: { supply?: Supply[] }) {
             callbackLabel={(context: any) => {
               const { dataIndex }: { dataIndex: number } = context;
               const { y }: Supply = supply![dataIndex];
-              return `PSWAP Gross Burn: ${formatNumber(format, y, 4)}`;
+              return `Gross Burn: ${formatNumber(format, y, 4)}`;
             }}
           />
         ) : (
