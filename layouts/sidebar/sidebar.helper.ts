@@ -1,3 +1,5 @@
+import { StarIcon } from '@heroicons/react/24/solid';
+
 export const navigation = [
   { name: 'Tokens', href: '/', icon: 'token' },
   { name: 'Pairs', href: '/pairs', icon: 'ring' },
@@ -8,6 +10,7 @@ export const navigation = [
     href: { pathname: '/charts', query: { token: 'CERES' } },
     icon: 'chart',
   },
+  { name: 'Portfolio', href: '/portfolio', icon: StarIcon },
 ];
 
 export const websites = [

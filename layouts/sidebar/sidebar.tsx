@@ -43,6 +43,7 @@ export default function SideBar({
                   typeof item.href === 'string'
                     ? router.pathname === item.href
                     : router.pathname === item.href.pathname;
+                const Icon = item.icon;
 
                 return (
                   <li key={item.name}>
@@ -60,9 +61,15 @@ export default function SideBar({
                         'text-white block text-base rounded-md p-2 font-medium'
                       )}
                     >
-                      <i
-                        className={`flaticon-${item.icon} float-left text-2xl w-10`}
-                      ></i>
+                      {typeof Icon === 'string' ? (
+                        <i
+                          className={`flaticon-${Icon} float-left text-2xl w-10`}
+                        ></i>
+                      ) : (
+                        <div className="w-10 float-left">
+                          <Icon className="h-6 w-auto" aria-hidden="true" />
+                        </div>
+                      )}
                       {item.name}
                     </Link>
                   </li>

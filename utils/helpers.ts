@@ -1,3 +1,4 @@
+import { Keyring } from '@polkadot/api';
 import moment from 'moment';
 
 export function formatWalletAddress(
@@ -118,3 +119,43 @@ export function checkNumberValue(number: any) {
 
   return false;
 }
+
+export function firstName(accountName: string | undefined) {
+  if (accountName) {
+    const nameSplit = accountName.split(' ');
+
+    if (nameSplit.length > 1) {
+      return nameSplit[0];
+    }
+
+    return accountName;
+  }
+
+  return '';
+}
+
+export function getAvatarTitle(accountName: string | undefined) {
+  if (accountName) {
+    const nameSplit = accountName.split(' ');
+
+    if (nameSplit.length > 1) {
+      return (
+        nameSplit[0].charAt(0).toUpperCase() +
+        nameSplit[1].charAt(0).toUpperCase()
+      );
+    }
+
+    return accountName.charAt(0);
+  }
+
+  return '';
+}
+
+export const getEncodedAddress = (address: string | undefined) => {
+  if (address) {
+    const keyring = new Keyring();
+    return keyring.encodeAddress(address, 69);
+  }
+
+  return '';
+};
