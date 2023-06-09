@@ -5,12 +5,18 @@ import { formatNumber } from '@utils/helpers';
 
 import { useFormatter } from 'next-intl';
 
-export default function BurningChart({ burning }: { burning?: Burning[] }) {
+export default function BurningChart({
+  burning,
+  selectedToken,
+}: {
+  burning?: Burning[];
+  selectedToken: string;
+}) {
   const format = useFormatter();
 
   return (
     <>
-      <Title title="Track PSWAP burning" topMargin />
+      <Title title={`Track ${selectedToken} burning`} topMargin />
       <div className="mt-16 p-4 rounded-xl bg-backgroundItem">
         {burning ? (
           <TrackerChart
@@ -31,14 +37,19 @@ export default function BurningChart({ burning }: { burning?: Burning[] }) {
             }}
             callbackLabel={(context: any) => {
               const { dataIndex }: { dataIndex: number } = context;
-              const { y, spent, lp, parl, net }: Burning = burning![dataIndex];
+              const { y, spent, lp, parl, net, back }: Burning =
+                burning![dataIndex];
               return [
-                `PSWAP Gross Burn: ${formatNumber(format, y)}`,
-                `XOR Spent: ${formatNumber(format, spent)}`,
-                `PSWAP Reminted LP: ${formatNumber(format, lp)}`,
-                `PSWAP Reminted Parliament: ${formatNumber(format, parl)}`,
+                `Gross Burn: ${formatNumber(format, y)}`,
+                `XOR ${
+                  selectedToken === 'PSWAP' ? 'spent' : 'fees'
+                }: ${formatNumber(format, spent)}`,
+                selectedToken === 'PSWAP'
+                  ? `Reminted LP: ${formatNumber(format, lp)}`
+                  : `XOR for buyback: ${formatNumber(format, back)}`,
+                `Reminted Parliament: ${formatNumber(format, parl)}`,
                 `Total Reminted: ${formatNumber(format, lp + parl)}`,
-                `PSWAP Net Burn: ${formatNumber(format, net)}`,
+                `Net Burn: ${formatNumber(format, net)}`,
               ];
             }}
           />
