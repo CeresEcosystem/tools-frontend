@@ -46,8 +46,17 @@ export function formatToCurrency(format: any, number: number): string {
 export function formatCurrencyWithDecimals(
   format: any,
   number: number | string,
-  decimal = 2
+  decimal = 2,
+  checkForEValue = false
 ): string {
+  if (checkForEValue) {
+    const numberString = number.toString();
+
+    if (numberString.includes('e')) {
+      return `$${numberString}`;
+    }
+  }
+
   return format.number(number, {
     style: 'currency',
     currency: 'USD',
@@ -59,8 +68,17 @@ export function formatCurrencyWithDecimals(
 export function formatNumber(
   format: any,
   number: number | string,
-  decimal = 2
+  decimal = 2,
+  checkForEValue = false
 ): string {
+  if (checkForEValue) {
+    const numberString = number.toString();
+
+    if (numberString.includes('e')) {
+      return `$${numberString}`;
+    }
+  }
+
   return format.number(number, {
     style: 'decimal',
     minimumFractionDigits: decimal,

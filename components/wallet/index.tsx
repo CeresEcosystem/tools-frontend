@@ -119,7 +119,7 @@ export default function Wallet() {
 
   return (
     <Popover className="relative">
-      <div className="flex cursor-pointer h-[84px] py-4 ml-5 lg:ml-10">
+      <div className="flex cursor-pointer h-[84px] py-4 ml-2 md:ml-5 lg:ml-10">
         <div className="bg-backgroundSidebar bg-opacity-60 h-full flex items-center justify-center rounded-xl md:w-48">
           {polkadot?.selectedAccount ? (
             <Popover.Button className="flex px-4 h-full items-center focus:outline-none">
