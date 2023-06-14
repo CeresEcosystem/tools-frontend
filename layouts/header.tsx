@@ -16,7 +16,7 @@ export default function Header({
   return (
     <>
       <div className="top-0 z-40 h-[84px] bg-backgroundHeader">
-        <div className="flex pr-5 lg:pr-10">
+        <div className="flex pr-2 md:pr-5 lg:pr-10">
           {appContext?.banners && appContext.banners.length > 0 && (
             <div className="w-full h-full overflow-hidden">
               <Carousel
