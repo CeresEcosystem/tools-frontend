@@ -1,12 +1,14 @@
 import Container from '@components/container';
 import Input from '@components/input';
 import TokensList from '@components/list/tokens_list';
+import TokenSupplyModal from '@components/modal/token_supply_modal';
 import TokensModal from '@components/modal/tokens_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import { NEW_API_URL } from '@constants/index';
 import useLocks from '@hooks/use_locks';
+import useSupply from '@hooks/use_supply';
 import useTokens from '@hooks/use_tokens';
-import { ModalTokens, Token } from '@interfaces/index';
+import { ModalSupply, ModalTokens, Token } from '@interfaces/index';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
 
@@ -23,11 +25,17 @@ export default function Tokens({ data }: { data?: Token[] }) {
   } = useTokens(data);
 
   const { getLocks } = useLocks();
+  const { getSupply } = useSupply();
 
   const [showLocks, setShowLocks] = useState<ModalTokens>({
     show: false,
     item: null,
     locks: [],
+  });
+  const [showSupply, setShowSupply] = useState<ModalSupply>({
+    show: false,
+    item: null,
+    supply: [],
   });
 
   useEffect(() => {
@@ -43,12 +51,25 @@ export default function Tokens({ data }: { data?: Token[] }) {
     });
   };
 
+  const fetchSupplyData = async (show: boolean, token: Token) => {
+    const response = await getSupply(token?.token);
+
+    setShowSupply({
+      show,
+      item: token,
+      supply: response,
+    });
+  };
+
   return (
     <Container>
       <Input handleChange={handleTokenSearch} />
       <TokensList
         tokens={tokens}
         showModal={(show: boolean, token: Token) => fetchData(show, token)}
+        showSupplyModal={(show: boolean, token: Token) =>
+          fetchSupplyData(show, token)
+        }
       />
       {totalPages > 1 && (
         <ListPagination
@@ -70,6 +91,17 @@ export default function Tokens({ data }: { data?: Token[] }) {
         }
         token={showLocks.item}
         locks={showLocks.locks}
+      />
+      <TokenSupplyModal
+        showModal={showSupply.show}
+        closeModal={() =>
+          setShowSupply((oldState) => ({
+            ...oldState,
+            show: false,
+          }))
+        }
+        token={showSupply.item}
+        supply={showSupply.supply}
       />
     </Container>
   );
