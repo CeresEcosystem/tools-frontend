@@ -12,7 +12,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 
 const useDemeterFarming = (hermesFilter = false) => {
- const [farmsAndPools, setFarmsAndPools] = useState<FarmAndPoolData>({
+  const [farmsAndPools, setFarmsAndPools] = useState<FarmAndPoolData>({
     farms: [],
     pools: [],
   });
@@ -26,7 +26,7 @@ const useDemeterFarming = (hermesFilter = false) => {
   }, []);
 
   const getTokenInfos = useCallback(async () => {
-    return fetch(`${DEMETER_API}/get-tokens-infos`)
+    return fetch(`${DEMETER_API}/tokens-infos`)
       .then(async (response) => {
         return (await response.json()) as TokenInfo;
       })
@@ -44,7 +44,7 @@ const useDemeterFarming = (hermesFilter = false) => {
   const getFarms = useCallback(
     async (pairs: Pair[], tokens: Token[], tokenInfos: TokenInfo) => {
       if (pairs && tokens) {
-        return fetch(`${DEMETER_API}/get-farms`)
+        return fetch(`${DEMETER_API}/farms`)
           .then(async (response) => {
             const json = await response.json();
 
@@ -70,7 +70,7 @@ const useDemeterFarming = (hermesFilter = false) => {
                   const totalLiquidity =
                     Number(farm.tvlPercent) * (pair?.liquidity! / 100);
 
-                    const tokenInfo = tokenInfos[rewardToken!.assetId];
+                  const tokenInfo = tokenInfos[rewardToken!.assetId];
 
                   const tokenPerBlock =
                     /* @ts-ignore */
@@ -117,7 +117,7 @@ const useDemeterFarming = (hermesFilter = false) => {
   const getPools = useCallback(
     async (tokens: Token[], tokenInfos: TokenInfo) => {
       if (tokens) {
-        return fetch(`${DEMETER_API}/get-pools`)
+        return fetch(`${DEMETER_API}/stakings`)
           .then(async (response) => {
             const json = await response.json();
 
@@ -187,21 +187,23 @@ const useDemeterFarming = (hermesFilter = false) => {
   );
 
   const init = useCallback(async () => {
-    Promise.all([getPairs(), getTokens(), getTokenInfos()]).then(async (responseAPI) => {
-      const pairs: Pair[] = responseAPI[0];
-      const tokens: Token[] = responseAPI[1];
-      const tokenInfos: TokenInfo = responseAPI[2];
+    Promise.all([getPairs(), getTokens(), getTokenInfos()]).then(
+      async (responseAPI) => {
+        const pairs: Pair[] = responseAPI[0];
+        const tokens: Token[] = responseAPI[1];
+        const tokenInfos: TokenInfo = responseAPI[2];
 
-      const responseFarmsAndPools = (await Promise.all([
-        getFarms(pairs, tokens, tokenInfos),
-        getPools(tokens, tokenInfos),
-      ])) as [FarmData[], PoolData[]];
+        const responseFarmsAndPools = (await Promise.all([
+          getFarms(pairs, tokens, tokenInfos),
+          getPools(tokens, tokenInfos),
+        ])) as [FarmData[], PoolData[]];
 
-      setFarmsAndPools({
-        farms: responseFarmsAndPools[0],
-        pools: responseFarmsAndPools[1],
-      });
-    });
+        setFarmsAndPools({
+          farms: responseFarmsAndPools[0],
+          pools: responseFarmsAndPools[1],
+        });
+      }
+    );
   }, [getPairs, getTokens, getFarms, getPools, getTokenInfos]);
 
   useEffect(() => {
