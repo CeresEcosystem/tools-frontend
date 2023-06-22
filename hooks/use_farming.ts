@@ -32,18 +32,18 @@ const useFarming = () => {
 
   const fetchTVL = (url: string, formatResponse = true) => {
     fetch(url)
-    .then(async (response) => {
-      if (formatResponse) {
-        const json = (await response.json()) as TVL;
-        tvl.current = formatCurrencyWithDecimals(format, json.tvl);
-      } else {
-        const tvlResponse = await response.json();
-        tvl.current = formatCurrencyWithDecimals(format, tvlResponse);
-      }
-      setLoading(false);
-    })
-    .catch(() => onFetchError());
-  }
+      .then(async (response) => {
+        if (formatResponse) {
+          const json = (await response.json()) as TVL;
+          tvl.current = formatCurrencyWithDecimals(format, json.tvl);
+        } else {
+          const tvlResponse = await response.json();
+          tvl.current = formatCurrencyWithDecimals(format, tvlResponse);
+        }
+        setLoading(false);
+      })
+      .catch(() => onFetchError());
+  };
 
   useEffect(() => {
     if (!loading) {
@@ -55,7 +55,7 @@ const useFarming = () => {
         fetchTVL(`${NEW_API_URL}/pairs/tvl`, false);
         break;
       case 'DEMETER':
-        fetchTVL(`${DEMETER_API}/get-supply-data`);
+        fetchTVL(`${DEMETER_API}/supply-data`);
         break;
       case 'HERMES':
         fetchTVL(`${HERMES_API}/supply/supply-data`);
