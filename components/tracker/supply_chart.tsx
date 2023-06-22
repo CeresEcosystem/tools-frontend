@@ -2,22 +2,30 @@ import TrackerChart from '@components/charts/tracker_chart';
 import Title from '@components/title';
 import { Supply } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
+import classNames from 'classnames';
 
 import { useFormatter } from 'next-intl';
 
 export default function SupplyChart({
   supply,
   selectedToken,
+  showTitle = true,
 }: {
   supply?: Supply[];
   selectedToken: string;
+  showTitle?: boolean;
 }) {
   const format = useFormatter();
 
   return (
     <>
-      <Title title={`Track ${selectedToken} supply`} topMargin />
-      <div className="mt-16 p-4 rounded-xl bg-backgroundItem">
+      {showTitle && <Title title={`Track ${selectedToken} supply`} topMargin />}
+      <div
+        className={classNames(
+          'p-4 rounded-xl bg-backgroundItem',
+          showTitle ? 'mt-16' : 'mt-8'
+        )}
+      >
         {supply ? (
           <TrackerChart
             data={supply.map((point) => point.y)}

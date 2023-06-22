@@ -132,6 +132,12 @@ export interface ModalTokens {
   locks: Lock[];
 }
 
+export interface ModalSupply {
+  show: boolean;
+  item: Token | null;
+  supply: Supply[];
+}
+
 export interface Reward {
   apr: string;
   rewards: number;
