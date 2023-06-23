@@ -251,3 +251,22 @@ export interface PortfolioItem {
   oneWeek: number;
   oneMonth: number;
 }
+
+export interface PortfolioStakingRewardsItem {
+  fullName: string;
+  token: string;
+  price: number;
+  balance: number;
+  value: number;
+}
+
+export interface PortfolioLiquidityItem {
+  token: string;
+  baseAsset: string;
+  value: number;
+}
+
+export interface PortfolioTab {
+  tab: string;
+  permalink: string;
+}
