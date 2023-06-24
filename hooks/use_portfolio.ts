@@ -128,8 +128,10 @@ const usePortfolio = () => {
   );
 
   const changeSelectedTab = (tab: PortfolioTab) => {
-    setLoading(true);
-    setSelectedTab(tab);
+    if (tab !== selectedTab) {
+      setLoading(true);
+      setSelectedTab(tab);
+    }
   };
 
   useEffect(() => {
