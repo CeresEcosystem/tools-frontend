@@ -247,9 +247,13 @@ export interface PortfolioItem {
   balance: number;
   value: number;
   oneHour: number;
+  oneHourValueDifference: number;
   oneDay: number;
+  oneDayValueDifference: number;
   oneWeek: number;
+  oneWeekValueDifference: number;
   oneMonth: number;
+  oneMonthValueDifference: number;
 }
 
 export interface PortfolioStakingRewardsItem {
