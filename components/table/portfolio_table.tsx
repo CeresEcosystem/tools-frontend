@@ -20,12 +20,46 @@ import { ChangeEvent } from 'react';
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
 
-function PriceInterval({ value }: { value: number }) {
-  if (value < 0) {
-    return <span className="text-red-400">{`${value}%`}</span>;
+function PriceInterval({
+  valuePercentage,
+  value,
+}: {
+  valuePercentage: number;
+  value: number;
+}) {
+  const format = useFormatter();
+
+  if (value === 0) {
+    return <span className="text-white text-opacity-50">0%</span>;
   }
 
-  return <span className="text-green-400">{`${value}%`}</span>;
+  if (value < 0) {
+    return (
+      <div className="flex flex-col space-y-1">
+        <span className="text-red-400">{`${formatNumber(
+          format,
+          valuePercentage,
+          2
+        )}%`}</span>
+        <span className="text-red-400 text-xs">
+          {formatCurrencyWithDecimals(format, value, 2, true)}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col space-y-1">
+      <span className="text-green-400">{`${formatNumber(
+        format,
+        valuePercentage,
+        2
+      )}%`}</span>
+      <span className="text-green-400 text-xs">
+        {formatCurrencyWithDecimals(format, value, 2, true)}
+      </span>
+    </div>
+  );
 }
 
 function Table({
@@ -141,16 +175,28 @@ function PortfolioTabTable({
                 {formatToCurrency(format, item.price)}
               </td>
               <td className={cellStyle}>
-                <PriceInterval value={item.oneHour} />
+                <PriceInterval
+                  valuePercentage={item.oneHour}
+                  value={item.oneHourValueDifference}
+                />
               </td>
               <td className={cellStyle}>
-                <PriceInterval value={item.oneDay} />
+                <PriceInterval
+                  valuePercentage={item.oneDay}
+                  value={item.oneDayValueDifference}
+                />
               </td>
               <td className={cellStyle}>
-                <PriceInterval value={item.oneWeek} />
+                <PriceInterval
+                  valuePercentage={item.oneWeek}
+                  value={item.oneWeekValueDifference}
+                />
               </td>
               <td className={cellStyle}>
-                <PriceInterval value={item.oneMonth} />
+                <PriceInterval
+                  valuePercentage={item.oneMonth}
+                  value={item.oneMonthValueDifference}
+                />
               </td>
               <td className={cellStyle}>
                 {formatNumber(format, item.balance, 3, true)}
