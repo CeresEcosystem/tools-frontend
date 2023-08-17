@@ -50,9 +50,9 @@ export function formatCurrencyWithDecimals(
   checkForEValue = false
 ): string {
   if (checkForEValue) {
-    const numberString = number.toString();
+    const numberString = number?.toString();
 
-    if (numberString.includes('e')) {
+    if (numberString?.includes('e')) {
       return `$${numberString}`;
     }
   }
@@ -72,9 +72,9 @@ export function formatNumber(
   checkForEValue = false
 ): string {
   if (checkForEValue) {
-    const numberString = number.toString();
+    const numberString = number?.toString();
 
-    if (numberString.includes('e')) {
+    if (numberString?.includes('e')) {
       return `$${numberString}`;
     }
   }
