@@ -1,4 +1,4 @@
-import { API } from '@constants/index';
+import { NEW_API_URL } from '@constants/index';
 import { AppContextType, Banner } from '@interfaces/index';
 import { createContext, useContext, useEffect, useState } from 'react';
 
@@ -8,12 +8,12 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [banners, setBanners] = useState<Banner[] | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/banners`)
+    fetch(`${NEW_API_URL}/banners/desktop`)
       .then(async (response) => {
         const json = await response.json();
         setBanners(json);
       })
-      .catch(() => {});
+      .catch(() => setBanners([]));
   }, []);
 
   return (
