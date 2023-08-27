@@ -274,3 +274,14 @@ export interface PortfolioTab {
   tab: string;
   permalink: string;
 }
+
+export interface WalletAddress {
+  name: string;
+  address: string;
+  fromPolkadotExtension: boolean;
+}
+
+export interface PortfolioModalData {
+  show: boolean;
+  item: WalletAddress | null;
+}

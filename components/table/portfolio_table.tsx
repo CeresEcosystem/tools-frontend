@@ -1,21 +1,25 @@
-import InputState from '@components/input/input_state';
 import Spinner from '@components/spinner';
 import PortfolioTabs from '@components/tabs/portfolio_tabs';
 import usePortfolio from '@hooks/use_portfolio';
 import {
   PortfolioItem,
   PortfolioLiquidityItem,
+  PortfolioModalData,
   PortfolioStakingRewardsItem,
+  WalletAddress,
 } from '@interfaces/index';
 import { ASSET_URL } from '@constants/index';
 import {
   formatCurrencyWithDecimals,
   formatNumber,
   formatToCurrency,
+  formatWalletAddress,
 } from '@utils/helpers';
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
+import { PencilIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import PortfolioModal from '@components/modal/portfolio_modal';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -102,31 +106,80 @@ function Table({
 }
 
 function PortfolioInput({
-  walletAddress,
-  handleWalletAddressChange,
+  selectedWallet,
+  walletAddresses,
+  handleWalletChange,
   loading,
-  fetchPortfolioItemsCallback,
+  showModal,
 }: {
-  walletAddress: string;
+  selectedWallet: WalletAddress | null;
+  walletAddresses: WalletAddress[];
   // eslint-disable-next-line no-unused-vars
-  handleWalletAddressChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  loading: boolean;
-  fetchPortfolioItemsCallback: () => void;
+  handleWalletChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  loading?: boolean;
+  // eslint-disable-next-line no-unused-vars
+  showModal: (item: WalletAddress | null) => void;
 }) {
   return (
-    <div className="flex space-x-4 mb-10 items-center max-w-lg mx-auto">
-      <InputState
-        value={walletAddress}
-        handleChange={handleWalletAddressChange}
-        showIcon={false}
-      />
-      <button
-        onClick={() => fetchPortfolioItemsCallback()}
-        disabled={loading}
-        className="rounded-xl bg-pink min-w-[100px] py-2 text-white text-sm focus:outline-none focus:ring-0"
-      >
-        {loading ? <span>Loading</span> : <span>Fetch</span>}
-      </button>
+    <div className="max-w-lg mx-auto mb-10">
+      <div className="flex space-x-4 items-center">
+        {walletAddresses.length > 0 ? (
+          <div className="relative w-full after:content-['▼'] after:top-3.5 after:text-white after:text-opacity-50 after:text-xs after:right-4 after:absolute">
+            <select
+              id="selectedWallet"
+              name="selectedWallet"
+              className="block relative w-full appearance-none bg-backgroundHeader border-backgroundHeader border-2 rounded-xl py-2 pl-4 pr-10 sm:pr-4 text-base text-white capitalize font-semibold focus:outline-none focus:border-pink focus:ring-0"
+              value={
+                selectedWallet
+                  ? walletAddresses.findIndex(
+                      (w) => w.address === selectedWallet.address
+                    )
+                  : 0
+              }
+              onChange={handleWalletChange}
+            >
+              {walletAddresses.map((wallet, index) => (
+                <option key={index} value={index}>{`${
+                  wallet.name
+                } (${formatWalletAddress(wallet.address, 6)})`}</option>
+              ))}
+            </select>
+          </div>
+        ) : (
+          <span className="w-full text-white text-sm">
+            No added wallets. Please, add one. <br /> If you have PolkadotJS
+            extension installed and wallets are not showing up, please refresh
+            the page.
+          </span>
+        )}
+        <div className="flex items-center justify-end space-x-2">
+          {walletAddresses.length > 0 &&
+            !selectedWallet?.fromPolkadotExtension && (
+              <button
+                onClick={() => showModal(selectedWallet)}
+                disabled={loading}
+                className="rounded-xl bg-pink p-2 text-white text-sm focus:outline-none focus:ring-0"
+              >
+                <PencilIcon className="w-5 h-5 text-white" />
+              </button>
+            )}
+          <button
+            onClick={() => showModal(null)}
+            disabled={loading}
+            className="rounded-xl bg-pink p-2 text-white text-sm focus:outline-none focus:ring-0"
+          >
+            <UserPlusIcon className="w-5 h-5 text-white" />
+          </button>
+        </div>
+      </div>
+      {walletAddresses.length > 0 && (
+        <div className="px-4 pt-1">
+          <small className="text-white text-opacity-50 text-xs leading-0">
+            If you have PolkadotJS extension installed and wallets are not
+            showing up, please refresh the page.
+          </small>
+        </div>
+      )}
     </div>
   );
 }
@@ -375,47 +428,53 @@ export default function PortfolioTable() {
     tabs,
     selectedTab,
     changeSelectedTab,
-    inputWalletAddress,
-    handleWalletAddressChange,
+    selectedWallet,
+    walletAddresses,
+    handleWalletChange,
     portfolioItems,
     loading,
     totalValue,
-    fetchPortfolioItems,
+    addEditWallet,
+    removeWallet,
   } = usePortfolio();
 
-  if (loadingStatus === 'Loading') {
-    return <Spinner />;
-  }
+  const [showModal, setShowModal] = useState<PortfolioModalData>({
+    show: false,
+    item: null,
+  });
 
-  if (loadingStatus === 'Not connected') {
-    return (
-      <span className="font-medium block text-opacity-50 mx-auto w-fit text-lg text-white">
-        Waiting for wallet connection...
-        <Spinner />
-      </span>
-    );
+  if (loadingStatus) {
+    return <Spinner />;
   }
 
   return (
     <>
-      <PortfolioTabs
-        tabs={tabs}
-        selectedTab={selectedTab}
-        changeSelectedTab={(tab) => changeSelectedTab(tab)}
+      <PortfolioInput
+        selectedWallet={selectedWallet}
+        walletAddresses={walletAddresses}
+        handleWalletChange={handleWalletChange}
+        loading={loading}
+        showModal={(item: WalletAddress | null) =>
+          setShowModal({
+            show: true,
+            item,
+          })
+        }
       />
-      {loadingStatus === 'No extension' && (
-        <PortfolioInput
-          walletAddress={inputWalletAddress}
-          handleWalletAddressChange={handleWalletAddressChange}
-          loading={loading}
-          fetchPortfolioItemsCallback={() =>
-            fetchPortfolioItems(inputWalletAddress)
-          }
+      {walletAddresses.length > 0 && (
+        <PortfolioTabs
+          tabs={tabs}
+          selectedTab={selectedTab}
+          changeSelectedTab={(tab) => changeSelectedTab(tab)}
         />
       )}
       {loading ? (
         <Spinner />
-      ) : !portfolioItems ? null : portfolioItems.length === 0 ? (
+      ) : !portfolioItems ? null : portfolioItems === 'throttle error' ? (
+        <span className="font-medium text-center block text-opacity-50 mx-auto w-fit text-lg text-white">
+          To many requests. Please, try again in one minute.
+        </span>
+      ) : portfolioItems.length === 0 ? (
         <span className="font-medium block text-opacity-50 mx-auto w-fit text-lg text-white">
           {`No items in ${selectedTab.tab}.`}
         </span>
@@ -427,6 +486,33 @@ export default function PortfolioTable() {
           selectedTab={selectedTab.tab}
         />
       )}
+      <PortfolioModal
+        showModal={showModal.show}
+        wallet={showModal.item}
+        addEditWallet={(
+          wallet: WalletAddress,
+          previousWallet: WalletAddress | null
+        ) => {
+          addEditWallet(wallet, previousWallet);
+          setShowModal((oldState) => ({
+            ...oldState,
+            show: false,
+          }));
+        }}
+        removeWallet={(wallet: WalletAddress) => {
+          removeWallet(wallet);
+          setShowModal((oldState) => ({
+            ...oldState,
+            show: false,
+          }));
+        }}
+        closeModal={() =>
+          setShowModal((oldState) => ({
+            ...oldState,
+            show: false,
+          }))
+        }
+      />
     </>
   );
 }

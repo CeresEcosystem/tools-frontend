@@ -1,7 +1,7 @@
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
 
-const WalletClient = dynamic(() => import('./'), {
-  ssr: false,
-});
+// const WalletClient = dynamic(() => import('./'), {
+//   ssr: false,
+// });
 
-export default WalletClient;
+// export default WalletClient;

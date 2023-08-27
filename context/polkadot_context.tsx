@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { APP_NAME, POLKADOT_ACCOUNT } from '@constants/index';
+import { APP_NAME } from '@constants/index';
 import { Keyring } from '@polkadot/api';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
@@ -17,9 +17,9 @@ interface PolkadotContextType {
   keyring: Keyring | null;
   loading: boolean;
   accounts: InjectedAccountWithMeta[] | null;
-  selectedAccount: InjectedAccountWithMeta | null;
-  saveSelectedAccount: (account: InjectedAccountWithMeta) => void;
-  disconnect: () => void;
+  // selectedAccount: InjectedAccountWithMeta | null;
+  // saveSelectedAccount: (account: InjectedAccountWithMeta) => void;
+  // disconnect: () => void;
 }
 
 const PolkadotContext = createContext<PolkadotContextType | null>(null);
@@ -29,22 +29,22 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[] | null>(
     null
   );
-  const [selectedAccount, setSelectedAccount] =
-    useState<InjectedAccountWithMeta | null>(null);
+  // const [selectedAccount, setSelectedAccount] =
+  //   useState<InjectedAccountWithMeta | null>(null);
 
   // const api = useRef<ApiPromise | null>(null);
   const keyring = useRef<Keyring | null>(null);
 
-  const saveSelectedAccount = useCallback(
-    async (account: InjectedAccountWithMeta) => {
-      if (account !== selectedAccount) {
-        const acc = account as InjectedAccountWithMeta;
-        localStorage.setItem(POLKADOT_ACCOUNT, JSON.stringify(account));
-        setSelectedAccount(acc);
-      }
-    },
-    [selectedAccount]
-  );
+  // const saveSelectedAccount = useCallback(
+  //   async (account: InjectedAccountWithMeta) => {
+  //     if (account !== selectedAccount) {
+  //       const acc = account as InjectedAccountWithMeta;
+  //       localStorage.setItem(POLKADOT_ACCOUNT, JSON.stringify(account));
+  //       setSelectedAccount(acc);
+  //     }
+  //   },
+  //   [selectedAccount]
+  // );
 
   // const setApi = useCallback(async () => {
   //   /** Connect to Sora network **/
@@ -64,8 +64,8 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
   // }, []);
 
   const connectToPolkadotExtension = useCallback(async () => {
-    const accountJSON = localStorage.getItem(POLKADOT_ACCOUNT);
-    const account = accountJSON ? JSON.parse(accountJSON) : null;
+    // const accountJSON = localStorage.getItem(POLKADOT_ACCOUNT);
+    // const account = accountJSON ? JSON.parse(accountJSON) : null;
 
     // this call fires up the authorization popup
     const extensions = await web3Enable(APP_NAME);
@@ -78,14 +78,14 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
       if (allAccounts !== null && allAccounts.length > 0) {
         setAccounts(allAccounts);
 
-        if (account !== null) {
-          const accountsFiltered = allAccounts.filter(
-            (acc) => acc?.meta?.name === account?.meta?.name
-          );
-          if (accountsFiltered.length > 0) {
-            setSelectedAccount(account);
-          }
-        }
+        // if (account !== null) {
+        //   const accountsFiltered = allAccounts.filter(
+        //     (acc) => acc?.meta?.name === account?.meta?.name
+        //   );
+        //   if (accountsFiltered.length > 0) {
+        //     setSelectedAccount(account);
+        //   }
+        // }
       }
     }
   }, []);
@@ -101,10 +101,10 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(false);
   }, [connectToPolkadotExtension, setKeyring]);
 
-  const disconnect = useCallback(() => {
-    localStorage.removeItem(POLKADOT_ACCOUNT);
-    setSelectedAccount(null);
-  }, []);
+  // const disconnect = useCallback(() => {
+  //   localStorage.removeItem(POLKADOT_ACCOUNT);
+  //   setSelectedAccount(null);
+  // }, []);
 
   useEffect(() => {
     init();
@@ -113,8 +113,7 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
     //   api.current?.disconnect();
     //   api.current = null;
     // };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [init]);
 
   return (
     <PolkadotContext.Provider
@@ -123,9 +122,9 @@ const PolkadotProvider = ({ children }: { children: React.ReactNode }) => {
         keyring: keyring.current,
         loading,
         accounts,
-        selectedAccount,
-        saveSelectedAccount,
-        disconnect,
+        // selectedAccount,
+        // saveSelectedAccount,
+        // disconnect,
       }}
     >
       {children}

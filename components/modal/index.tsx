@@ -5,10 +5,12 @@ export default function Modal({
   showModal,
   closeModal,
   children,
+  showCloseButton = true,
 }: {
   showModal: boolean;
   closeModal: () => void;
   children: React.ReactNode;
+  showCloseButton?: boolean;
 }) {
   return (
     <Transition.Root show={showModal} as={Fragment}>
@@ -37,12 +39,14 @@ export default function Modal({
             >
               <Dialog.Panel className="relative max-h-full flex flex-col rounded-xl px-2 py-6 overflow-hidden bg-backgroundBody sm:px-6">
                 {children}
-                <button
-                  onClick={closeModal}
-                  className="w-full mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
-                >
-                  Close
-                </button>
+                {showCloseButton && (
+                  <button
+                    onClick={closeModal}
+                    className="w-full mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
+                  >
+                    Close
+                  </button>
+                )}
               </Dialog.Panel>
             </Transition.Child>
           </div>

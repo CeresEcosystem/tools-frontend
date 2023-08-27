@@ -1,20 +1,15 @@
 import { usePolkadot } from '@context/polkadot_context';
-import { useEffect, useState, useCallback, ChangeEvent, useRef } from 'react';
-import usePersistState from './use_persist_state';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   PortfolioItem,
   PortfolioLiquidityItem,
   PortfolioStakingRewardsItem,
   PortfolioTab,
+  WalletAddress,
 } from '@interfaces/index';
 import { NEW_API_URL } from '@constants/index';
 import { getEncodedAddress } from '@utils/helpers';
-
-export type LoadingStatus =
-  | 'Loading'
-  | 'No extension'
-  | 'Not connected'
-  | 'Connected';
+import usePersistState from './use_persist_state';
 
 const tabs = [
   { tab: 'Portfolio', permalink: '/portfolio/' },
@@ -23,20 +18,24 @@ const tabs = [
   { tab: 'Liquidity', permalink: '/portfolio/liquidity/' },
 ];
 
+const WALLET_ADDRESSES = 'WALLET_ADDRESSES';
+
 const usePortfolio = () => {
   const polkadot = usePolkadot();
 
-  const [loadingStatus, setLoadingStatus] = useState<LoadingStatus>('Loading');
+  const [loadingStatus, setLoadingStatus] = useState(true);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
-  const [inputWalletAddress, setInputWalletAddress] = usePersistState(
-    '',
-    'WALLET_ADDRESS'
-  );
   const [loading, setLoading] = useState(false);
+  const [selectedWallet, setSelectedWallet] =
+    usePersistState<WalletAddress | null>(null, 'SELECTED_WALLET');
+
+  const polkadotWallets = useRef<WalletAddress[]>([]);
+  const storageWallets = useRef<WalletAddress[]>([]);
 
   const portfolioItems = useRef<
     | (PortfolioItem | PortfolioStakingRewardsItem | PortfolioLiquidityItem)[]
     | undefined
+    | 'throttle error'
   >();
 
   const totalValue = useRef(0);
@@ -79,32 +78,36 @@ const usePortfolio = () => {
       if (address !== '') {
         try {
           const response = await fetch(
-            `${NEW_API_URL}${selectedTab.permalink}${getEncodedAddress(
-              address
-            )}`
+            `${NEW_API_URL}${selectedTab.permalink}${address}`
           );
-          const json = await response.json();
 
-          if (json && json?.length > 0) {
-            let array = [];
-
-            if (selectedTab.tab === 'Portfolio') {
-              array = json as PortfolioItem[];
-              sortAndFilterItems(array);
-            } else if (
-              selectedTab.tab === 'Staking' ||
-              selectedTab.tab === 'Rewards'
-            ) {
-              array = json as PortfolioStakingRewardsItem[];
-              sortAndFilterItems(array);
-            } else {
-              array = json as PortfolioLiquidityItem[];
-              sortAndFilterItems(array);
-            }
-          } else {
-            portfolioItems.current = [];
-            totalValue.current = 0;
+          if (response.status === 429) {
+            portfolioItems.current = 'throttle error';
             setLoading(false);
+          } else {
+            const json = await response.json();
+
+            if (response.status === 200 && json && json?.length > 0) {
+              let array = [];
+
+              if (selectedTab.tab === 'Portfolio') {
+                array = json as PortfolioItem[];
+                sortAndFilterItems(array);
+              } else if (
+                selectedTab.tab === 'Staking' ||
+                selectedTab.tab === 'Rewards'
+              ) {
+                array = json as PortfolioStakingRewardsItem[];
+                sortAndFilterItems(array);
+              } else {
+                array = json as PortfolioLiquidityItem[];
+                sortAndFilterItems(array);
+              }
+            } else {
+              portfolioItems.current = [];
+              totalValue.current = 0;
+              setLoading(false);
+            }
           }
         } catch {
           portfolioItems.current = [];
@@ -120,12 +123,12 @@ const usePortfolio = () => {
     [selectedTab.permalink, selectedTab.tab, loading]
   );
 
-  const handleWalletAddressChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setInputWalletAddress(e.target.value);
-    },
-    [setInputWalletAddress]
-  );
+  const handleWalletChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedIndex = event.target.selectedIndex;
+    setSelectedWallet(
+      [...polkadotWallets.current, ...storageWallets.current][selectedIndex]
+    );
+  };
 
   const changeSelectedTab = (tab: PortfolioTab) => {
     if (tab !== selectedTab) {
@@ -134,47 +137,139 @@ const usePortfolio = () => {
     }
   };
 
+  const setWalletAddresses = useCallback(
+    (connected: boolean) => {
+      let accounts: WalletAddress[] = [];
+
+      if (connected) {
+        accounts =
+          polkadot?.accounts?.map((acc) => {
+            return {
+              name: acc.meta.name,
+              address: getEncodedAddress(acc.address),
+              fromPolkadotExtension: true,
+            } as WalletAddress;
+          }) ?? [];
+      }
+
+      polkadotWallets.current = accounts;
+
+      const wallets = localStorage.getItem(WALLET_ADDRESSES);
+
+      storageWallets.current = wallets
+        ? (JSON.parse(wallets) as WalletAddress[])
+        : [];
+
+      const allWallets = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ];
+
+      if (!selectedWallet && allWallets.length > 0) {
+        setSelectedWallet(allWallets[0]);
+      }
+
+      setLoadingStatus(false);
+    },
+    [polkadot?.accounts, selectedWallet, setSelectedWallet]
+  );
+
+  const addEditWallet = useCallback(
+    (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
+      if (previousWallet) {
+        const walletIndex = storageWallets.current.findIndex(
+          (w) =>
+            w.name === previousWallet.name &&
+            w.address === previousWallet.address
+        );
+
+        if (walletIndex !== -1) {
+          storageWallets.current[walletIndex] = {
+            name: wallet.name,
+            address: wallet.address,
+            fromPolkadotExtension: wallet.fromPolkadotExtension,
+          };
+          localStorage.setItem(
+            WALLET_ADDRESSES,
+            JSON.stringify(storageWallets.current)
+          );
+          setSelectedWallet(wallet);
+        }
+      } else {
+        const newArray = [...storageWallets.current, wallet];
+        storageWallets.current = newArray;
+        localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
+        setSelectedWallet(wallet);
+      }
+    },
+    [setSelectedWallet]
+  );
+
+  const removeWallet = useCallback(
+    (wallet: WalletAddress) => {
+      const removedArray = Array.from(storageWallets.current).filter(
+        (w) => w.address !== wallet.address && w.name !== wallet.name
+      );
+
+      storageWallets.current = removedArray;
+      localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(removedArray));
+
+      const allWallets = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ];
+
+      if (allWallets.length > 0) {
+        setSelectedWallet(allWallets[0]);
+      } else {
+        setSelectedWallet(null);
+      }
+    },
+    [setSelectedWallet]
+  );
+
   useEffect(() => {
     if (!polkadot?.loading) {
       if (polkadot?.accounts && polkadot?.accounts?.length > 0) {
-        if (polkadot?.selectedAccount?.address) {
-          setLoadingStatus('Connected');
-        } else {
-          setLoadingStatus('Not connected');
-        }
+        setWalletAddresses(true);
       } else {
-        setLoadingStatus('No extension');
+        setWalletAddresses(false);
       }
     }
-  }, [
-    polkadot?.accounts,
-    polkadot?.loading,
-    polkadot?.selectedAccount?.address,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polkadot?.accounts, polkadot?.loading]);
 
   useEffect(() => {
-    if (loadingStatus === 'Connected') {
-      fetchPortfolioItems(polkadot?.selectedAccount?.address!);
-    } else if (loadingStatus === 'No extension' && inputWalletAddress !== '') {
-      fetchPortfolioItems(inputWalletAddress);
-    } else {
-      setLoading(false);
+    if (!loadingStatus) {
+      if (selectedWallet) {
+        if (
+          [...polkadotWallets.current, ...storageWallets.current].length > 0
+        ) {
+          fetchPortfolioItems(selectedWallet.address);
+        }
+      } else {
+        if (portfolioItems.current && portfolioItems.current?.length > 0) {
+          portfolioItems.current = undefined;
+        }
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingStatus, selectedTab]);
+  }, [loadingStatus, selectedTab, selectedWallet]);
 
   return {
     loadingStatus,
     tabs,
     selectedTab,
     changeSelectedTab,
-    inputWalletAddress,
-    handleWalletAddressChange,
-    walletAddress: polkadot?.selectedAccount?.address,
+    selectedWallet,
+    walletAddresses: [...polkadotWallets.current, ...storageWallets.current],
+    handleWalletChange,
     portfolioItems: portfolioItems.current,
     loading,
     totalValue: totalValue.current,
     fetchPortfolioItems,
+    addEditWallet,
+    removeWallet,
   };
 };
 
