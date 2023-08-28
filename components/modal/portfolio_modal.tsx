@@ -61,8 +61,8 @@ export default function PortfolioModal({
       closeModal={closeModal}
       showCloseButton={false}
     >
-      <div className="flex items-center justify-between">
-        <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">
+      <div className="flex px-2 items-center justify-between">
+        <h4 className="font-bold text-white line-clamp-1 text-lg">
           {wallet ? 'Edit wallet' : 'Add new wallet'}
         </h4>
         <button
@@ -115,7 +115,10 @@ export default function PortfolioModal({
           </div>
         </div>
         {wallet && !wallet.fromPolkadotExtension && (
-          <button onClick={() => removeWallet(wallet)} className="text-pink">
+          <button
+            onClick={() => removeWallet(wallet)}
+            className="mx-2 text-pink"
+          >
             Remove this wallet
           </button>
         )}
