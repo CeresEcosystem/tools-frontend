@@ -82,6 +82,11 @@ export interface TokensReturnType {
   goToNextPage: () => void;
   goToLastPage: () => void;
   handleTokenSearch: (search: ChangeEvent<HTMLInputElement>) => void;
+  addTokenToFavorites: (token: Token) => void;
+  removeTokenFromFavorites: (token: Token) => void;
+  showOnlyFavorites: boolean;
+  toggleFavorites: (favorites: boolean) => void;
+  favoriteTokens: string[];
 }
 
 export interface Block {

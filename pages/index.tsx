@@ -1,4 +1,5 @@
 import Container from '@components/container';
+import TokensFavoriteFilter from '@components/filters/tokens_favorite_filter';
 import Input from '@components/input';
 import TokensList from '@components/list/tokens_list';
 import TokenSupplyModal from '@components/modal/token_supply_modal';
@@ -22,6 +23,11 @@ export default function Tokens({ data }: { data?: Token[] }) {
     goToNextPage,
     goToLastPage,
     handleTokenSearch,
+    addTokenToFavorites,
+    removeTokenFromFavorites,
+    showOnlyFavorites,
+    toggleFavorites,
+    favoriteTokens,
   } = useTokens(data);
 
   const { getLocks } = useLocks();
@@ -64,12 +70,19 @@ export default function Tokens({ data }: { data?: Token[] }) {
   return (
     <Container>
       <Input handleChange={handleTokenSearch} />
+      <TokensFavoriteFilter
+        showOnlyFavorites={showOnlyFavorites}
+        toggleFavorites={toggleFavorites}
+      />
       <TokensList
         tokens={tokens}
         showModal={(show: boolean, token: Token) => fetchData(show, token)}
         showSupplyModal={(show: boolean, token: Token) =>
           fetchSupplyData(show, token)
         }
+        addTokenToFavorites={addTokenToFavorites}
+        removeTokenFromFavorites={removeTokenFromFavorites}
+        favoriteTokens={favoriteTokens}
       />
       {totalPages > 1 && (
         <ListPagination

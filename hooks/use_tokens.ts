@@ -1,74 +1,120 @@
 import { formatToCurrency, formatWalletAddress } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import usePagination from '@hooks/use_pagination';
 import { Token, TokensReturnType } from '@interfaces/index';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/index';
+import { addToFavorites, removeFromFavorites } from '@store/tokens/token_slice';
 
 const limiter = 10;
 
 const useTokens = (data?: Token[]): TokensReturnType => {
   const format = useFormatter();
 
-  const allTokens = useRef<Token[]>(
-    data
-      ? data.map((t) => {
-          return {
-            ...t,
-            assetIdFormatted: formatWalletAddress(t.assetId),
-            priceFormatted: formatToCurrency(format, t.price),
-          };
-        })
-      : []
+  const dispatch = useDispatch();
+  const favoriteTokens = useSelector(
+    (state: RootState) => state.tokens.favoriteTokens
   );
-  const tokens = useRef(allTokens.current);
+
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(
+    favoriteTokens.length > 0
+  );
+
+  const getAllTokens = useCallback(
+    (showFavorites = showOnlyFavorites) => {
+      if (showFavorites) {
+        return (
+          data
+            ?.filter((item) => favoriteTokens.includes(item.assetId))
+            .map((token) => {
+              return {
+                ...token,
+                assetIdFormatted: formatWalletAddress(token.assetId),
+                priceFormatted: formatToCurrency(format, token.price),
+              };
+            }) || []
+        );
+      } else {
+        return (
+          data?.map((t) => {
+            return {
+              ...t,
+              assetIdFormatted: formatWalletAddress(t.assetId),
+              priceFormatted: formatToCurrency(format, t.price),
+            };
+          }) || []
+        );
+      }
+    },
+    [data, favoriteTokens, format, showOnlyFavorites]
+  );
+
+  const [allTokens, setAllTokens] = useState<Token[]>(getAllTokens());
+  const [tokens, setTokens] = useState(allTokens);
 
   const [tokenSlice, setTokenSlice] = useState(
-    allTokens.current.slice(0, limiter) ?? []
+    allTokens.slice(0, limiter) ?? []
   );
 
   const currentPage = useRef(0);
   const totalPages = useRef(
-    allTokens.current ? Math.ceil(allTokens.current.length / limiter) : 0
+    allTokens ? Math.ceil(allTokens.length / limiter) : 0
   );
 
   const { goToFirstPage, goToPreviousPage, goToNextPage, goToLastPage } =
     usePagination<Token>(
       currentPage.current,
       totalPages.current,
-      tokens.current,
+      tokens,
       (cp: number) => (currentPage.current = cp),
       (array: Array<Token>) => setTokenSlice(array),
-      limiter,
+      limiter
     );
 
-  const resetData = () => {
-    tokens.current = allTokens.current;
+  const resetData = (allTs = allTokens) => {
+    setTokens(allTs);
     currentPage.current = 0;
-    totalPages.current = allTokens.current
-      ? Math.ceil(allTokens.current.length / limiter)
-      : 0;
-    setTokenSlice(allTokens.current.slice(0, limiter) ?? []);
+    totalPages.current = allTs ? Math.ceil(allTs.length / limiter) : 0;
+    setTokenSlice(allTs.slice(0, limiter) ?? []);
   };
 
   const handleTokenSearch = (search: ChangeEvent<HTMLInputElement>) => {
     if (search.target.value !== '') {
-      tokens.current = allTokens.current?.filter(
-        (token) =>
-          token.assetId
-            .toUpperCase()
-            .includes(search.target.value.toUpperCase()) ||
-          token.fullName
-            .toUpperCase()
-            .includes(search.target.value.toUpperCase())
+      setTokens(
+        allTokens?.filter(
+          (token) =>
+            token.assetId
+              .toUpperCase()
+              .includes(search.target.value.toUpperCase()) ||
+            token.fullName
+              .toUpperCase()
+              .includes(search.target.value.toUpperCase())
+        )
       );
       currentPage.current = 0;
-      totalPages.current = tokens.current
-        ? Math.ceil(tokens.current.length / limiter)
-        : 0;
-      setTokenSlice(tokens.current?.slice(0, limiter) ?? []);
+      totalPages.current = tokens ? Math.ceil(tokens.length / limiter) : 0;
+      setTokenSlice(tokens?.slice(0, limiter) ?? []);
     } else {
       resetData();
     }
+  };
+
+  const toggleFavorites = (favorites: boolean) => {
+    if (favorites !== showOnlyFavorites) {
+      const tokensFiltered: Token[] = getAllTokens(favorites);
+      setAllTokens(tokensFiltered);
+      resetData(tokensFiltered);
+      setShowOnlyFavorites(favorites);
+    }
+  };
+
+  const addTokenToFavorites = (token: Token) => {
+    dispatch(addToFavorites(token.assetId));
+  };
+
+  const removeTokenFromFavorites = (token: Token) => {
+    dispatch(removeFromFavorites(token.assetId));
   };
 
   return {
@@ -80,6 +126,11 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     goToNextPage,
     goToLastPage,
     handleTokenSearch,
+    addTokenToFavorites,
+    removeTokenFromFavorites,
+    showOnlyFavorites,
+    toggleFavorites,
+    favoriteTokens,
   };
 };
 

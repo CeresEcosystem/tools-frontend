@@ -26,6 +26,7 @@
       "@constants/*": ["constants/*"],
       "@utils/*": ["utils/*"],
       "@interfaces/*": ["interfaces/*"],
+      "@store/*": ["store/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

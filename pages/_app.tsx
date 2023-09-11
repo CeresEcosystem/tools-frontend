@@ -6,6 +6,9 @@ import AppProvider from '@context/app_context';
 import { NextIntlProvider } from 'next-intl';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 import PolkadotClientContext from '@context/polkadot_dynamic_context';
+import { Provider } from 'react-redux';
+import { store, persistor } from '@store/index';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const sora = Sora({ subsets: ['latin'], variable: '--font-sora' });
 
@@ -28,9 +31,13 @@ export default function App({ Component, pageProps }: AppProps) {
       <NextIntlProvider locale="en">
         <PolkadotClientContext>
           <AppProvider>
-            <BaseLayout>
-              <Component {...pageProps} />
-            </BaseLayout>
+            <Provider store={store}>
+              <PersistGate loading={null} persistor={persistor}>
+                <BaseLayout>
+                  <Component {...pageProps} />
+                </BaseLayout>
+              </PersistGate>
+            </Provider>
           </AppProvider>
         </PolkadotClientContext>
       </NextIntlProvider>

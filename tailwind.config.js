@@ -15,6 +15,7 @@ export const theme = {
       backgroundItem: '#250936',
       pink: '#f0398c',
       cyan: '#4dd0e1',
+      yellow: '#f1b350',
     },
   },
   screens: {
