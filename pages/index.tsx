@@ -83,8 +83,9 @@ export default function Tokens({ data }: { data?: Token[] }) {
         addTokenToFavorites={addTokenToFavorites}
         removeTokenFromFavorites={removeTokenFromFavorites}
         favoriteTokens={favoriteTokens}
+        showOnlyFavorites={showOnlyFavorites}
       />
-      {totalPages > 1 && (
+      {!showOnlyFavorites && totalPages > 1 && (
         <ListPagination
           currentPage={currentPage}
           totalPages={totalPages}

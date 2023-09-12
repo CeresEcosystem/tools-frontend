@@ -31,7 +31,7 @@ export default function TokensFavoriteFilter({
       >
         <StarIcon className="h-6 w-6 rounded-full text-white" />
         <span className="hidden sm:block text-sm text-white font-medium md:text-base">
-          Show only favorites
+          Favorites
         </span>
       </div>
     </div>

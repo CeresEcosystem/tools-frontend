@@ -1,26 +1,32 @@
+import TokensFavoriteFilter from '@components/filters/tokens_favorite_filter';
 import Input from '@components/input';
 import Modal from '@components/modal';
 import { ASSET_URL } from '@constants/index';
 import { Token } from '@interfaces/index';
 import { formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export default function PricesModal({
   showModal,
   closeModal,
   tokens,
   changeCurrentTokenFromModal,
+  showOnlyFavorites,
+  toggleFavorites,
 }: {
   showModal: boolean;
   closeModal: () => void;
   tokens: Token[];
   // eslint-disable-next-line no-unused-vars
   changeCurrentTokenFromModal: (token: Token) => void;
+  showOnlyFavorites: boolean;
+  // eslint-disable-next-line no-unused-vars
+  toggleFavorites: (favorites: boolean) => void;
 }) {
   const format = useFormatter();
 
-  const [tokenList, setTokenList] = useState(tokens);
+  const [tokenList, setTokenList] = useState<Token[]>([]);
 
   const handleTokenSearch = (search: ChangeEvent<HTMLInputElement>) => {
     if (search.target.value !== '') {
@@ -39,6 +45,10 @@ export default function PricesModal({
     }
   };
 
+  useEffect(() => {
+    setTokenList(tokens);
+  }, [tokens]);
+
   const onCloseModal = () => {
     closeModal();
     setTokenList(tokens);
@@ -54,6 +64,10 @@ export default function PricesModal({
       <div className="w-full">
         <Input handleChange={handleTokenSearch} />
       </div>
+      <TokensFavoriteFilter
+        showOnlyFavorites={showOnlyFavorites}
+        toggleFavorites={toggleFavorites}
+      />
       <div className="mt-8 overflow-y-auto overscroll-contain h-full">
         <ul role="list" className="space-y-2">
           {tokenList.map((token) => (

@@ -54,7 +54,7 @@ const useTokens = (data?: Token[]): TokensReturnType => {
   const [tokens, setTokens] = useState(allTokens);
 
   const [tokenSlice, setTokenSlice] = useState(
-    allTokens.slice(0, limiter) ?? []
+    showOnlyFavorites ? allTokens : allTokens.slice(0, limiter)
   );
 
   const currentPage = useRef(0);
@@ -72,11 +72,11 @@ const useTokens = (data?: Token[]): TokensReturnType => {
       limiter
     );
 
-  const resetData = (allTs = allTokens) => {
+  const resetData = (allTs = allTokens, favorites = showOnlyFavorites) => {
     setTokens(allTs);
     currentPage.current = 0;
     totalPages.current = allTs ? Math.ceil(allTs.length / limiter) : 0;
-    setTokenSlice(allTs.slice(0, limiter) ?? []);
+    setTokenSlice(favorites ? allTs : allTs.slice(0, limiter));
   };
 
   const handleTokenSearch = (search: ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +94,7 @@ const useTokens = (data?: Token[]): TokensReturnType => {
       );
       currentPage.current = 0;
       totalPages.current = tokens ? Math.ceil(tokens.length / limiter) : 0;
-      setTokenSlice(tokens?.slice(0, limiter) ?? []);
+      setTokenSlice(showOnlyFavorites ? tokens : tokens.slice(0, limiter));
     } else {
       resetData();
     }
@@ -104,7 +104,7 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     if (favorites !== showOnlyFavorites) {
       const tokensFiltered: Token[] = getAllTokens(favorites);
       setAllTokens(tokensFiltered);
-      resetData(tokensFiltered);
+      resetData(tokensFiltered, favorites);
       setShowOnlyFavorites(favorites);
     }
   };

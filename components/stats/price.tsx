@@ -11,11 +11,16 @@ export default function Price({
   token,
   prices,
   changeCurrentTokenFromModal,
+  showOnlyFavorites,
+  toggleFavorites,
 }: {
   token: Token;
   prices: Token[];
   // eslint-disable-next-line no-unused-vars
   changeCurrentTokenFromModal: (token: Token) => void;
+  showOnlyFavorites: boolean;
+  // eslint-disable-next-line no-unused-vars
+  toggleFavorites: (favorites: boolean) => void;
 }) {
   const format = useFormatter();
 
@@ -60,6 +65,8 @@ export default function Price({
           changeCurrentTokenFromModal(token);
           setShowPriceModal(false);
         }}
+        showOnlyFavorites={showOnlyFavorites}
+        toggleFavorites={toggleFavorites}
       />
     </>
   );
