@@ -11,8 +11,6 @@ export default function Charts() {
     changeCurrentToken,
     prices,
     changeCurrentTokenFromModal,
-    showOnlyFavorites,
-    toggleFavorites,
   } = usePrices();
 
   return (
@@ -30,8 +28,6 @@ export default function Charts() {
             token={currentToken}
             prices={prices}
             changeCurrentTokenFromModal={changeCurrentTokenFromModal}
-            showOnlyFavorites={showOnlyFavorites}
-            toggleFavorites={toggleFavorites}
           />
           <div className="h-[calc(100vh-84px)] py-8 sm:px-8">
             <TradingViewChartClient

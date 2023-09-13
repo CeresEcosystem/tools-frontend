@@ -1,8 +1,6 @@
 import PricesModal from '@components/modal/prices_modal';
 import { ASSET_URL } from '@constants/index';
 import { Token } from '@interfaces/index';
-import { formatToCurrency } from '@utils/helpers';
-import { useFormatter } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
 import { BsArrowsFullscreen } from 'react-icons/bs';
@@ -11,19 +9,12 @@ export default function Price({
   token,
   prices,
   changeCurrentTokenFromModal,
-  showOnlyFavorites,
-  toggleFavorites,
 }: {
   token: Token;
   prices: Token[];
   // eslint-disable-next-line no-unused-vars
   changeCurrentTokenFromModal: (token: Token) => void;
-  showOnlyFavorites: boolean;
-  // eslint-disable-next-line no-unused-vars
-  toggleFavorites: (favorites: boolean) => void;
 }) {
-  const format = useFormatter();
-
   const [showPriceModal, setShowPriceModal] = useState(false);
 
   return (
@@ -37,14 +28,14 @@ export default function Price({
               alt={token.fullName}
             />
             <div className="flex flex-col">
-              <h4
-                onClick={() => setShowPriceModal(true)}
-                className="text-base cursor-pointer font-bold text-white sm:text-lg"
-              >
+              <h4 className="text-base font-bold text-white sm:text-lg">
                 {token.fullName}
               </h4>
-              <span className="text-lg text-cyan font-bold">
-                {formatToCurrency(format, token.price)}
+              <span
+                onClick={() => setShowPriceModal(true)}
+                className="text-xs text-white cursor-pointer font-bold text-opacity-50 hover:text-opacity-100 hover:text-pink"
+              >
+                Show all tokens
               </span>
             </div>
           </div>
@@ -65,8 +56,6 @@ export default function Price({
           changeCurrentTokenFromModal(token);
           setShowPriceModal(false);
         }}
-        showOnlyFavorites={showOnlyFavorites}
-        toggleFavorites={toggleFavorites}
       />
     </>
   );

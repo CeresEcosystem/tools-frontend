@@ -12,16 +12,27 @@ const usePrices = () => {
     (state: RootState) => state.tokens.favoriteTokens
   );
 
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(
-    favoriteTokens.length > 0
-  );
-
-  const prices = useRef<Token[]>([]);
-  const [pricesFavorites, setPricesFavorites] = useState<Token[]>([]);
+  const [prices, setPrices] = useState<Token[]>([]);
 
   const [currentToken, setCurrentToken] = useState<Token | undefined>();
 
   const priceInterval = useRef<ReturnType<typeof setInterval> | undefined>();
+
+  const sortTokens = useCallback(
+    (tokenA: Token, tokenB: Token) => {
+      const aIsFavorite = favoriteTokens.includes(tokenA.assetId);
+      const bIsFavorite = favoriteTokens.includes(tokenB.assetId);
+
+      if (aIsFavorite && !bIsFavorite) {
+        return -1;
+      } else if (!aIsFavorite && bIsFavorite) {
+        return 1;
+      } else {
+        return 0;
+      }
+    },
+    [favoriteTokens]
+  );
 
   const getPrices = useCallback(
     async (token?: string) => {
@@ -29,12 +40,13 @@ const usePrices = () => {
         .then(async (response) => {
           if (response.ok) {
             const json = (await response.json()) as Token[];
-            prices.current = json;
-            setPricesFavorites(
-              showOnlyFavorites
-                ? json.filter((p) => favoriteTokens.includes(p.assetId))
-                : json
-            );
+            const sortedTokens = json.slice().sort(sortTokens);
+
+            for (let i = 0; i < favoriteTokens.length; i++) {
+              sortedTokens[i].isFavorite = true;
+            }
+
+            setPrices(json.slice().sort(sortTokens));
 
             if (token) {
               const t = json.find((t) => t.token === token)!;
@@ -44,12 +56,12 @@ const usePrices = () => {
         })
         .catch(() => {});
     },
-    [favoriteTokens, showOnlyFavorites]
+    [favoriteTokens.length, sortTokens]
   );
 
   const changeCurrentToken = useCallback(
     (token: any) => {
-      const t = prices.current.find((t) => t.token === token?.name)!;
+      const t = prices.find((t) => t.token === token?.name)!;
       setCurrentToken(t);
     },
     [prices]
@@ -64,17 +76,6 @@ const usePrices = () => {
       getPrices();
     }, 60000);
   }, [getPrices]);
-
-  const toggleFavorites = (favorites: boolean) => {
-    if (favorites !== showOnlyFavorites) {
-      setPricesFavorites(
-        favorites
-          ? prices.current.filter((p) => favoriteTokens.includes(p.assetId))
-          : prices.current
-      );
-      setShowOnlyFavorites(favorites);
-    }
-  };
 
   useEffect(() => {
     if (isReady) {
@@ -92,12 +93,10 @@ const usePrices = () => {
 
   return {
     currentToken,
-    prices: pricesFavorites,
+    prices,
     getPrices,
     changeCurrentToken,
     changeCurrentTokenFromModal,
-    showOnlyFavorites,
-    toggleFavorites,
   };
 };
 

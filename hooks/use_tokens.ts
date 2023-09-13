@@ -21,33 +21,27 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     favoriteTokens.length > 0
   );
 
+  const dataFormatted = useRef<Token[]>(
+    data?.map((t) => {
+      return {
+        ...t,
+        assetIdFormatted: formatWalletAddress(t.assetId),
+        priceFormatted: formatToCurrency(format, t.price),
+      };
+    }) || []
+  );
+
   const getAllTokens = useCallback(
     (showFavorites = showOnlyFavorites) => {
       if (showFavorites) {
-        return (
-          data
-            ?.filter((item) => favoriteTokens.includes(item.assetId))
-            .map((token) => {
-              return {
-                ...token,
-                assetIdFormatted: formatWalletAddress(token.assetId),
-                priceFormatted: formatToCurrency(format, token.price),
-              };
-            }) || []
+        return dataFormatted.current.filter((item) =>
+          favoriteTokens.includes(item.assetId)
         );
       } else {
-        return (
-          data?.map((t) => {
-            return {
-              ...t,
-              assetIdFormatted: formatWalletAddress(t.assetId),
-              priceFormatted: formatToCurrency(format, t.price),
-            };
-          }) || []
-        );
+        return dataFormatted.current;
       }
     },
-    [data, favoriteTokens, format, showOnlyFavorites]
+    [favoriteTokens, showOnlyFavorites]
   );
 
   const [allTokens, setAllTokens] = useState<Token[]>(getAllTokens());

@@ -71,6 +71,7 @@ export interface Token {
   lockedTokens: number;
   assetIdFormatted: string | '';
   priceFormatted: string | '';
+  isFavorite?: boolean;
 }
 
 export interface TokensReturnType {
