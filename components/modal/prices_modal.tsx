@@ -55,7 +55,10 @@ export default function PricesModal({
       <div className="w-full">
         <Input handleChange={handleTokenSearch} />
       </div>
-      <div className="mt-8 overflow-y-auto overscroll-contain h-full">
+      <span className="mt-3 pl-2 text-white text-opacity-50 text-xs">
+        Your Favorites tokens from Tokens section are displayed first
+      </span>
+      <div className="mt-6 overflow-y-auto overscroll-contain h-full">
         <ul role="list" className="space-y-2">
           {tokenList.map((token) => (
             <li
