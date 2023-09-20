@@ -5,6 +5,13 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+declare global {
+  // eslint-disable-next-line no-unused-vars
+  interface Window {
+    flutter_inappwebview: any;
+  }
+}
+
 const usePrices = () => {
   const { query, isReady } = useRouter();
 
@@ -63,6 +70,8 @@ const usePrices = () => {
     (token: any) => {
       const t = prices.find((t) => t.token === token?.name)!;
       setCurrentToken(t);
+
+      window.flutter_inappwebview?.callHandler('tokenChange', t.token);
     },
     [prices]
   );
