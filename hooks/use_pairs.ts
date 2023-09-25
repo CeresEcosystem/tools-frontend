@@ -116,17 +116,21 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
   };
 
   const handleBaseAssetChange = (bAsset: string) => {
+    let synthFilter = syntheticsFilter;
+
+    if (bAsset === 'All' && synthFilter) {
+      synthFilter = false;
+      setSyntheticsFilter(false);
+    }
+
     if (bAsset !== selectedBaseAsset.current) {
       selectedBaseAsset.current = bAsset;
-
-      let synthFilter = syntheticsFilter;
-
-      if (bAsset === 'All' && synthFilter) {
-        synthFilter = false;
-        setSyntheticsFilter(false);
-      }
-
       setPairs(undefined, bAsset, synthFilter);
+    } else {
+      if (synthFilter) {
+        selectedBaseAsset.current = '';
+        setPairs(undefined, '', synthFilter);
+      }
     }
   };
 
