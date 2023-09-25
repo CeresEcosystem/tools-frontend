@@ -10,6 +10,8 @@ import { SYNTHETICS_FILTER } from '@constants/index';
 
 const limiter = 10;
 
+const filters = ['All', 'Favorites', 'Synthetics'];
+
 const useTokens = (data?: Token[]): TokensReturnType => {
   const format = useFormatter();
 
@@ -18,11 +20,9 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     (state: RootState) => state.tokens.favoriteTokens
   );
 
-  const [showOnlyFavorites, setShowOnlyFavorites] = useState(
-    favoriteTokens.length > 0
+  const [filter, setFilter] = useState(
+    favoriteTokens.length > 0 ? filters[1] : filters[0]
   );
-
-  const [syntheticsFilter, setSyntheticsFilter] = useState(false);
 
   const dataFormatted = useRef<Token[]>(
     data?.map((t) => {
@@ -34,37 +34,33 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     }) || []
   );
 
+  const searchQuery = useRef('');
+
   const getAllTokens = useCallback(
-    (
-      showFavorites = showOnlyFavorites,
-      filterBySynthetics = syntheticsFilter
-    ) => {
-      let arrayFiltered = [];
-
-      if (showFavorites) {
-        arrayFiltered = dataFormatted.current.filter((item) =>
-          favoriteTokens.includes(item.assetId)
-        );
-      } else {
-        arrayFiltered = dataFormatted.current;
+    (tokenFilter = filter) => {
+      switch (tokenFilter) {
+        case 'All':
+          return dataFormatted.current;
+        case 'Favorites':
+          return dataFormatted.current.filter((item) =>
+            favoriteTokens.includes(item.assetId)
+          );
+        case 'Synthetics':
+          return dataFormatted.current.filter((token) =>
+            token.assetId.startsWith(SYNTHETICS_FILTER)
+          );
+        default:
+          return dataFormatted.current;
       }
-
-      if (filterBySynthetics) {
-        arrayFiltered = arrayFiltered.filter((token) =>
-          token.assetId.startsWith(SYNTHETICS_FILTER)
-        );
-      }
-
-      return arrayFiltered;
     },
-    [favoriteTokens, showOnlyFavorites, syntheticsFilter]
+    [favoriteTokens, filter]
   );
 
   const [allTokens, setAllTokens] = useState<Token[]>(getAllTokens());
   const [tokens, setTokens] = useState(allTokens);
 
   const [tokenSlice, setTokenSlice] = useState(
-    showOnlyFavorites ? allTokens : allTokens.slice(0, limiter)
+    filter === 'Favorites' ? allTokens : allTokens.slice(0, limiter)
   );
 
   const currentPage = useRef(0);
@@ -82,40 +78,48 @@ const useTokens = (data?: Token[]): TokensReturnType => {
       limiter
     );
 
-  const resetData = (allTs = allTokens, favorites = showOnlyFavorites) => {
+  const resetData = (allTs: Token[], filt: string) => {
     setTokens(allTs);
     currentPage.current = 0;
     totalPages.current = allTs ? Math.ceil(allTs.length / limiter) : 0;
-    setTokenSlice(favorites ? allTs : allTs.slice(0, limiter));
+    setTokenSlice(filt === 'Favorites' ? allTs : allTs.slice(0, limiter));
   };
 
-  const handleTokenSearch = (search: ChangeEvent<HTMLInputElement>) => {
-    if (search.target.value !== '') {
-      setTokens(
-        allTokens?.filter(
-          (token) =>
-            token.assetId
-              .toUpperCase()
-              .includes(search.target.value.toUpperCase()) ||
-            token.fullName
-              .toUpperCase()
-              .includes(search.target.value.toUpperCase())
-        )
+  const handleTokenSearch = (
+    search?: ChangeEvent<HTMLInputElement>,
+    allTs = allTokens,
+    filt = filter
+  ) => {
+    const s = search?.target.value ?? searchQuery.current;
+
+    if (s !== '') {
+      const searchedTokens = allTs?.filter(
+        (token) =>
+          token.assetId.toUpperCase().includes(s.toUpperCase()) ||
+          token.fullName.toUpperCase().includes(s.toUpperCase())
       );
+
+      setTokens(searchedTokens);
       currentPage.current = 0;
-      totalPages.current = tokens ? Math.ceil(tokens.length / limiter) : 0;
-      setTokenSlice(showOnlyFavorites ? tokens : tokens.slice(0, limiter));
+      totalPages.current = searchedTokens
+        ? Math.ceil(searchedTokens.length / limiter)
+        : 0;
+      setTokenSlice(
+        filt === 'Favorites' ? searchedTokens : searchedTokens.slice(0, limiter)
+      );
     } else {
-      resetData();
+      resetData(allTs, filt);
     }
+
+    searchQuery.current = s;
   };
 
-  const toggleFavorites = (favorites: boolean) => {
-    if (favorites !== showOnlyFavorites) {
-      const tokensFiltered: Token[] = getAllTokens(favorites);
+  const toggleFilter = (tokenFilter: string) => {
+    if (tokenFilter !== filter) {
+      const tokensFiltered: Token[] = getAllTokens(tokenFilter);
       setAllTokens(tokensFiltered);
-      resetData(tokensFiltered, favorites);
-      setShowOnlyFavorites(favorites);
+      handleTokenSearch(undefined, tokensFiltered, tokenFilter);
+      setFilter(tokenFilter);
     }
   };
 
@@ -125,15 +129,6 @@ const useTokens = (data?: Token[]): TokensReturnType => {
 
   const removeTokenFromFavorites = (token: Token) => {
     dispatch(removeFromFavorites(token.assetId));
-  };
-
-  const handleSyntheticsFilter = () => {
-    const filter = !syntheticsFilter;
-    setSyntheticsFilter(filter);
-
-    const tokensFiltered: Token[] = getAllTokens(showOnlyFavorites, filter);
-    setAllTokens(tokensFiltered);
-    resetData(tokensFiltered);
   };
 
   return {
@@ -147,11 +142,10 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     handleTokenSearch,
     addTokenToFavorites,
     removeTokenFromFavorites,
-    showOnlyFavorites,
-    toggleFavorites,
+    filters,
+    filter,
+    toggleFilter,
     favoriteTokens,
-    syntheticsFilter,
-    handleSyntheticsFilter,
   };
 };
 

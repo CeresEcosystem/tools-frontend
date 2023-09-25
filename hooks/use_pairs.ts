@@ -89,11 +89,11 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
       const synthFilter = filterBySynthetics ?? syntheticsFilter;
 
       let pairsByBaseAsset =
-        ba === 'All'
+        ba === 'All' || ba === ''
           ? allPairs.current.allData
           : allPairs.current.allData.filter((pair) => pair.baseAsset === ba);
 
-      if (synthFilter) {
+      if (synthFilter && ba !== 'All') {
         pairsByBaseAsset = pairsByBaseAsset.filter((pair) =>
           pair.tokenAssetId.startsWith(SYNTHETICS_FILTER)
         );
@@ -119,12 +119,30 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
     if (bAsset !== selectedBaseAsset.current) {
       selectedBaseAsset.current = bAsset;
 
-      setPairs(undefined, bAsset);
+      let synthFilter = syntheticsFilter;
+
+      if (bAsset === 'All' && synthFilter) {
+        synthFilter = false;
+        setSyntheticsFilter(false);
+      }
+
+      setPairs(undefined, bAsset, synthFilter);
     }
   };
 
   const handleSyntheticsFilter = () => {
     const filter = !syntheticsFilter;
+
+    if (filter) {
+      if (selectedBaseAsset.current === 'All') {
+        selectedBaseAsset.current = '';
+      }
+    } else {
+      if (selectedBaseAsset.current === '') {
+        selectedBaseAsset.current = 'All';
+      }
+    }
+
     setSyntheticsFilter(filter);
     setPairs(undefined, undefined, filter);
   };

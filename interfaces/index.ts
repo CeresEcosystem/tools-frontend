@@ -87,11 +87,10 @@ export interface TokensReturnType {
   handleTokenSearch: (search: ChangeEvent<HTMLInputElement>) => void;
   addTokenToFavorites: (token: Token) => void;
   removeTokenFromFavorites: (token: Token) => void;
-  showOnlyFavorites: boolean;
-  toggleFavorites: (favorites: boolean) => void;
+  filters: string[];
+  filter: string;
+  toggleFilter: (filter: string) => void;
   favoriteTokens: string[];
-  syntheticsFilter: boolean;
-  handleSyntheticsFilter: () => void;
 }
 
 export interface Block {

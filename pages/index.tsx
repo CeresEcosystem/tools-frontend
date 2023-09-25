@@ -25,11 +25,10 @@ export default function Tokens({ data }: { data?: Token[] }) {
     handleTokenSearch,
     addTokenToFavorites,
     removeTokenFromFavorites,
-    showOnlyFavorites,
-    toggleFavorites,
+    filters,
+    filter,
+    toggleFilter,
     favoriteTokens,
-    syntheticsFilter,
-    handleSyntheticsFilter,
   } = useTokens(data);
 
   const { getLocks } = useLocks();
@@ -73,10 +72,9 @@ export default function Tokens({ data }: { data?: Token[] }) {
     <Container>
       <Input handleChange={handleTokenSearch} />
       <TokensFavoriteFilter
-        showOnlyFavorites={showOnlyFavorites}
-        toggleFavorites={toggleFavorites}
-        syntheticsFilter={syntheticsFilter}
-        handleSyntheticsFilter={handleSyntheticsFilter}
+        filters={filters}
+        filter={filter}
+        toggleFilter={toggleFilter}
       />
       <TokensList
         tokens={tokens}
@@ -87,9 +85,9 @@ export default function Tokens({ data }: { data?: Token[] }) {
         addTokenToFavorites={addTokenToFavorites}
         removeTokenFromFavorites={removeTokenFromFavorites}
         favoriteTokens={favoriteTokens}
-        showOnlyFavorites={showOnlyFavorites}
+        showOnlyFavorites={filter === 'Favorites'}
       />
-      {!showOnlyFavorites && totalPages > 1 && (
+      {filter !== 'Favorites' && totalPages > 1 && (
         <ListPagination
           currentPage={currentPage}
           totalPages={totalPages}
