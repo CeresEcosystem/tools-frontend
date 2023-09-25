@@ -27,6 +27,8 @@ export default function Pairs({ data }: { data?: Pair[] }) {
     goToNextPage,
     goToLastPage,
     handlePairSearch,
+    syntheticsFilter,
+    handleSyntheticsFilter,
   } = usePairs(data);
 
   const { getLocks } = useLocks();
@@ -58,6 +60,8 @@ export default function Pairs({ data }: { data?: Pair[] }) {
         baseAssets={baseAssets}
         selectedBaseAsset={selectedBaseAsset}
         handleBaseAssetChange={handleBaseAssetChange}
+        syntheticsFilter={syntheticsFilter}
+        handleSyntheticsFilter={handleSyntheticsFilter}
       />
       <PairsList
         pairs={pairs}

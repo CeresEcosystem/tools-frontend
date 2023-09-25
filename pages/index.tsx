@@ -28,6 +28,8 @@ export default function Tokens({ data }: { data?: Token[] }) {
     showOnlyFavorites,
     toggleFavorites,
     favoriteTokens,
+    syntheticsFilter,
+    handleSyntheticsFilter,
   } = useTokens(data);
 
   const { getLocks } = useLocks();
@@ -73,6 +75,8 @@ export default function Tokens({ data }: { data?: Token[] }) {
       <TokensFavoriteFilter
         showOnlyFavorites={showOnlyFavorites}
         toggleFavorites={toggleFavorites}
+        syntheticsFilter={syntheticsFilter}
+        handleSyntheticsFilter={handleSyntheticsFilter}
       />
       <TokensList
         tokens={tokens}

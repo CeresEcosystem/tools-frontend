@@ -5,11 +5,15 @@ export default function PairsFilter({
   baseAssets,
   selectedBaseAsset,
   handleBaseAssetChange,
+  syntheticsFilter,
+  handleSyntheticsFilter,
 }: {
   baseAssets: string[];
   selectedBaseAsset: string;
   // eslint-disable-next-line no-unused-vars
   handleBaseAssetChange: (bAsset: string) => void;
+  syntheticsFilter: boolean;
+  handleSyntheticsFilter: () => void;
 }) {
   return (
     <div className="flex flex-wrap mt-2">
@@ -39,6 +43,23 @@ export default function PairsFilter({
           </div>
         );
       })}
+      <div
+        onClick={() => handleSyntheticsFilter()}
+        className={classNames(
+          'bg-backgroundHeader mx-1 mt-2 px-4 py-1 rounded-3xl text-center cursor-pointer flex items-center justify-center space-x-2',
+          syntheticsFilter ? 'opacity-100' : 'opacity-50',
+          'hover:opacity-100'
+        )}
+      >
+        <img
+          src={`${ASSET_URL}/XST.svg`}
+          alt="XST"
+          className="h-8 w-8 rounded-full"
+        />
+        <span className="text-sm text-white font-medium md:text-base">
+          Synthetics
+        </span>
+      </div>
     </div>
   );
 }

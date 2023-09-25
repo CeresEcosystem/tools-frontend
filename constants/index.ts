@@ -15,3 +15,4 @@ export const HMX_ADDRESS =
   '0x002d4e9e03f192cc33b128319a049f353db98fbf4d98f717fd0b7f66a0462142';
 
 export const VAL_LATEST_BLOCK = 1243341;
+export const SYNTHETICS_FILTER = '0x0300';

@@ -6,6 +6,7 @@ import { Token, TokensReturnType } from '@interfaces/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/index';
 import { addToFavorites, removeFromFavorites } from '@store/tokens/token_slice';
+import { SYNTHETICS_FILTER } from '@constants/index';
 
 const limiter = 10;
 
@@ -21,6 +22,8 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     favoriteTokens.length > 0
   );
 
+  const [syntheticsFilter, setSyntheticsFilter] = useState(false);
+
   const dataFormatted = useRef<Token[]>(
     data?.map((t) => {
       return {
@@ -32,16 +35,29 @@ const useTokens = (data?: Token[]): TokensReturnType => {
   );
 
   const getAllTokens = useCallback(
-    (showFavorites = showOnlyFavorites) => {
+    (
+      showFavorites = showOnlyFavorites,
+      filterBySynthetics = syntheticsFilter
+    ) => {
+      let arrayFiltered = [];
+
       if (showFavorites) {
-        return dataFormatted.current.filter((item) =>
+        arrayFiltered = dataFormatted.current.filter((item) =>
           favoriteTokens.includes(item.assetId)
         );
       } else {
-        return dataFormatted.current;
+        arrayFiltered = dataFormatted.current;
       }
+
+      if (filterBySynthetics) {
+        arrayFiltered = arrayFiltered.filter((token) =>
+          token.assetId.startsWith(SYNTHETICS_FILTER)
+        );
+      }
+
+      return arrayFiltered;
     },
-    [favoriteTokens, showOnlyFavorites]
+    [favoriteTokens, showOnlyFavorites, syntheticsFilter]
   );
 
   const [allTokens, setAllTokens] = useState<Token[]>(getAllTokens());
@@ -111,6 +127,15 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     dispatch(removeFromFavorites(token.assetId));
   };
 
+  const handleSyntheticsFilter = () => {
+    const filter = !syntheticsFilter;
+    setSyntheticsFilter(filter);
+
+    const tokensFiltered: Token[] = getAllTokens(showOnlyFavorites, filter);
+    setAllTokens(tokensFiltered);
+    resetData(tokensFiltered);
+  };
+
   return {
     tokens: tokenSlice,
     totalPages: totalPages.current,
@@ -125,6 +150,8 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     showOnlyFavorites,
     toggleFavorites,
     favoriteTokens,
+    syntheticsFilter,
+    handleSyntheticsFilter,
   };
 };
 

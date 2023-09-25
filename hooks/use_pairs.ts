@@ -1,8 +1,9 @@
 import { formatNumber, formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import { ChangeEvent, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import usePagination from '@hooks/use_pagination';
 import { Pair, PairData, PairsReturnType } from '@interfaces/index';
+import { SYNTHETICS_FILTER } from '@constants/index';
 
 const limiter = 10;
 
@@ -50,6 +51,8 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
   const pairs = useRef(allPairs.current.allData);
   const searchQuery = useRef('');
 
+  const [syntheticsFilter, setSyntheticsFilter] = useState(false);
+
   const [pairsSlice, setPairsSlice] = useState(
     allPairs.current.allData.slice(0, limiter) ?? []
   );
@@ -68,7 +71,7 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
       pairs.current,
       (cp: number) => (currentPage.current = cp),
       (array: Array<Pair>) => setPairsSlice(array),
-      limiter,
+      limiter
     );
 
   const setPage = () => {
@@ -79,22 +82,32 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
     setPairsSlice(pairs.current.slice(0, limiter) ?? []);
   };
 
-  const setPairs = (search?: string, bAsset?: string) => {
-    const s = search ?? searchQuery.current;
-    const ba = bAsset ?? selectedBaseAsset.current;
+  const setPairs = useCallback(
+    (search?: string, bAsset?: string, filterBySynthetics?: boolean) => {
+      const s = search ?? searchQuery.current;
+      const ba = bAsset ?? selectedBaseAsset.current;
+      const synthFilter = filterBySynthetics ?? syntheticsFilter;
 
-    const pairsByBaseAsset =
-      ba === 'All'
-        ? allPairs.current.allData
-        : allPairs.current.allData.filter((pair) => pair.baseAsset === ba);
+      let pairsByBaseAsset =
+        ba === 'All'
+          ? allPairs.current.allData
+          : allPairs.current.allData.filter((pair) => pair.baseAsset === ba);
 
-    pairs.current = pairsByBaseAsset.filter(
-      (pair) =>
-        pair.tokenFullName.toUpperCase().includes(s.toUpperCase()) ||
-        pair.baseAssetFullName.toUpperCase().includes(s.toUpperCase())
-    );
-    setPage();
-  };
+      if (synthFilter) {
+        pairsByBaseAsset = pairsByBaseAsset.filter((pair) =>
+          pair.tokenAssetId.startsWith(SYNTHETICS_FILTER)
+        );
+      }
+
+      pairs.current = pairsByBaseAsset.filter(
+        (pair) =>
+          pair.tokenFullName.toUpperCase().includes(s.toUpperCase()) ||
+          pair.baseAssetFullName.toUpperCase().includes(s.toUpperCase())
+      );
+      setPage();
+    },
+    [syntheticsFilter]
+  );
 
   const handlePairSearch = (search: ChangeEvent<HTMLInputElement>) => {
     searchQuery.current = search.target.value;
@@ -108,6 +121,12 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
 
       setPairs(undefined, bAsset);
     }
+  };
+
+  const handleSyntheticsFilter = () => {
+    const filter = !syntheticsFilter;
+    setSyntheticsFilter(filter);
+    setPairs(undefined, undefined, filter);
   };
 
   return {
@@ -124,6 +143,8 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
     goToNextPage,
     goToLastPage,
     handlePairSearch,
+    syntheticsFilter,
+    handleSyntheticsFilter,
   };
 };
 

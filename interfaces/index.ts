@@ -61,6 +61,8 @@ export interface PairsReturnType {
   goToNextPage: () => void;
   goToLastPage: () => void;
   handlePairSearch: (search: ChangeEvent<HTMLInputElement>) => void;
+  syntheticsFilter: boolean;
+  handleSyntheticsFilter: () => void;
 }
 
 export interface Token {
@@ -88,6 +90,8 @@ export interface TokensReturnType {
   showOnlyFavorites: boolean;
   toggleFavorites: (favorites: boolean) => void;
   favoriteTokens: string[];
+  syntheticsFilter: boolean;
+  handleSyntheticsFilter: () => void;
 }
 
 export interface Block {
