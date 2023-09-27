@@ -95,6 +95,7 @@ export interface TokensReturnType {
 
 export interface Block {
   blockNum: number;
+  burnType: string;
   grossBurn: number;
   netBurn: number;
   remintedLp: number;

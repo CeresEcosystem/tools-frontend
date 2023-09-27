@@ -5,7 +5,9 @@ import usePagination from '@hooks/use_pagination';
 const limiter = 6;
 
 const useGross = (blocks?: Block[]) => {
-  const allBlocks = useRef(blocks ?? []);
+  const allBlocks = useRef(
+    blocks?.filter((block) => block.burnType === 'FEES') ?? []
+  );
 
   const [blocksSlice, setBlocksSlice] = useState(
     allBlocks.current.slice(0, limiter) ?? []

@@ -32,6 +32,7 @@ function GrossTableData({
   if (blocks) {
     return (
       <div className="flex flex-col space-y-4 overflow-x-hidden">
+        <h1 className="text-white px-2 text-base">Burns by fees</h1>
         <div className="max-w-full overflow-x-auto">
           <table className="min-w-[700px] w-full">
             <thead>

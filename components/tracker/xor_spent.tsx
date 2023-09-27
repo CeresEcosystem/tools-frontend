@@ -4,7 +4,6 @@ import { useFormatter } from 'next-intl';
 import TimeTab from '@components/tracker/time_tab';
 import useXORSpent from '@hooks/use_xor_spent';
 import ListPagination from '@components/pagination/list_pagination';
-import { VAL_LATEST_BLOCK } from '@constants/index';
 
 function XorSpentData({
   blocks,
@@ -35,22 +34,22 @@ function XorSpentData({
         <TimeTab
           selectedTimeFrame={selectedTimeFrame}
           setSelectedTimeFrame={setSelectedTimeFrame}
-          label={`XOR ${selectedToken === 'PSWAP' ? 'spent' : 'fees'}`}
+          label={selectedToken === 'PSWAP' ? 'XOR spent' : 'TBC burns'}
         />
         <table>
           <tbody>
             {blocksSlice.map((block) => (
               <tr key={block.blockNum}>
-                <td className="text-white text-sm p-2">{`${
-                  selectedToken === 'VAL' && block.blockNum === VAL_LATEST_BLOCK
-                    ? 'until'
-                    : 'block'
-                } #${formatNumber(format, block.blockNum, 0)}`}</td>
-                <td className="text-right text-white text-sm p-2">{`${formatNumber(
+                <td className="text-white text-sm p-2">{`block #${formatNumber(
                   format,
-                  block.xorSpent,
-                  4
-                )} XOR`}</td>
+                  block.blockNum,
+                  0
+                )}`}</td>
+                <td className="text-right text-white text-sm p-2">
+                  {selectedToken === 'VAL'
+                    ? `${formatNumber(format, block.grossBurn, 4)} VAL`
+                    : `${formatNumber(format, block.xorSpent, 4)} XOR`}
+                </td>
               </tr>
             ))}
           </tbody>
