@@ -24,7 +24,7 @@ function XorSpentData({
     goToPreviousPage,
     goToNextPage,
     goToLastPage,
-  } = useXORSpent(blocks, last);
+  } = useXORSpent(selectedToken, blocks, last);
 
   const format = useFormatter();
 
