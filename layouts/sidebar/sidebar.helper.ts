@@ -6,7 +6,7 @@ export const navigation = [
   { name: 'Farming', href: '/farming', icon: 'sprout' },
   { name: 'Burning Tracker', href: '/tracker', icon: 'flame' },
   {
-    name: 'Charts',
+    name: 'Charts & Swaps',
     href: { pathname: '/charts', query: { token: 'CERES' } },
     icon: 'chart',
   },
