@@ -1,6 +1,15 @@
 /* eslint-disable no-unused-vars */
 import { ChangeEvent } from 'react';
 
+export interface PageMeta {
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  pageCount: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 export interface Banner {
   sm: string;
   md: string;
@@ -294,4 +303,21 @@ export interface WalletAddress {
 export interface PortfolioModalData {
   show: boolean;
   item: WalletAddress | null;
+}
+
+export interface Swap {
+  swappedAt: string;
+  accountId: string;
+  inputAssetId: string;
+  outputAssetId: string;
+  assetInputAmount: number;
+  assetOutputAmount: number;
+  inputAsset?: string;
+  outputAsset?: string;
+  type?: string;
+}
+
+export interface SwapsData {
+  data: Swap[];
+  meta: PageMeta;
 }

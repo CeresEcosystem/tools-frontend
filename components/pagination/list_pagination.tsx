@@ -12,6 +12,8 @@ export default function ListPagination({
   goToNextPage,
   goToLastPage,
   small = false,
+  topMargin = true,
+  justifyEnd = false,
 }: {
   currentPage: number;
   totalPages: number;
@@ -20,9 +22,17 @@ export default function ListPagination({
   goToNextPage: () => void;
   goToLastPage: () => void;
   small?: boolean;
+  topMargin?: boolean;
+  justifyEnd?: boolean;
 }) {
   return (
-    <div className={'flex space-x-2 justify-center mt-8'}>
+    <div
+      className={classNames(
+        'flex space-x-2',
+        topMargin && 'mt-8',
+        justifyEnd ? 'justify-end' : 'justify-center'
+      )}
+    >
       <button
         onClick={() => goToFirstPage()}
         className={classNames(buttonStyle, small && 'h-6 w-6')}

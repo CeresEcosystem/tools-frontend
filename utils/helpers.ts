@@ -86,6 +86,30 @@ export function formatNumber(
   });
 }
 
+export function formatNumberExceptDecimal(
+  format: any,
+  number: number | string
+) {
+  const numberString = number?.toString();
+
+  if (numberString.includes('.')) {
+    const numberSplit = numberString.split('.');
+    const firstPart = format.number(parseInt(numberSplit[0]), {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+
+    return `${firstPart}.${numberSplit[1]}`;
+  } else {
+    return format.number(number, {
+      style: 'decimal',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  }
+}
+
 export function scrollToTop() {
   const isBrowser = () => typeof window !== 'undefined';
 
@@ -96,6 +120,13 @@ export function scrollToTop() {
 export function formatDateFromTimestamp(timestamp: number) {
   const date = moment(new Date(timestamp), 'YYYY-MM-DD HH:MM');
   return `${date.format('MMMM DD, YYYY')} ${date.format('HH:mm')}`;
+}
+
+export function formatDate(date: string) {
+  const dateFormatted = moment(date);
+  return `${dateFormatted.format('YYYY-MM-DD')} ${dateFormatted.format(
+    'HH:mm'
+  )}`;
 }
 
 export function formatTimeFrame(time: string): string {

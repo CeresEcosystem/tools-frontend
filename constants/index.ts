@@ -16,3 +16,4 @@ export const HMX_ADDRESS =
 
 export const VAL_LATEST_BLOCK = 1243341;
 export const SYNTHETICS_FILTER = '0x0300';
+export const WALLET_ADDRESSES = 'WALLET_ADDRESSES';

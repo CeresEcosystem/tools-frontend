@@ -7,7 +7,7 @@ import {
   PortfolioTab,
   WalletAddress,
 } from '@interfaces/index';
-import { NEW_API_URL } from '@constants/index';
+import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
 import { getEncodedAddress } from '@utils/helpers';
 import usePersistState from './use_persist_state';
 
@@ -17,8 +17,6 @@ const tabs = [
   { tab: 'Rewards', permalink: '/portfolio/rewards/' },
   { tab: 'Liquidity', permalink: '/portfolio/liquidity/' },
 ];
-
-const WALLET_ADDRESSES = 'WALLET_ADDRESSES';
 
 const usePortfolio = () => {
   const polkadot = usePolkadot();

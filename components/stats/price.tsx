@@ -3,17 +3,19 @@ import { ASSET_URL } from '@constants/index';
 import { Token } from '@interfaces/index';
 import Link from 'next/link';
 import { useState } from 'react';
-import { BsArrowsFullscreen } from 'react-icons/bs';
+import { BsArrowsFullscreen, BsArrowLeftRight } from 'react-icons/bs';
 
 export default function Price({
   token,
   prices,
   changeCurrentTokenFromModal,
+  scrollToSwaps,
 }: {
   token: Token;
   prices: Token[];
   // eslint-disable-next-line no-unused-vars
   changeCurrentTokenFromModal: (token: Token) => void;
+  scrollToSwaps: () => void;
 }) {
   const [showPriceModal, setShowPriceModal] = useState(false);
 
@@ -39,13 +41,22 @@ export default function Price({
               </span>
             </div>
           </div>
-          <Link
-            href={{ pathname: '/trading', query: { token: token.token } }}
-            target="tv_chart"
-            className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
-          >
-            <BsArrowsFullscreen size={20} color="#ffffff" />
-          </Link>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => scrollToSwaps()}
+              title="Scroll to swaps"
+              className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
+            >
+              <BsArrowLeftRight size={20} color="#ffffff" />
+            </button>
+            <Link
+              href={{ pathname: '/trading', query: { token: token.token } }}
+              target="tv_chart"
+              className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
+            >
+              <BsArrowsFullscreen size={20} color="#ffffff" />
+            </Link>
+          </div>
         </div>
       </div>
       <PricesModal
