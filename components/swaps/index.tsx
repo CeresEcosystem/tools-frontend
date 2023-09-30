@@ -1,5 +1,6 @@
 import ListPagination from '@components/pagination/list_pagination';
 import Spinner from '@components/spinner';
+import { ASSET_URL } from '@constants/index';
 import useSwaps from '@hooks/use_swaps';
 import { Token } from '@interfaces/index';
 import {
@@ -10,8 +11,8 @@ import {
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
 
-const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
-const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
+const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
+const cellStyle = 'text-center text-white px-2 py-4 text-xs font-medium';
 
 export default function Swaps({
   address,
@@ -61,7 +62,7 @@ export default function Swaps({
               key={swap.swappedAt + index}
               className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10 hover:bg-backgroundHeader"
             >
-              <td className={classNames(cellStyle, 'min-w-[200px]')}>
+              <td className={classNames(cellStyle, 'min-w-[150px]')}>
                 {formatDate(swap.swappedAt)}
               </td>
               <td
@@ -73,8 +74,26 @@ export default function Swaps({
                 {swap.type}
               </td>
               <td className={cellStyle}>{swap.accountId}</td>
-              <td className={cellStyle}>{swap.inputAsset}</td>
-              <td className={cellStyle}>{swap.outputAsset}</td>
+              <td className={classNames(cellStyle, 'min-w-[150px]')}>
+                <img
+                  src={`${ASSET_URL}/${swap.inputAsset}.svg`}
+                  alt=""
+                  className="w-8 h-8 mr-3 inline-block"
+                />
+                <span className="text-left min-w-[50px] inline-block">
+                  {swap.inputAsset}
+                </span>
+              </td>
+              <td className={classNames(cellStyle, 'min-w-[150px]')}>
+                <img
+                  src={`${ASSET_URL}/${swap.outputAsset}.svg`}
+                  alt=""
+                  className="w-8 h-8 mr-3 inline-block"
+                />
+                <span className="text-left min-w-[50px] inline-block">
+                  {swap.outputAsset}
+                </span>
+              </td>
               <td className={cellStyle}>
                 {formatNumberExceptDecimal(format, swap.assetInputAmount)}
               </td>
