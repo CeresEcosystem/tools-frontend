@@ -2,13 +2,27 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 const usePersistState = <T>(
   initialValue: T,
-  localStorageKey: string
+  localStorageKey: string,
+  // eslint-disable-next-line no-unused-vars
+  condition?: (value: T) => boolean
 ): [T, Dispatch<SetStateAction<T>>] => {
   const [value, setValue] = useState<T>(() => {
     try {
       const valueFromLS = localStorage.getItem(localStorageKey);
 
-      return valueFromLS ? (JSON.parse(valueFromLS) as T) : initialValue;
+      if (valueFromLS) {
+        const v = JSON.parse(valueFromLS) as T;
+
+        if (condition) {
+          if (condition(v)) {
+            return v;
+          } else {
+            localStorage.removeItem(localStorageKey);
+          }
+        }
+      }
+
+      return initialValue;
     } catch (error) {
       return initialValue;
     }

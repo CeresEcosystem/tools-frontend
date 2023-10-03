@@ -10,6 +10,7 @@ import {
 import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
 import { getEncodedAddress } from '@utils/helpers';
 import usePersistState from './use_persist_state';
+import { useRouter } from 'next/router';
 
 const tabs = [
   { tab: 'Portfolio', permalink: '/portfolio/' },
@@ -19,13 +20,23 @@ const tabs = [
 ];
 
 const usePortfolio = () => {
+  const router = useRouter();
+
   const polkadot = usePolkadot();
 
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [loading, setLoading] = useState(false);
   const [selectedWallet, setSelectedWallet] =
-    usePersistState<WalletAddress | null>(null, 'SELECTED_WALLET');
+    usePersistState<WalletAddress | null>(
+      null,
+      'SELECTED_WALLET',
+      (value: WalletAddress | null) => {
+        if (value && value.name !== '' && router.query.slug === undefined)
+          return true;
+        return false;
+      }
+    );
 
   const polkadotWallets = useRef<WalletAddress[]>([]);
   const storageWallets = useRef<WalletAddress[]>([]);
@@ -158,45 +169,61 @@ const usePortfolio = () => {
         ? (JSON.parse(wallets) as WalletAddress[])
         : [];
 
-      const allWallets = [
-        ...polkadotWallets.current,
-        ...storageWallets.current,
-      ];
+      if (router.query.slug && router.query.slug?.length > 0) {
+        const wallet: WalletAddress = {
+          name: '',
+          address: router.query.slug[0],
+          fromPolkadotExtension: false,
+        };
+        storageWallets.current?.push(wallet);
+        setSelectedWallet(wallet);
+      } else {
+        const allWallets = [
+          ...polkadotWallets.current,
+          ...storageWallets.current,
+        ];
 
-      if (!selectedWallet && allWallets.length > 0) {
-        setSelectedWallet(allWallets[0]);
+        if (!selectedWallet && allWallets.length > 0) {
+          setSelectedWallet(allWallets[0]);
+        }
       }
 
       setLoadingStatus(false);
     },
-    [polkadot?.accounts, selectedWallet, setSelectedWallet]
+    [polkadot?.accounts, router.query.slug, selectedWallet, setSelectedWallet]
   );
 
   const addEditWallet = useCallback(
     (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
-      if (previousWallet) {
-        const walletIndex = storageWallets.current.findIndex(
-          (w) =>
-            w.name === previousWallet.name &&
-            w.address === previousWallet.address
-        );
-
-        if (walletIndex !== -1) {
-          storageWallets.current[walletIndex] = {
-            name: wallet.name,
-            address: wallet.address,
-            fromPolkadotExtension: wallet.fromPolkadotExtension,
-          };
-          localStorage.setItem(
-            WALLET_ADDRESSES,
-            JSON.stringify(storageWallets.current)
+      if (wallet.name !== '') {
+        if (previousWallet) {
+          const walletIndex = storageWallets.current.findIndex(
+            (w) =>
+              w.name === previousWallet.name &&
+              w.address === previousWallet.address
           );
+
+          if (walletIndex !== -1) {
+            storageWallets.current[walletIndex] = {
+              name: wallet.name,
+              address: wallet.address,
+              fromPolkadotExtension: wallet.fromPolkadotExtension,
+            };
+            localStorage.setItem(
+              WALLET_ADDRESSES,
+              JSON.stringify(storageWallets.current)
+            );
+            setSelectedWallet(wallet);
+          }
+        } else {
+          const newArray = [...storageWallets.current, wallet];
+          storageWallets.current = newArray;
+          localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
           setSelectedWallet(wallet);
         }
       } else {
         const newArray = [...storageWallets.current, wallet];
         storageWallets.current = newArray;
-        localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
         setSelectedWallet(wallet);
       }
     },

@@ -41,8 +41,10 @@ export default function SideBar({
               {navigation.map((item) => {
                 const active =
                   typeof item.href === 'string'
-                    ? router.pathname === item.href
-                    : router.pathname === item.href.pathname;
+                    ? item.href === '/'
+                      ? router.pathname === item.href
+                      : router.pathname.includes(item.href)
+                    : router.pathname.includes(item.href.pathname);
                 const Icon = item.icon;
 
                 return (

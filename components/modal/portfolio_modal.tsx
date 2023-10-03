@@ -94,7 +94,6 @@ export default function PortfolioModal({
                 id="name"
                 label="Wallet name"
                 value={formData.name}
-                required
                 handleChange={handleChange}
                 showIcon={false}
                 placeholder="Enter wallet name"

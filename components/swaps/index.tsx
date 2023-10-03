@@ -10,6 +10,10 @@ import {
 } from '@utils/helpers';
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
+import Link from 'next/link';
+// import { useEffect } from 'react';
+
+// import { io } from 'socket.io-client';
 
 const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
 const cellStyle = 'text-center text-white px-2 py-4 text-xs font-medium';
@@ -22,6 +26,29 @@ export default function Swaps({
   tokens: Token[];
 }) {
   const format = useFormatter();
+
+  // useEffect(() => {
+  //   const socket = io('http://192.168.1.61:3004/swapsocket');
+
+  //   socket.on('connect', () => {
+  //     console.log('Socket connected');
+  //   });
+
+  //   socket.on(
+  //     '0x0200000000000000000000000000000000000000000000000000000000000000',
+  //     (data) => {
+  //       console.log(data);
+  //     }
+  //   );
+
+  //   socket.on('disconnect', () => {
+  //     console.log('Socket disconnected');
+  //   });
+
+  //   return () => {
+  //     socket.disconnect();
+  //   };
+  // }, []);
 
   const {
     swaps,
@@ -73,7 +100,11 @@ export default function Swaps({
               >
                 {swap.type}
               </td>
-              <td className={cellStyle}>{swap.accountId}</td>
+              <td className={cellStyle}>
+                <Link href={`/portfolio/${swap.accountId}`}>
+                  {swap.accountId}
+                </Link>
+              </td>
               <td className={classNames(cellStyle, 'min-w-[150px]')}>
                 <img
                   src={`${ASSET_URL}/${swap.inputAsset}.svg`}

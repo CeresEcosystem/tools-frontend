@@ -139,9 +139,14 @@ function PortfolioInput({
               onChange={handleWalletChange}
             >
               {walletAddresses.map((wallet, index) => (
-                <option key={index} value={index}>{`${
-                  wallet.name
-                } (${formatWalletAddress(wallet.address, 6)})`}</option>
+                <option key={index} value={index}>
+                  {wallet.name !== ''
+                    ? `${wallet.name} (${formatWalletAddress(
+                        wallet.address,
+                        6
+                      )})`
+                    : formatWalletAddress(wallet.address, 10)}
+                </option>
               ))}
             </select>
           </div>
@@ -154,7 +159,8 @@ function PortfolioInput({
         )}
         <div className="flex items-center justify-end space-x-2">
           {walletAddresses.length > 0 &&
-            !selectedWallet?.fromPolkadotExtension && (
+            !selectedWallet?.fromPolkadotExtension &&
+            selectedWallet?.name !== '' && (
               <button
                 onClick={() => showModal(selectedWallet)}
                 disabled={loading}
