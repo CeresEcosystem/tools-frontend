@@ -132,11 +132,13 @@ const usePortfolio = () => {
     [selectedTab.permalink, selectedTab.tab, loading]
   );
 
-  const handleWalletChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedIndex = event.target.selectedIndex;
-    setSelectedWallet(
-      [...polkadotWallets.current, ...storageWallets.current][selectedIndex]
-    );
+  const handleWalletChange = (newWallet?: string) => {
+    const wallet =
+      [...polkadotWallets.current, ...storageWallets.current].find(
+        (w) => w.address === newWallet
+      ) ?? null;
+
+    setSelectedWallet(wallet);
   };
 
   const changeSelectedTab = (tab: PortfolioTab) => {
@@ -169,20 +171,29 @@ const usePortfolio = () => {
         ? (JSON.parse(wallets) as WalletAddress[])
         : [];
 
+      const allWallets = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ];
+
       if (router.query.slug && router.query.slug?.length > 0) {
         const wallet: WalletAddress = {
           name: '',
           address: router.query.slug[0],
           fromPolkadotExtension: false,
         };
-        storageWallets.current?.push(wallet);
-        setSelectedWallet(wallet);
-      } else {
-        const allWallets = [
-          ...polkadotWallets.current,
-          ...storageWallets.current,
-        ];
 
+        const walletExist = allWallets.find(
+          (w) => w.address === wallet.address
+        );
+
+        if (walletExist) {
+          setSelectedWallet(walletExist);
+        } else {
+          storageWallets.current?.push(wallet);
+          setSelectedWallet(wallet);
+        }
+      } else {
         if (!selectedWallet && allWallets.length > 0) {
           setSelectedWallet(allWallets[0]);
         }
@@ -195,6 +206,11 @@ const usePortfolio = () => {
 
   const addEditWallet = useCallback(
     (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
+      const walletExist = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ].find((w) => w.address === wallet.address);
+
       if (wallet.name !== '') {
         if (previousWallet) {
           const walletIndex = storageWallets.current.findIndex(
@@ -216,15 +232,23 @@ const usePortfolio = () => {
             setSelectedWallet(wallet);
           }
         } else {
-          const newArray = [...storageWallets.current, wallet];
-          storageWallets.current = newArray;
-          localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
-          setSelectedWallet(wallet);
+          if (walletExist) {
+            setSelectedWallet(walletExist);
+          } else {
+            const newArray = [...storageWallets.current, wallet];
+            storageWallets.current = newArray;
+            localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
+            setSelectedWallet(wallet);
+          }
         }
       } else {
-        const newArray = [...storageWallets.current, wallet];
-        storageWallets.current = newArray;
-        setSelectedWallet(wallet);
+        if (walletExist) {
+          setSelectedWallet(walletExist);
+        } else {
+          const newArray = [...storageWallets.current, wallet];
+          storageWallets.current = newArray;
+          setSelectedWallet(wallet);
+        }
       }
     },
     [setSelectedWallet]
@@ -233,7 +257,7 @@ const usePortfolio = () => {
   const removeWallet = useCallback(
     (wallet: WalletAddress) => {
       const removedArray = Array.from(storageWallets.current).filter(
-        (w) => w.address !== wallet.address && w.name !== wallet.name
+        (w) => w.address !== wallet.address
       );
 
       storageWallets.current = removedArray;

@@ -315,6 +315,7 @@ export interface Swap {
   inputAsset?: string;
   outputAsset?: string;
   type?: string;
+  accountIdFormatted?: string;
 }
 
 export interface SwapsData {

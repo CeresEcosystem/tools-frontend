@@ -17,9 +17,10 @@ import {
 } from '@utils/helpers';
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { PencilIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import PortfolioModal from '@components/modal/portfolio_modal';
+import Select from 'react-select';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -115,40 +116,47 @@ function PortfolioInput({
   selectedWallet: WalletAddress | null;
   walletAddresses: WalletAddress[];
   // eslint-disable-next-line no-unused-vars
-  handleWalletChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleWalletChange: (newWallet?: string) => void;
   loading?: boolean;
   // eslint-disable-next-line no-unused-vars
   showModal: (item: WalletAddress | null) => void;
 }) {
+  const getItem = (w: WalletAddress | null) => {
+    if (w) {
+      if (w.name !== '') {
+        const wf = `${w.name} (${formatWalletAddress(w.address, 6)})`;
+        return { label: wf, value: w.address };
+      }
+
+      const wf = formatWalletAddress(w.address, 10);
+      return { label: wf, value: w.address };
+    }
+
+    return { label: '', value: '' };
+  };
+
+  const options = walletAddresses.map((wallet) => {
+    return getItem(wallet);
+  });
+
+  const selectedValue = getItem(selectedWallet);
+
   return (
     <div className="max-w-lg mx-auto mb-10">
       <div className="flex space-x-4 items-center">
         {walletAddresses.length > 0 ? (
-          <div className="relative w-full after:content-['▼'] after:top-3.5 after:text-white after:text-opacity-50 after:text-xs after:right-4 after:absolute">
-            <select
+          <div className="relative w-full">
+            <Select
               id="selectedWallet"
               name="selectedWallet"
-              className="block relative w-full appearance-none bg-backgroundHeader border-backgroundHeader border-2 rounded-xl py-2 pl-4 pr-10 sm:pr-4 text-base text-white capitalize font-semibold focus:outline-none focus:border-pink focus:ring-0"
-              value={
-                selectedWallet
-                  ? walletAddresses.findIndex(
-                      (w) => w.address === selectedWallet.address
-                    )
-                  : 0
+              value={selectedValue}
+              options={options}
+              isSearchable
+              // eslint-disable-next-line no-unused-vars
+              onChange={(newValue, _actionMeta) =>
+                handleWalletChange(newValue?.value)
               }
-              onChange={handleWalletChange}
-            >
-              {walletAddresses.map((wallet, index) => (
-                <option key={index} value={index}>
-                  {wallet.name !== ''
-                    ? `${wallet.name} (${formatWalletAddress(
-                        wallet.address,
-                        6
-                      )})`
-                    : formatWalletAddress(wallet.address, 10)}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         ) : (
           <span className="w-full text-white text-sm">

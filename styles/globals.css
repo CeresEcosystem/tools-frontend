@@ -87,3 +87,66 @@ body {
     padding-right: 12px;
   }
 }
+
+.css-13cymwt-control {
+  background: #532968 !important;
+  border: 2px solid #532968 !important;
+  border-radius: 12px !important;
+}
+
+.css-t3ipsp-control {
+  background: #532968 !important;
+  border: 2px solid #532968 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 2px #f0398c !important;
+}
+
+.css-1dimb5e-singleValue {
+  font-size: 16px !important;
+  color: #ffffff !important;
+  text-transform: capitalize !important;
+  font-weight: 600 !important;
+}
+
+.css-166bipr-Input {
+  font-size: 16px !important;
+  color: #ffffff !important;
+  text-transform: capitalize !important;
+  font-weight: 600 !important;
+}
+
+.css-1u9des2-indicatorSeparator {
+  background-color: #ffffff50 !important;
+}
+
+.css-1xc3v61-indicatorContainer {
+  color: #ffffff50 !important;
+}
+
+.css-15lsz6c-indicatorContainer {
+  color: #ffffff50 !important;
+}
+
+.css-1nmdiq5-menu {
+  background: #250936 !important;
+}
+
+.css-tr4s17-option {
+  font-size: 16px !important;
+  color: #ffffff !important;
+  text-transform: capitalize !important;
+  background-color: #532968 !important;
+}
+
+.css-10wo9uf-option {
+  font-size: 16px !important;
+  color: #ffffff !important;
+  text-transform: capitalize !important;
+}
+
+.css-d7l1ni-option {
+  background-color: #532968 !important;
+  font-size: 16px !important;
+  text-transform: capitalize !important;
+  color: #ffffff !important;
+}

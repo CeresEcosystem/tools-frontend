@@ -5,6 +5,7 @@ export const LOCK_API_URL = 'https://api.cerestoken.io/api';
 export const ASSET_URL = 'https://data.cerestoken.io/storage/icons';
 export const DEMETER_API = 'https://api.deotoken.com/api/demeter';
 export const HERMES_API = 'https://api.hermes-dao.io/api';
+export const SWAP_SOCKET_URL = 'https://data.cerestoken.io/swapsocket';
 
 // SORA API //
 export const POLKADOT_ACCOUNT = 'POLKADOT_ACCOUNT';

@@ -1,4 +1,8 @@
-import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
+import {
+  NEW_API_URL,
+  SWAP_SOCKET_URL,
+  WALLET_ADDRESSES,
+} from '@constants/index';
 import { usePolkadot } from '@context/polkadot_context';
 import {
   PageMeta,
@@ -7,11 +11,16 @@ import {
   Token,
   WalletAddress,
 } from '@interfaces/index';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { getEncodedAddress } from '@utils/helpers';
+import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Socket, io } from 'socket.io-client';
 
 const useSwaps = (tokens: Token[], address: string) => {
   const polkadot = usePolkadot();
+
+  const { pathname } = useRouter();
 
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
@@ -21,17 +30,31 @@ const useSwaps = (tokens: Token[], address: string) => {
 
   const pageMeta = useRef<PageMeta | undefined>();
 
+  const currentAddress = useRef(address);
+  const socket = useRef<
+    Socket<DefaultEventsMap, DefaultEventsMap> | undefined
+  >();
+
+  const connectSocket = useCallback(() => {
+    socket.current = io(SWAP_SOCKET_URL);
+  }, []);
+
+  const disconnectSocket = useCallback(() => {
+    socket.current?.disconnect();
+    socket.current = undefined;
+  }, []);
+
   const fetchSwaps = useCallback(
-    (addr: string, page = 1) => {
-      fetch(`${NEW_API_URL}/swaps/${addr}?page=${page}`)
+    async (addr: string, page = 1) => {
+      await fetch(`${NEW_API_URL}/swaps/${addr}?page=${page}`)
         .then(async (response) => {
           if (response.ok) {
             const responseData = (await response.json()) as SwapsData;
 
-            const swaps: Swap[] = [];
+            const swapsArray: Swap[] = [];
 
             responseData.data.forEach((swap) =>
-              swaps.push({
+              swapsArray.push({
                 ...swap,
                 inputAsset: tokens.find(
                   (token) => token.assetId === swap.inputAssetId
@@ -40,7 +63,7 @@ const useSwaps = (tokens: Token[], address: string) => {
                   (token) => token.assetId === swap.outputAssetId
                 )?.token,
                 type: addr === swap.inputAssetId ? 'Sell' : 'Buy',
-                accountId:
+                accountIdFormatted:
                   walletsStorage.current.find(
                     (wallet) => wallet.address === swap.accountId
                   )?.name ?? swap.accountId,
@@ -48,16 +71,66 @@ const useSwaps = (tokens: Token[], address: string) => {
             );
 
             pageMeta.current = responseData.meta;
-            setSwaps(swaps);
+            setSwaps(swapsArray);
             setPageLoading(false);
+
+            if (page > 1) {
+              socket.current?.disconnect();
+            } else {
+              if (!socket.current?.active) {
+                connectSocket();
+              }
+
+              socket.current?.off(currentAddress.current);
+              currentAddress.current = addr;
+
+              socket.current?.on(addr, (data) => {
+                setSwaps((prevSwaps) => {
+                  const swap = data as Swap;
+
+                  const s: Swap = {
+                    ...swap,
+                    inputAsset: tokens.find(
+                      (token) => token.assetId === swap.inputAssetId
+                    )?.token,
+                    outputAsset: tokens.find(
+                      (token) => token.assetId === swap.outputAssetId
+                    )?.token,
+                    type: addr === swap.inputAssetId ? 'Sell' : 'Buy',
+                    accountIdFormatted:
+                      walletsStorage.current.find(
+                        (wallet) => wallet.address === swap.accountId
+                      )?.name ?? swap.accountId,
+                  };
+
+                  let updatedSwaps = [s];
+
+                  if (pageMeta.current && prevSwaps) {
+                    const numberOfSwapsOnPage = prevSwaps?.length;
+                    updatedSwaps = [s, ...prevSwaps].slice(0, 10);
+                    pageMeta.current.totalCount++;
+
+                    if (numberOfSwapsOnPage === pageMeta.current.pageSize) {
+                      pageMeta.current.hasNextPage = true;
+                    }
+                  }
+
+                  return updatedSwaps;
+                });
+              });
+            }
+          } else {
+            socket.current?.disconnect();
           }
         })
         .catch(() => {
           setSwaps([]);
           setPageLoading(false);
+
+          socket.current?.disconnect();
         });
     },
-    [tokens]
+    [connectSocket, tokens]
   );
 
   const setWalletAddresses = useCallback(
@@ -114,6 +187,16 @@ const useSwaps = (tokens: Token[], address: string) => {
   }, [address, fetchSwaps]);
 
   useEffect(() => {
+    return () => {
+      disconnectSocket();
+    };
+  }, [disconnectSocket, pathname]);
+
+  useEffect(() => {
+    connectSocket();
+  }, [connectSocket]);
+
+  useEffect(() => {
     if (!polkadot?.loading) {
       if (polkadot?.accounts && polkadot?.accounts?.length > 0) {
         setWalletAddresses(true);
@@ -127,6 +210,7 @@ const useSwaps = (tokens: Token[], address: string) => {
     if (!loadingStatus) {
       fetchSwaps(address);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, loadingStatus]);
 
