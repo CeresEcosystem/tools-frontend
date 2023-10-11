@@ -106,6 +106,7 @@ export default function PortfolioModal({
                 name="address"
                 id="address"
                 label="Wallet address"
+                disabled={wallet !== null}
                 value={formData.address}
                 required
                 handleChange={handleChange}
@@ -117,6 +118,7 @@ export default function PortfolioModal({
         </div>
         {wallet && !wallet.fromPolkadotExtension && (
           <button
+            type="button"
             onClick={() => removeWallet(wallet)}
             className="mx-2 text-pink"
           >

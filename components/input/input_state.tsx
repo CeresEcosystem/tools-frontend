@@ -10,6 +10,7 @@ export default function InputState({
   placeholder,
   label = '',
   required = false,
+  disabled = false,
 }: {
   type?: string;
   name: string;
@@ -21,6 +22,7 @@ export default function InputState({
   placeholder?: string;
   label?: string;
   required?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div>
@@ -43,6 +45,7 @@ export default function InputState({
           name={name}
           id={id}
           value={value}
+          disabled={disabled}
           onChange={handleChange}
           required={required}
           className="block w-full rounded-xl border-0 bg-transparent py-2 px-6 text-white placeholder:text-white placeholder:text-opacity-50 focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none"

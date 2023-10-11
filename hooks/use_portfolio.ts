@@ -273,11 +273,12 @@ const usePortfolio = () => {
 
   const removeWallet = useCallback(
     (wallet: WalletAddress) => {
-      const removedArray = Array.from(storageWallets.current).filter(
+      const removedArray = storageWallets.current.filter(
         (w) => w.address !== wallet.address
       );
 
       storageWallets.current = removedArray;
+
       localStorage.setItem(
         WALLET_ADDRESSES,
         JSON.stringify(removedArray.filter((w) => !w.temporaryAddress))
