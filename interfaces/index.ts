@@ -298,6 +298,7 @@ export interface WalletAddress {
   name: string;
   address: string;
   fromPolkadotExtension: boolean;
+  temporaryAddress: boolean;
 }
 
 export interface PortfolioModalData {

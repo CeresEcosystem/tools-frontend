@@ -484,7 +484,8 @@ export default function PortfolioTable() {
       )}
       {loading ? (
         <Spinner />
-      ) : !portfolioItems ? null : portfolioItems === 'throttle error' ? (
+      ) : !portfolioItems || !selectedWallet ? null : portfolioItems ===
+        'throttle error' ? (
         <span className="font-medium text-center block text-opacity-50 mx-auto w-fit text-lg text-white">
           To many requests. Please, try again in one minute.
         </span>

@@ -50,6 +50,7 @@ export default function PortfolioModal({
       name: formData.name,
       address: formData.address,
       fromPolkadotExtension: false,
+      temporaryAddress: formData.name === '',
     };
 
     addEditWallet(newWallet, wallet);
@@ -96,6 +97,7 @@ export default function PortfolioModal({
                 value={formData.name}
                 handleChange={handleChange}
                 showIcon={false}
+                required={wallet !== null}
                 placeholder="Enter wallet name"
               />
             </div>

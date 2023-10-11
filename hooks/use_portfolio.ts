@@ -159,6 +159,7 @@ const usePortfolio = () => {
               name: acc.meta.name,
               address: getEncodedAddress(acc.address),
               fromPolkadotExtension: true,
+              temporaryAddress: false,
             } as WalletAddress;
           }) ?? [];
       }
@@ -166,10 +167,11 @@ const usePortfolio = () => {
       polkadotWallets.current = accounts;
 
       const wallets = localStorage.getItem(WALLET_ADDRESSES);
+      const walletsDB = wallets ? (JSON.parse(wallets) as WalletAddress[]) : [];
 
-      storageWallets.current = wallets
-        ? (JSON.parse(wallets) as WalletAddress[])
-        : [];
+      storageWallets.current = walletsDB.map((w) => {
+        return { ...w, temporaryAddress: w.name === '' };
+      });
 
       const allWallets = [
         ...polkadotWallets.current,
@@ -181,6 +183,7 @@ const usePortfolio = () => {
           name: '',
           address: router.query.slug[0],
           fromPolkadotExtension: false,
+          temporaryAddress: true,
         };
 
         const walletExist = allWallets.find(
@@ -204,54 +207,68 @@ const usePortfolio = () => {
     [polkadot?.accounts, router.query.slug, selectedWallet, setSelectedWallet]
   );
 
-  const addEditWallet = useCallback(
-    (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
+  const editWallet = useCallback(
+    (wallet: WalletAddress, index: number) => {
+      storageWallets.current[index] = {
+        name: wallet.name,
+        address: wallet.address,
+        fromPolkadotExtension: wallet.fromPolkadotExtension,
+        temporaryAddress: wallet.temporaryAddress,
+      };
+      localStorage.setItem(
+        WALLET_ADDRESSES,
+        JSON.stringify(
+          storageWallets.current.filter((w) => !w.temporaryAddress)
+        )
+      );
+      setSelectedWallet(wallet);
+    },
+    [setSelectedWallet]
+  );
+
+  const addWallet = useCallback(
+    (wallet: WalletAddress, storeWallets: boolean) => {
       const walletExist = [
         ...polkadotWallets.current,
         ...storageWallets.current,
       ].find((w) => w.address === wallet.address);
 
-      if (wallet.name !== '') {
-        if (previousWallet) {
-          const walletIndex = storageWallets.current.findIndex(
-            (w) =>
-              w.name === previousWallet.name &&
-              w.address === previousWallet.address
-          );
-
-          if (walletIndex !== -1) {
-            storageWallets.current[walletIndex] = {
-              name: wallet.name,
-              address: wallet.address,
-              fromPolkadotExtension: wallet.fromPolkadotExtension,
-            };
-            localStorage.setItem(
-              WALLET_ADDRESSES,
-              JSON.stringify(storageWallets.current)
-            );
-            setSelectedWallet(wallet);
-          }
-        } else {
-          if (walletExist) {
-            setSelectedWallet(walletExist);
-          } else {
-            const newArray = [...storageWallets.current, wallet];
-            storageWallets.current = newArray;
-            localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(newArray));
-            setSelectedWallet(wallet);
-          }
-        }
+      if (walletExist) {
+        setSelectedWallet(walletExist);
       } else {
-        if (walletExist) {
-          setSelectedWallet(walletExist);
-        } else {
-          const newArray = [...storageWallets.current, wallet];
-          storageWallets.current = newArray;
-          setSelectedWallet(wallet);
+        const newArray = [...storageWallets.current, wallet];
+        storageWallets.current = newArray;
+
+        if (storeWallets) {
+          localStorage.setItem(
+            WALLET_ADDRESSES,
+            JSON.stringify(newArray.filter((w) => !w.temporaryAddress))
+          );
         }
+
+        setSelectedWallet(wallet);
       }
     },
     [setSelectedWallet]
+  );
+
+  const addEditWallet = useCallback(
+    (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
+      if (wallet.name !== '') {
+        if (previousWallet) {
+          const walletIndex = storageWallets.current.findIndex(
+            (w) => w.address === previousWallet.address
+          );
+
+          editWallet(wallet, walletIndex);
+        } else {
+          addWallet(wallet, true);
+        }
+      } else {
+        addWallet(wallet, false);
+      }
+    },
+    [addWallet, editWallet]
   );
 
   const removeWallet = useCallback(
@@ -261,7 +278,10 @@ const usePortfolio = () => {
       );
 
       storageWallets.current = removedArray;
-      localStorage.setItem(WALLET_ADDRESSES, JSON.stringify(removedArray));
+      localStorage.setItem(
+        WALLET_ADDRESSES,
+        JSON.stringify(removedArray.filter((w) => !w.temporaryAddress))
+      );
 
       const allWallets = [
         ...polkadotWallets.current,
