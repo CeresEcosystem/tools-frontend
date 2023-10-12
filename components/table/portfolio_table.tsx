@@ -18,9 +18,14 @@ import {
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
 import { useState } from 'react';
-import { PencilIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import {
+  PencilIcon,
+  UserPlusIcon,
+  ClipboardIcon,
+} from '@heroicons/react/24/outline';
 import PortfolioModal from '@components/modal/portfolio_modal';
 import Select from 'react-select';
+import Clipboard from '@components/clipboard';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -145,7 +150,7 @@ function PortfolioInput({
     <div className="max-w-lg mx-auto mb-10">
       <div className="flex space-x-4 items-center">
         {walletAddresses.length > 0 ? (
-          <div className="relative w-full">
+          <div className="relative w-full bg-backgroundHeader flex items-center rounded-xl">
             <Select
               id="selectedWallet"
               name="selectedWallet"
@@ -157,6 +162,13 @@ function PortfolioInput({
                 handleWalletChange(newValue?.value)
               }
             />
+            {selectedWallet && selectedWallet.address !== '' && (
+              <Clipboard text={selectedWallet.address}>
+                <div className="bg-white bg-opacity-10 mr-2 p-1 rounded-lg cursor-pointer">
+                  <ClipboardIcon className="w-5 h-5 text-white" />
+                </div>
+              </Clipboard>
+            )}
           </div>
         ) : (
           <span className="w-full text-white text-sm">

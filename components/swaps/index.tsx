@@ -11,9 +11,12 @@ import {
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
 import Link from 'next/link';
+import { ClipboardIcon } from '@heroicons/react/24/outline';
+import Clipboard from '@components/clipboard';
 
 const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
-const cellStyle = 'text-center text-white px-2 py-4 text-xs font-medium';
+const cellStyle =
+  'text-center text-white px-2 py-4 text-xs font-medium whitespace-nowrap';
 
 export default function Swaps({
   address,
@@ -78,6 +81,9 @@ export default function Swaps({
                 <Link href={`/portfolio/${swap.accountId}`}>
                   {swap.accountIdFormatted}
                 </Link>
+                <Clipboard text={swap.accountId}>
+                  <ClipboardIcon className="h-4 w-4 inline-block ml-1 cursor-pointer" />
+                </Clipboard>
               </td>
               <td className={classNames(cellStyle, 'min-w-[150px]')}>
                 <img
