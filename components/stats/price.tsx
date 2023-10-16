@@ -4,6 +4,7 @@ import { Token } from '@interfaces/index';
 import Link from 'next/link';
 import { useState } from 'react';
 import { BsArrowsFullscreen, BsArrowLeftRight } from 'react-icons/bs';
+import { HeartIcon } from '@heroicons/react/24/solid';
 
 export default function Price({
   token,
@@ -11,10 +12,10 @@ export default function Price({
   changeCurrentTokenFromModal,
   scrollToSwaps,
 }: {
-  token: Token;
+  token: Token | string;
   prices: Token[];
   // eslint-disable-next-line no-unused-vars
-  changeCurrentTokenFromModal: (token: Token) => void;
+  changeCurrentTokenFromModal: (token: Token | string) => void;
   scrollToSwaps: () => void;
 }) {
   const [showPriceModal, setShowPriceModal] = useState(false);
@@ -24,14 +25,20 @@ export default function Price({
       <div className="w-full flex justify-center">
         <div className="bg-backgroundItem space-x-10 flex rounded-xl items-center mt-16 py-4 px-8">
           <div className="flex items-center">
-            <img
-              className="rounded-full w-12 h-12 mr-4"
-              src={`${ASSET_URL}/${token.token}.svg`}
-              alt={token.fullName}
-            />
+            {typeof token === 'string' ? (
+              <div className="rounded-full p-2 flex items-center justify-center w-12 h-12 mr-4 bg-pink">
+                <HeartIcon className="w-8 h-8 text-white" />
+              </div>
+            ) : (
+              <img
+                className="rounded-full w-12 h-12 mr-4"
+                src={`${ASSET_URL}/${token.token}.svg`}
+                alt={token.fullName}
+              />
+            )}
             <div className="flex flex-col">
               <h4 className="text-base font-bold text-white sm:text-lg">
-                {token.fullName}
+                {typeof token === 'string' ? 'Favorite tokens' : token.fullName}
               </h4>
               <span
                 onClick={() => setShowPriceModal(true)}
@@ -41,29 +48,31 @@ export default function Price({
               </span>
             </div>
           </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => scrollToSwaps()}
-              title="Scroll to swaps"
-              className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
-            >
-              <BsArrowLeftRight size={20} color="#ffffff" />
-            </button>
-            <Link
-              href={{ pathname: '/trading', query: { token: token.token } }}
-              target="tv_chart"
-              className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
-            >
-              <BsArrowsFullscreen size={20} color="#ffffff" />
-            </Link>
-          </div>
+          {typeof token !== 'string' && (
+            <div className="flex space-x-2">
+              <button
+                onClick={() => scrollToSwaps()}
+                title="Scroll to swaps"
+                className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
+              >
+                <BsArrowLeftRight size={20} color="#ffffff" />
+              </button>
+              <Link
+                href={{ pathname: '/trading', query: { token: token.token } }}
+                target="tv_chart"
+                className="rounded-md bg-white bg-opacity-10 p-2 hover:bg-opacity-20"
+              >
+                <BsArrowsFullscreen size={20} color="#ffffff" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
       <PricesModal
         showModal={showPriceModal}
         closeModal={() => setShowPriceModal(false)}
         tokens={prices}
-        changeCurrentTokenFromModal={(token: Token) => {
+        changeCurrentTokenFromModal={(token: Token | string) => {
           changeCurrentTokenFromModal(token);
           setShowPriceModal(false);
         }}

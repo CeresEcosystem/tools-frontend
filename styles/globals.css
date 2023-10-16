@@ -168,3 +168,32 @@ body {
     width: calc(100vw - 32px) !important;
   }
 }
+
+/*
+	*
+	* react-toastify styles
+	*
+	*/
+.Toastify__toast-container {
+  max-width: 1280px;
+  width: auto;
+}
+.Toastify__toast-theme--dark {
+  background: #532968 !important;
+}
+.Toastify__toast-body {
+  padding: 15px;
+}
+.Toastify__toast--success {
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+}
+.Toastify__toast--error {
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+}
+.Toastify__close-button {
+  color: #fff !important;
+}

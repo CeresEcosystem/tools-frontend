@@ -16,7 +16,7 @@ export default function Trading() {
           setIsScriptReady(true);
         }}
       />
-      {isScriptReady && currentToken && (
+      {isScriptReady && currentToken && typeof currentToken !== 'string' && (
         <>
           <div className="h-[100vh] w-[100vw]">
             <TradingViewChartClient

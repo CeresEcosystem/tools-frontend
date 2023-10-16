@@ -28,11 +28,13 @@ export default function PortfolioModal({
   });
 
   useEffect(() => {
-    setFormData({
-      name: wallet?.name || '',
-      address: wallet?.address || '',
-    });
-  }, [wallet]);
+    if (showModal) {
+      setFormData({
+        name: wallet?.name || '',
+        address: wallet?.address || '',
+      });
+    }
+  }, [wallet, showModal]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -106,7 +108,6 @@ export default function PortfolioModal({
                 name="address"
                 id="address"
                 label="Wallet address"
-                disabled={wallet !== null}
                 value={formData.address}
                 required
                 handleChange={handleChange}

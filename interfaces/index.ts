@@ -307,6 +307,7 @@ export interface PortfolioModalData {
 }
 
 export interface Swap {
+  id: string;
   swappedAt: string;
   accountId: string;
   inputAssetId: string;

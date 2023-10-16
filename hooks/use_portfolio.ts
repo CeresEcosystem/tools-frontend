@@ -11,13 +11,17 @@ import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
 import { getEncodedAddress } from '@utils/helpers';
 import usePersistState from './use_persist_state';
 import { useRouter } from 'next/router';
+import { showErrorNotify } from '@utils/toast';
 
 const tabs = [
   { tab: 'Portfolio', permalink: '/portfolio/' },
   { tab: 'Staking', permalink: '/portfolio/staking/' },
   { tab: 'Rewards', permalink: '/portfolio/rewards/' },
   { tab: 'Liquidity', permalink: '/portfolio/liquidity/' },
+  { tab: 'Swaps', permalink: '/portfolio/swaps/' },
 ];
+
+const WALLET_EXIST_ERROR = 'Wallet with entered address already exist.';
 
 const usePortfolio = () => {
   const router = useRouter();
@@ -208,33 +212,50 @@ const usePortfolio = () => {
   );
 
   const editWallet = useCallback(
-    (wallet: WalletAddress, index: number) => {
-      storageWallets.current[index] = {
-        name: wallet.name,
-        address: wallet.address,
-        fromPolkadotExtension: wallet.fromPolkadotExtension,
-        temporaryAddress: wallet.temporaryAddress,
-      };
-      localStorage.setItem(
-        WALLET_ADDRESSES,
-        JSON.stringify(
-          storageWallets.current.filter((w) => !w.temporaryAddress)
-        )
+    (wallet: WalletAddress, previousWallet: WalletAddress) => {
+      const walletIndex = storageWallets.current.findIndex(
+        (w) => w.address === previousWallet.address
       );
-      setSelectedWallet(wallet);
+      const walletExist = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ]
+        .filter((w) => w.address !== previousWallet.address)
+        .find((w) => w.address === wallet.address);
+
+      const shouldEdit =
+        !walletExist || wallet.address === previousWallet.address;
+
+      if (shouldEdit) {
+        storageWallets.current[walletIndex] = {
+          name: wallet.name,
+          address: wallet.address,
+          fromPolkadotExtension: wallet.fromPolkadotExtension,
+          temporaryAddress: wallet.temporaryAddress,
+        };
+        localStorage.setItem(
+          WALLET_ADDRESSES,
+          JSON.stringify(
+            storageWallets.current.filter((w) => !w.temporaryAddress)
+          )
+        );
+        setSelectedWallet(wallet);
+      } else {
+        showErrorNotify(WALLET_EXIST_ERROR, true);
+      }
     },
     [setSelectedWallet]
   );
 
   const addWallet = useCallback(
     (wallet: WalletAddress, storeWallets: boolean) => {
-      const walletExist = [
-        ...polkadotWallets.current,
-        ...storageWallets.current,
-      ].find((w) => w.address === wallet.address);
+      const walletExist =
+        [...polkadotWallets.current, ...storageWallets.current].findIndex(
+          (w) => w.address === wallet.address
+        ) !== 1;
 
       if (walletExist) {
-        setSelectedWallet(walletExist);
+        showErrorNotify(WALLET_EXIST_ERROR, true);
       } else {
         const newArray = [...storageWallets.current, wallet];
         storageWallets.current = newArray;
@@ -254,18 +275,10 @@ const usePortfolio = () => {
 
   const addEditWallet = useCallback(
     (wallet: WalletAddress, previousWallet: WalletAddress | null) => {
-      if (wallet.name !== '') {
-        if (previousWallet) {
-          const walletIndex = storageWallets.current.findIndex(
-            (w) => w.address === previousWallet.address
-          );
-
-          editWallet(wallet, walletIndex);
-        } else {
-          addWallet(wallet, true);
-        }
+      if (previousWallet) {
+        editWallet(wallet, previousWallet);
       } else {
-        addWallet(wallet, false);
+        addWallet(wallet, wallet.name !== '');
       }
     },
     [addWallet, editWallet]

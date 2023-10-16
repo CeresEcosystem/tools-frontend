@@ -37,14 +37,24 @@ export default function Charts() {
             changeCurrentTokenFromModal={changeCurrentTokenFromModal}
             scrollToSwaps={scrollToSwaps}
           />
-          <div className="h-[calc(100vh-84px)] py-8 sm:px-8">
-            <TradingViewChartClient
-              symbol={currentToken.token}
-              changeCurrentToken={changeCurrentToken}
-            />
-          </div>
+          {typeof currentToken !== 'string' && (
+            <div className="h-[calc(100vh-84px)] py-8 sm:px-8">
+              <TradingViewChartClient
+                symbol={currentToken.token}
+                changeCurrentToken={changeCurrentToken}
+              />
+            </div>
+          )}
           <div ref={scrollToRef}>
-            <SwapsClient address={currentToken.assetId} tokens={prices} />
+            <SwapsClient
+              address={
+                typeof currentToken === 'string'
+                  ? currentToken
+                  : currentToken.assetId
+              }
+              tokens={prices}
+              token={currentToken}
+            />
           </div>
         </>
       )}

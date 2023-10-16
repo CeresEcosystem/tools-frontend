@@ -21,9 +21,11 @@ const cellStyle =
 export default function Swaps({
   address,
   tokens,
+  token,
 }: {
   address: string;
   tokens: Token[];
+  token: Token | string;
 }) {
   const format = useFormatter();
 
@@ -52,7 +54,9 @@ export default function Swaps({
         <thead className="bg-white bg-opacity-10">
           <tr className="border-collapse border-4 border-backgroundHeader">
             <th className={tableHeadStyle}>Date</th>
-            <th className={tableHeadStyle}>Type</th>
+            {typeof token !== 'string' && (
+              <th className={tableHeadStyle}>Type</th>
+            )}
             <th className={tableHeadStyle}>Account</th>
             <th className={tableHeadStyle}>Sold Token</th>
             <th className={tableHeadStyle}>Bought Token</th>
@@ -69,14 +73,16 @@ export default function Swaps({
               <td className={classNames(cellStyle, 'min-w-[150px]')}>
                 {formatDate(swap.swappedAt)}
               </td>
-              <td
-                className={classNames(
-                  cellStyle,
-                  swap.type === 'Buy' ? '!text-green-400' : '!text-red-400'
-                )}
-              >
-                {swap.type}
-              </td>
+              {typeof token !== 'string' && (
+                <td
+                  className={classNames(
+                    cellStyle,
+                    swap.type === 'Buy' ? '!text-green-400' : '!text-red-400'
+                  )}
+                >
+                  {swap.type}
+                </td>
+              )}
               <td className={cellStyle}>
                 <Link href={`/portfolio/${swap.accountId}`}>
                   {swap.accountIdFormatted}

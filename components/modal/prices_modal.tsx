@@ -1,11 +1,11 @@
 import Input from '@components/input';
 import Modal from '@components/modal';
-import { ASSET_URL } from '@constants/index';
+import { ASSET_URL, FAVORITE_TOKENS } from '@constants/index';
 import { Token } from '@interfaces/index';
 import { formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { ChangeEvent, useState } from 'react';
-import { StarIcon as StarFavorite } from '@heroicons/react/24/solid';
+import { HeartIcon, StarIcon as StarFavorite } from '@heroicons/react/24/solid';
 
 export default function PricesModal({
   showModal,
@@ -17,7 +17,7 @@ export default function PricesModal({
   closeModal: () => void;
   tokens: Token[];
   // eslint-disable-next-line no-unused-vars
-  changeCurrentTokenFromModal: (token: Token) => void;
+  changeCurrentTokenFromModal: (token: Token | string) => void;
 }) {
   const format = useFormatter();
 
@@ -45,7 +45,7 @@ export default function PricesModal({
     setTokenList(tokens);
   };
 
-  const onChangeCurrentTokenFromModal = (token: Token) => {
+  const onChangeCurrentTokenFromModal = (token: Token | string) => {
     changeCurrentTokenFromModal(token);
     setTokenList(tokens);
   };
@@ -60,6 +60,17 @@ export default function PricesModal({
       </span>
       <div className="mt-6 overflow-y-auto overscroll-contain h-full">
         <ul role="list" className="space-y-2">
+          <li
+            onClick={() => onChangeCurrentTokenFromModal(FAVORITE_TOKENS)}
+            className="bg-backgroundItem cursor-pointer p-3 rounded-xl overflow-hidden flex items-center"
+          >
+            <div className="rounded-full flex items-center justify-center w-6 h-6 mr-2 bg-pink">
+              <HeartIcon className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-xs text-white font-bold sm:text-sm">
+              Favorite tokens
+            </span>
+          </li>
           {tokenList.map((token) => (
             <li
               key={`${token.fullName}+${token.assetId}`}

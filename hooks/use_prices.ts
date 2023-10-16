@@ -21,7 +21,9 @@ const usePrices = () => {
 
   const [prices, setPrices] = useState<Token[]>([]);
 
-  const [currentToken, setCurrentToken] = useState<Token | undefined>();
+  const [currentToken, setCurrentToken] = useState<
+    Token | string | undefined
+  >();
 
   const priceInterval = useRef<ReturnType<typeof setInterval> | undefined>();
 
@@ -76,7 +78,7 @@ const usePrices = () => {
     [prices]
   );
 
-  const changeCurrentTokenFromModal = useCallback((token: Token) => {
+  const changeCurrentTokenFromModal = useCallback((token: Token | string) => {
     setCurrentToken(token);
   }, []);
 
