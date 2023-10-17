@@ -5,11 +5,13 @@ export default function PortfolioTabs({
   tabs,
   selectedTab,
   changeSelectedTab,
+  loading,
 }: {
   tabs: PortfolioTab[];
   selectedTab: PortfolioTab;
   // eslint-disable-next-line no-unused-vars
   changeSelectedTab: (tab: PortfolioTab) => void;
+  loading: boolean;
 }) {
   return (
     <div className="max-w-lg mb-10 px-2 py-2 mx-auto w-full bg-backgroundItem flex rounded-xl sm:px-5">
@@ -19,7 +21,11 @@ export default function PortfolioTabs({
         return (
           <div
             key={tab.tab}
-            onClick={() => changeSelectedTab(tab)}
+            onClick={() => {
+              if (!loading) {
+                changeSelectedTab(tab);
+              }
+            }}
             className={classNames(
               'flex-1 flex justify-center items-center rounded-xl py-2 cursor-pointer group',
               selected && 'bg-white bg-opacity-10'

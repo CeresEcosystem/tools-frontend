@@ -2,10 +2,12 @@ import Spinner from '@components/spinner';
 import PortfolioTabs from '@components/tabs/portfolio_tabs';
 import usePortfolio from '@hooks/use_portfolio';
 import {
+  PageMeta,
   PortfolioItem,
   PortfolioLiquidityItem,
   PortfolioModalData,
   PortfolioStakingRewardsItem,
+  Swap,
   WalletAddress,
 } from '@interfaces/index';
 import { ASSET_URL } from '@constants/index';
@@ -26,6 +28,7 @@ import {
 import PortfolioModal from '@components/modal/portfolio_modal';
 import Select from 'react-select';
 import Clipboard from '@components/clipboard';
+import SwapsTable from '@components/swaps/swaps_table';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -404,6 +407,11 @@ function TabRenderer({
   selectedTab,
   totalValue,
   portfolioItems,
+  pageMeta,
+  goToFirstPage,
+  goToPreviousPage,
+  goToNextPage,
+  goToLastPage,
 }: {
   selectedTab: string;
   totalValue: number;
@@ -411,7 +419,13 @@ function TabRenderer({
     | PortfolioItem
     | PortfolioStakingRewardsItem
     | PortfolioLiquidityItem
+    | Swap
   )[];
+  pageMeta: PageMeta | undefined;
+  goToFirstPage: () => void;
+  goToPreviousPage: () => void;
+  goToNextPage: () => void;
+  goToLastPage: () => void;
 }) {
   if (selectedTab === 'Portfolio') {
     return (
@@ -440,6 +454,23 @@ function TabRenderer({
     );
   }
 
+  if (selectedTab === 'Swaps') {
+    return (
+      <div className="max-w-full overflow-x-auto">
+        <SwapsTable
+          token="Portfolio"
+          swaps={portfolioItems as Swap[]}
+          pageMeta={pageMeta}
+          goToFirstPage={goToFirstPage}
+          goToPreviousPage={goToPreviousPage}
+          goToNextPage={goToNextPage}
+          goToLastPage={goToLastPage}
+          showAccount={false}
+        />
+      </div>
+    );
+  }
+
   return (
     <PortfolioLiquidityTab
       portfolioItems={portfolioItems as PortfolioLiquidityItem[]}
@@ -462,6 +493,11 @@ export default function PortfolioTable() {
     totalValue,
     addEditWallet,
     removeWallet,
+    pageMeta,
+    goToFirstPage,
+    goToPreviousPage,
+    goToNextPage,
+    goToLastPage,
   } = usePortfolio();
 
   const [showModal, setShowModal] = useState<PortfolioModalData>({
@@ -492,6 +528,7 @@ export default function PortfolioTable() {
           tabs={tabs}
           selectedTab={selectedTab}
           changeSelectedTab={(tab) => changeSelectedTab(tab)}
+          loading={loading}
         />
       )}
       {loading ? (
@@ -511,6 +548,11 @@ export default function PortfolioTable() {
           portfolioItems={portfolioItems}
           totalValue={totalValue}
           selectedTab={selectedTab.tab}
+          pageMeta={pageMeta}
+          goToFirstPage={goToFirstPage}
+          goToPreviousPage={goToPreviousPage}
+          goToNextPage={goToNextPage}
+          goToLastPage={goToLastPage}
         />
       )}
       <PortfolioModal

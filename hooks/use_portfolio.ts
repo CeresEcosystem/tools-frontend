@@ -1,10 +1,14 @@
 import { usePolkadot } from '@context/polkadot_context';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import {
+  PageMeta,
   PortfolioItem,
   PortfolioLiquidityItem,
   PortfolioStakingRewardsItem,
   PortfolioTab,
+  Swap,
+  SwapsData,
+  Token,
   WalletAddress,
 } from '@interfaces/index';
 import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
@@ -45,8 +49,15 @@ const usePortfolio = () => {
   const polkadotWallets = useRef<WalletAddress[]>([]);
   const storageWallets = useRef<WalletAddress[]>([]);
 
+  const pageMeta = useRef<PageMeta | undefined>();
+
   const portfolioItems = useRef<
-    | (PortfolioItem | PortfolioStakingRewardsItem | PortfolioLiquidityItem)[]
+    | (
+        | PortfolioItem
+        | PortfolioStakingRewardsItem
+        | PortfolioLiquidityItem
+        | Swap
+      )[]
     | undefined
     | 'throttle error'
   >();
@@ -83,7 +94,7 @@ const usePortfolio = () => {
   }
 
   const fetchPortfolioItems = useCallback(
-    async (address: string) => {
+    async (address: string, page = 1) => {
       if (!loading) {
         setLoading(true);
       }
@@ -91,7 +102,7 @@ const usePortfolio = () => {
       if (address !== '') {
         try {
           const response = await fetch(
-            `${NEW_API_URL}${selectedTab.permalink}${address}`
+            `${NEW_API_URL}${selectedTab.permalink}${address}?page=${page}`
           );
 
           if (response.status === 429) {
@@ -100,7 +111,7 @@ const usePortfolio = () => {
           } else {
             const json = await response.json();
 
-            if (response.status === 200 && json && json?.length > 0) {
+            if (response.status === 200 && json) {
               let array = [];
 
               if (selectedTab.tab === 'Portfolio') {
@@ -112,6 +123,28 @@ const usePortfolio = () => {
               ) {
                 array = json as PortfolioStakingRewardsItem[];
                 sortAndFilterItems(array);
+              } else if (selectedTab.tab === 'Swaps') {
+                const jsonResponse = json as SwapsData;
+                pageMeta.current = jsonResponse.meta;
+
+                const swapsArray: Swap[] = [];
+                const tokensResponse = await fetch(`${NEW_API_URL}/prices`);
+                const tokensJson = (await tokensResponse.json()) as Token[];
+
+                jsonResponse.data.forEach((swap) =>
+                  swapsArray.push({
+                    ...swap,
+                    inputAsset: tokensJson.find(
+                      (token) => token.assetId === swap.inputAssetId
+                    )?.token,
+                    outputAsset: tokensJson.find(
+                      (token) => token.assetId === swap.outputAssetId
+                    )?.token,
+                  })
+                );
+
+                portfolioItems.current = swapsArray;
+                setLoading(false);
               } else {
                 array = json as PortfolioLiquidityItem[];
                 sortAndFilterItems(array);
@@ -135,6 +168,36 @@ const usePortfolio = () => {
     },
     [selectedTab.permalink, selectedTab.tab, loading]
   );
+
+  const goToFirstPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage && selectedWallet) {
+      fetchPortfolioItems(selectedWallet.address);
+    }
+  }, [fetchPortfolioItems, selectedWallet]);
+
+  const goToPreviousPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage && selectedWallet) {
+      fetchPortfolioItems(
+        selectedWallet.address,
+        pageMeta.current.pageNumber - 1
+      );
+    }
+  }, [fetchPortfolioItems, selectedWallet]);
+
+  const goToNextPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage && selectedWallet) {
+      fetchPortfolioItems(
+        selectedWallet.address,
+        pageMeta.current.pageNumber + 1
+      );
+    }
+  }, [fetchPortfolioItems, selectedWallet]);
+
+  const goToLastPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage && selectedWallet) {
+      fetchPortfolioItems(selectedWallet.address, pageMeta.current.pageCount);
+    }
+  }, [fetchPortfolioItems, selectedWallet]);
 
   const handleWalletChange = (newWallet?: string) => {
     const wallet =
@@ -353,6 +416,11 @@ const usePortfolio = () => {
     fetchPortfolioItems,
     addEditWallet,
     removeWallet,
+    pageMeta: pageMeta.current,
+    goToFirstPage,
+    goToPreviousPage,
+    goToNextPage,
+    goToLastPage,
   };
 };
 
