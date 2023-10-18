@@ -6,7 +6,7 @@ import { ASSET_URL } from '@constants/index';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
 import usePairsLiquidity from '@hooks/use_pairs_liquidity';
 import { Pair } from '@interfaces/index';
-import { formatNumber, formatNumberExceptDecimal } from '@utils/helpers';
+import { formatNumber } from '@utils/helpers';
 import classNames from 'classnames';
 import { useFormatter } from 'next-intl';
 import Link from 'next/link';
@@ -105,17 +105,21 @@ export default function PairsLiquidityModal({
                     </td>
                     <td className={cellStyle}>
                       {liq.firstAssetAmountFormatted
-                        ? formatNumberExceptDecimal(
+                        ? formatNumber(
                             format,
-                            liq.firstAssetAmountFormatted
+                            liq.firstAssetAmountFormatted,
+                            2,
+                            true
                           )
                         : '/'}
                     </td>
                     <td className={cellStyle}>
                       {liq.secondAssetAmountFormatted
-                        ? formatNumberExceptDecimal(
+                        ? formatNumber(
                             format,
-                            liq.secondAssetAmountFormatted
+                            liq.secondAssetAmountFormatted,
+                            2,
+                            true
                           )
                         : '/'}
                     </td>

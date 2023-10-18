@@ -33,7 +33,7 @@ export default function Modal({
           <div
             className={classNames(
               'px-2 h-full mx-auto sm:px-6',
-              !fullScreen && 'max-w-xl'
+              fullScreen ? 'max-w-6xl' : 'max-w-xl'
             )}
           >
             <Transition.Child
