@@ -315,7 +315,7 @@ const usePortfolio = () => {
       const walletExist =
         [...polkadotWallets.current, ...storageWallets.current].findIndex(
           (w) => w.address === wallet.address
-        ) !== 1;
+        ) !== -1;
 
       if (walletExist) {
         showErrorNotify(WALLET_EXIST_ERROR, true);

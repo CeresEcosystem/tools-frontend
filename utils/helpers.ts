@@ -117,9 +117,12 @@ export function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-export function formatDateFromTimestamp(timestamp: number) {
+export function formatDateFromTimestamp(
+  timestamp: number,
+  format = 'MMMM DD, YYYY'
+) {
   const date = moment(new Date(timestamp), 'YYYY-MM-DD HH:MM');
-  return `${date.format('MMMM DD, YYYY')} ${date.format('HH:mm')}`;
+  return `${date.format(format)} ${date.format('HH:mm')}`;
 }
 
 export function formatDate(date: string) {

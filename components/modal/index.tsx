@@ -1,4 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
+import classNames from 'classnames';
 import { Fragment } from 'react';
 
 export default function Modal({
@@ -6,11 +7,13 @@ export default function Modal({
   closeModal,
   children,
   showCloseButton = true,
+  fullScreen = false,
 }: {
   showModal: boolean;
   closeModal: () => void;
   children: React.ReactNode;
   showCloseButton?: boolean;
+  fullScreen?: boolean;
 }) {
   return (
     <Transition.Root show={showModal} as={Fragment}>
@@ -27,7 +30,12 @@ export default function Modal({
           <div className="fixed inset-0 bg-black bg-opacity-60 transition-opacity" />
         </Transition.Child>
         <div className="fixed inset-x-0 inset-y-12 lg:pl-72">
-          <div className="px-2 h-full max-w-xl mx-auto sm:px-6">
+          <div
+            className={classNames(
+              'px-2 h-full mx-auto sm:px-6',
+              !fullScreen && 'max-w-xl'
+            )}
+          >
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -37,12 +45,12 @@ export default function Modal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="relative max-h-full flex flex-col rounded-xl px-2 py-6 overflow-hidden bg-backgroundBody sm:px-6">
+              <Dialog.Panel className="relative flex flex-col rounded-xl px-2 py-6 overflow-hidden bg-backgroundBody max-h-full sm:px-6">
                 {children}
                 {showCloseButton && (
                   <button
                     onClick={closeModal}
-                    className="w-full mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
+                    className="w-full max-w-md mt-8 block mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
                   >
                     Close
                   </button>

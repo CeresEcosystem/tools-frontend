@@ -170,6 +170,11 @@ export interface ModalPairs {
   locks: Lock[];
 }
 
+export interface ModalPairsLiquidity {
+  show: boolean;
+  item: Pair | null;
+}
+
 export interface FAQ {
   question: string;
   answer: string | string[];
@@ -322,5 +327,25 @@ export interface Swap {
 
 export interface SwapsData {
   data: Swap[];
+  meta: PageMeta;
+}
+
+export interface PairLiquidity {
+  signerId: string;
+  firstAssetId: string;
+  secondAssetId: string;
+  firstAssetAmount: string;
+  secondAssetAmount: string;
+  transactionType: string;
+  timestamp: number;
+  firstAssetAmountFormatted?: number;
+  secondAssetAmountFormatted?: number;
+  transactionTypeFormatted?: string;
+  timestampFormatted?: string;
+  accountIdFormatted?: string;
+}
+
+export interface PairLiquidityData {
+  data: PairLiquidity[];
   meta: PageMeta;
 }

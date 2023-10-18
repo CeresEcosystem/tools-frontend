@@ -2,13 +2,14 @@ import Container from '@components/container';
 import PairsFilter from '@components/filters/pairs_filter';
 import Input from '@components/input';
 import PairsList from '@components/list/pairs_list';
+import PairsLiquidityModalClient from '@components/modal/pairs_liquidity_modal_client';
 import PairsModal from '@components/modal/pairs_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import PairsStats from '@components/stats/pairs_stats';
 import { NEW_API_URL } from '@constants/index';
 import useLocks from '@hooks/use_locks';
 import usePairs from '@hooks/use_pairs';
-import { Pair, ModalPairs } from '@interfaces/index';
+import { Pair, ModalPairs, ModalPairsLiquidity } from '@interfaces/index';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
 
@@ -39,6 +40,11 @@ export default function Pairs({ data }: { data?: Pair[] }) {
     locks: [],
   });
 
+  const [showLiquidity, setShowLiquidity] = useState<ModalPairsLiquidity>({
+    show: false,
+    item: null,
+  });
+
   useEffect(() => {
     scrollToTop();
   }, [pairs]);
@@ -66,6 +72,9 @@ export default function Pairs({ data }: { data?: Pair[] }) {
       <PairsList
         pairs={pairs}
         showModal={(show: boolean, pair: Pair) => fetchData(show, pair)}
+        showLiquidityModal={(show: boolean, pair: Pair) =>
+          setShowLiquidity({ show, item: pair })
+        }
       />
       {totalPages > 1 && (
         <ListPagination
@@ -87,6 +96,16 @@ export default function Pairs({ data }: { data?: Pair[] }) {
         }
         pair={showLocks.item}
         locks={showLocks.locks}
+      />
+      <PairsLiquidityModalClient
+        showModal={showLiquidity.show}
+        closeModal={() =>
+          setShowLiquidity((oldState) => ({
+            ...oldState,
+            show: false,
+          }))
+        }
+        pair={showLiquidity.item}
       />
     </Container>
   );

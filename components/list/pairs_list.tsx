@@ -2,6 +2,8 @@ import { ASSET_URL } from '@constants/index';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import { Pair } from '@interfaces/index';
+import VerticalSeparator from '@components/separator/vertical_separator';
+import { CircleStackIcon } from '@heroicons/react/24/outline';
 
 const labelStyle =
   'text-xs text-white text-opacity-50 text-right block sm:text-sm';
@@ -10,10 +12,13 @@ const infoStyle = 'block text-pink text-base text-end font-bold sm:text-xl';
 export default function PairsList({
   pairs,
   showModal,
+  showLiquidityModal,
 }: {
   pairs: Pair[];
   // eslint-disable-next-line no-unused-vars
   showModal: (show: boolean, pair: Pair) => void;
+  // eslint-disable-next-line no-unused-vars
+  showLiquidityModal: (show: boolean, pair: Pair) => void;
 }) {
   return (
     <ul role="list" className="space-y-2 mt-8">
@@ -76,13 +81,29 @@ export default function PairsList({
               </p>
             </div>
           </div>
-          <button
-            onClick={() => showModal(true, pair)}
-            className="rounded-md w-full bg-white bg-opacity-10 px-3 py-1.5 flex max-w-xs justify-center items-center gap-x-1 hover:bg-opacity-20 sm:max-w-none sm:w-auto"
-          >
-            <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
-            <span className="text-white text-sm sm:hidden">View locks</span>
-          </button>
+          <div className="flex flex-col w-full sm:flex-row sm:w-auto">
+            <hr className="w-full my-4 border border-white border-opacity-5 sm:hidden" />
+            <VerticalSeparator className="hidden sm:block" />
+            <div className="flex space-x-2 sm:flex-col sm:justify-center sm:space-y-2 sm:space-x-0">
+              <button
+                onClick={() => showLiquidityModal(true, pair)}
+                className="rounded-md whitespace-nowrap bg-white w-full bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+              >
+                <CircleStackIcon
+                  aria-hidden="true"
+                  className="h-5 w-5 text-white"
+                />
+                View liquidity
+              </button>
+              <button
+                onClick={() => showModal(true, pair)}
+                className="rounded-md whitespace-nowrap bg-white w-full bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1.5 hover:bg-opacity-20"
+              >
+                <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
+                View locks
+              </button>
+            </div>
+          </div>
         </li>
       ))}
     </ul>
