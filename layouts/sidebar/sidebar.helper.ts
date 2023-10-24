@@ -48,3 +48,14 @@ export const docs = [
   },
   { href: '/', icon: '/apollo.svg' },
 ];
+
+export const links = [
+  {
+    href: '/privacy-policy',
+    title: 'Privacy Policy',
+  },
+  {
+    href: '/terms-of-use',
+    title: 'Terms of Use',
+  },
+];
