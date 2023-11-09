@@ -46,7 +46,7 @@ export const docs = [
     href: 'https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Hermes%20Litepaper.pdf',
     icon: '/hermes.svg',
   },
-  { href: '/', icon: '/apollo.svg' },
+  { href: 'https://apollo-protocol.gitbook.io', icon: '/apollo.svg' },
 ];
 
 export const links = [
