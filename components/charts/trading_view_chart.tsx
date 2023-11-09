@@ -1,6 +1,6 @@
 import { NEW_API_URL } from '@constants/index';
 import {
-  ChartingLibraryWidgetOptions,
+  IChartingLibraryWidget,
   ResolutionString,
   TimezoneId,
   widget,
@@ -18,8 +18,37 @@ export default function TradingViewChart({
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
 
+  const tvWidget = useRef<IChartingLibraryWidget | undefined>();
+
+  async function saveChartPreferences(userId: string, chartId: string) {
+    try {
+      tvWidget.current?.save((state) => {
+        const preferencesKey = `chartPreferences_${chartId}`;
+        localStorage.setItem(preferencesKey, JSON.stringify(state));
+        console.log('Chart preferences saved to local storage');
+      });
+    } catch (error) {
+      console.error('Error saving chart preferences', error);
+    }
+  }
+
+  function loadChartPreferencesLocally(chartId: string) {
+    const preferencesKey = `chartPreferences_${chartId}`;
+    const storedPreferences = localStorage.getItem(preferencesKey);
+
+    if (storedPreferences) {
+      const preferences = JSON.parse(storedPreferences);
+
+      tvWidget.current?.load(preferences);
+      // Apply the preferences to the TradingView chart here
+      console.log('Loaded chart preferences from local storage:', preferences);
+    } else {
+      console.log('No chart preferences found in local storage.');
+    }
+  }
+
   useEffect(() => {
-    const widgetOptions: ChartingLibraryWidgetOptions = {
+    tvWidget.current = new widget({
       debug: false,
       autosize: true,
       symbol,
@@ -72,23 +101,28 @@ export default function TradingViewChart({
         'mainSeriesProperties.hiloStyle.color': '#000',
       },
       symbol_search_request_delay: 600,
-    };
+    });
 
-    const tvWidget = new widget(widgetOptions);
-
-    tvWidget.onChartReady(() => {
-      tvWidget
-        .activeChart()
+    tvWidget.current.onChartReady(() => {
+      loadChartPreferencesLocally('chart456');
+      tvWidget.current
+        ?.activeChart()
         .onSymbolChanged()
         .subscribe(
           null,
           // @ts-ignore
           (symbolName) => changeCurrentToken(symbolName)
         );
+      tvWidget.current?.subscribe('study_event', () => {
+        saveChartPreferences('user123', 'chart456');
+      });
+      tvWidget.current?.subscribe('drawing_event', () => {
+        saveChartPreferences('user123', 'chart456');
+      });
     });
 
     return () => {
-      tvWidget.remove();
+      tvWidget.current?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol]);
