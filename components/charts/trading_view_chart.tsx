@@ -7,6 +7,10 @@ import {
 } from '@public/static/charting_library';
 import { useEffect, useRef } from 'react';
 
+type Preferences = { [key: string]: object } | null;
+
+const CHART_PREFERENCES = 'CHART_PREFERENCES';
+
 export default function TradingViewChart({
   symbol,
   changeCurrentToken,
@@ -20,30 +24,38 @@ export default function TradingViewChart({
 
   const tvWidget = useRef<IChartingLibraryWidget | undefined>();
 
-  async function saveChartPreferences(userId: string, chartId: string) {
+  function saveChartPreferences() {
     try {
+      const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
+      let preferences: Preferences = null;
+
       tvWidget.current?.save((state) => {
-        const preferencesKey = `chartPreferences_${chartId}`;
-        localStorage.setItem(preferencesKey, JSON.stringify(state));
-        console.log('Chart preferences saved to local storage');
+        const stringState = JSON.stringify(state);
+        const stateFormatted = stringState.replaceAll('POLKASWAP:', '');
+
+        if (storedPreferences) {
+          preferences = JSON.parse(storedPreferences);
+          preferences![symbol] = JSON.parse(stateFormatted);
+        } else {
+          preferences = { [symbol]: JSON.parse(stateFormatted) };
+        }
+
+        localStorage.setItem(CHART_PREFERENCES, JSON.stringify(preferences));
       });
     } catch (error) {
       console.error('Error saving chart preferences', error);
     }
   }
 
-  function loadChartPreferencesLocally(chartId: string) {
-    const preferencesKey = `chartPreferences_${chartId}`;
-    const storedPreferences = localStorage.getItem(preferencesKey);
+  function loadChartPreferences() {
+    const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
 
     if (storedPreferences) {
       const preferences = JSON.parse(storedPreferences);
 
-      tvWidget.current?.load(preferences);
-      // Apply the preferences to the TradingView chart here
-      console.log('Loaded chart preferences from local storage:', preferences);
-    } else {
-      console.log('No chart preferences found in local storage.');
+      if (preferences[symbol]) {
+        tvWidget.current?.load(preferences[symbol]);
+      }
     }
   }
 
@@ -58,10 +70,11 @@ export default function TradingViewChart({
       ),
       interval: '30' as ResolutionString,
       library_path: '/static/charting_library/',
+      auto_save_delay: 2,
       locale: 'en',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as TimezoneId,
       container: chartContainerRef.current,
-      disabled_features: ['use_localstorage_for_settings'],
+      disabled_features: ['header_fullscreen_button'],
       loading_screen: {
         backgroundColor: 'rgb(43, 10, 57)',
       },
@@ -104,7 +117,8 @@ export default function TradingViewChart({
     });
 
     tvWidget.current.onChartReady(() => {
-      loadChartPreferencesLocally('chart456');
+      loadChartPreferences();
+
       tvWidget.current
         ?.activeChart()
         .onSymbolChanged()
@@ -113,11 +127,9 @@ export default function TradingViewChart({
           // @ts-ignore
           (symbolName) => changeCurrentToken(symbolName)
         );
-      tvWidget.current?.subscribe('study_event', () => {
-        saveChartPreferences('user123', 'chart456');
-      });
-      tvWidget.current?.subscribe('drawing_event', () => {
-        saveChartPreferences('user123', 'chart456');
+
+      tvWidget.current?.subscribe('onAutoSaveNeeded', () => {
+        saveChartPreferences();
       });
     });
 
