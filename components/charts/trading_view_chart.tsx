@@ -1,11 +1,15 @@
 import { NEW_API_URL } from '@constants/index';
 import {
-  ChartingLibraryWidgetOptions,
+  IChartingLibraryWidget,
   ResolutionString,
   TimezoneId,
   widget,
 } from '@public/static/charting_library';
 import { useEffect, useRef } from 'react';
+
+type Preferences = { [key: string]: object } | null;
+
+const CHART_PREFERENCES = 'CHART_PREFERENCES';
 
 export default function TradingViewChart({
   symbol,
@@ -18,8 +22,45 @@ export default function TradingViewChart({
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
 
+  const tvWidget = useRef<IChartingLibraryWidget | undefined>();
+
+  function saveChartPreferences() {
+    try {
+      const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
+      let preferences: Preferences = null;
+
+      tvWidget.current?.save((state) => {
+        const stringState = JSON.stringify(state);
+        const stateFormatted = stringState.replaceAll('POLKASWAP:', '');
+
+        if (storedPreferences) {
+          preferences = JSON.parse(storedPreferences);
+          preferences![symbol] = JSON.parse(stateFormatted);
+        } else {
+          preferences = { [symbol]: JSON.parse(stateFormatted) };
+        }
+
+        localStorage.setItem(CHART_PREFERENCES, JSON.stringify(preferences));
+      });
+    } catch (error) {
+      console.error('Error saving chart preferences', error);
+    }
+  }
+
+  function loadChartPreferences() {
+    const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
+
+    if (storedPreferences) {
+      const preferences = JSON.parse(storedPreferences);
+
+      if (preferences[symbol]) {
+        tvWidget.current?.load(preferences[symbol]);
+      }
+    }
+  }
+
   useEffect(() => {
-    const widgetOptions: ChartingLibraryWidgetOptions = {
+    tvWidget.current = new widget({
       debug: false,
       autosize: true,
       symbol,
@@ -29,10 +70,11 @@ export default function TradingViewChart({
       ),
       interval: '30' as ResolutionString,
       library_path: '/static/charting_library/',
+      auto_save_delay: 2,
       locale: 'en',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as TimezoneId,
       container: chartContainerRef.current,
-      disabled_features: ['use_localstorage_for_settings'],
+      disabled_features: ['header_fullscreen_button'],
       loading_screen: {
         backgroundColor: 'rgb(43, 10, 57)',
       },
@@ -72,23 +114,27 @@ export default function TradingViewChart({
         'mainSeriesProperties.hiloStyle.color': '#000',
       },
       symbol_search_request_delay: 600,
-    };
+    });
 
-    const tvWidget = new widget(widgetOptions);
+    tvWidget.current.onChartReady(() => {
+      loadChartPreferences();
 
-    tvWidget.onChartReady(() => {
-      tvWidget
-        .activeChart()
+      tvWidget.current
+        ?.activeChart()
         .onSymbolChanged()
         .subscribe(
           null,
           // @ts-ignore
           (symbolName) => changeCurrentToken(symbolName)
         );
+
+      tvWidget.current?.subscribe('onAutoSaveNeeded', () => {
+        saveChartPreferences();
+      });
     });
 
     return () => {
-      tvWidget.remove();
+      tvWidget.current?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [symbol]);
