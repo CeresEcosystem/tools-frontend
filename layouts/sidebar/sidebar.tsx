@@ -41,11 +41,9 @@ export default function SideBar({
             <ul role="list" className="-mx-2 space-y-1">
               {navigation.map((item) => {
                 const active =
-                  typeof item.href === 'string'
-                    ? item.href === '/'
-                      ? router.pathname === item.href
-                      : router.pathname.includes(item.href)
-                    : router.pathname.includes(item.href.pathname);
+                  item.href === '/'
+                    ? router.pathname === item.href
+                    : router.pathname.includes(item.href);
                 const Icon = item.icon;
 
                 return (

@@ -12,6 +12,8 @@ declare global {
   }
 }
 
+const TOKEN = 'CHART_TOKEN';
+
 const usePrices = () => {
   const { query, isReady } = useRouter();
 
@@ -71,6 +73,7 @@ const usePrices = () => {
   const changeCurrentToken = useCallback(
     (token: any) => {
       const t = prices.find((t) => t.token === token?.name)!;
+      localStorage.setItem(TOKEN, t.token);
       setCurrentToken(t);
 
       window.flutter_inappwebview?.callHandler('tokenChange', t.token);
@@ -79,6 +82,10 @@ const usePrices = () => {
   );
 
   const changeCurrentTokenFromModal = useCallback((token: Token | string) => {
+    if (typeof token !== 'string') {
+      localStorage.setItem(TOKEN, token.token);
+    }
+
     setCurrentToken(token);
   }, []);
 
@@ -90,8 +97,21 @@ const usePrices = () => {
 
   useEffect(() => {
     if (isReady) {
-      const token = (query?.token as string) ?? 'CERES';
-      getPrices(token);
+      const chartToken = localStorage.getItem(TOKEN);
+      const tokenQuery = query?.token;
+
+      if (tokenQuery) {
+        const token = query.token as string;
+
+        getPrices(token);
+
+        if (token !== chartToken) {
+          localStorage.setItem(TOKEN, token);
+        }
+      } else {
+        getPrices(chartToken ?? 'CERES');
+      }
+
       setPriceInterval();
     }
 
@@ -105,7 +125,6 @@ const usePrices = () => {
   return {
     currentToken,
     prices,
-    getPrices,
     changeCurrentToken,
     changeCurrentTokenFromModal,
   };

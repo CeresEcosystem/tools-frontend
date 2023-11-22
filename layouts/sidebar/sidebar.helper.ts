@@ -7,7 +7,7 @@ export const navigation = [
   { name: 'Burning Tracker', href: '/tracker', icon: 'flame' },
   {
     name: 'Charts & Swaps',
-    href: { pathname: '/charts', query: { token: 'CERES' } },
+    href: '/charts',
     icon: 'chart',
   },
   { name: 'Portfolio', href: '/portfolio', icon: StarIcon },
