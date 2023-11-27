@@ -7,6 +7,7 @@ import {
   PortfolioLiquidityItem,
   PortfolioModalData,
   PortfolioStakingRewardsItem,
+  PortfolioTransferItem,
   Swap,
   WalletAddress,
 } from '@interfaces/index';
@@ -29,6 +30,8 @@ import PortfolioModal from '@components/modal/portfolio_modal';
 import Select from 'react-select';
 import Clipboard from '@components/clipboard';
 import SwapsTable from '@components/swaps/swaps_table';
+import Link from 'next/link';
+import TransfersTable from '@components/transfers/transfers_table';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -81,10 +84,10 @@ function Table({
   renderBody,
   footerColSpan,
 }: {
-  totalValue: number;
+  totalValue?: number;
   renderHeader: React.ReactNode;
   renderBody: React.ReactNode;
-  footerColSpan: number;
+  footerColSpan?: number;
 }) {
   const format = useFormatter();
 
@@ -99,16 +102,18 @@ function Table({
           </tr>
         </thead>
         <tbody>{renderBody}</tbody>
-        <tfoot className="bg-backgroundHeader border-t-4 border-t-backgroundHeader">
-          <tr>
-            <td colSpan={footerColSpan} className={footerStyle}>
-              Total Value
-            </td>
-            <td className={classNames(footerStyle, 'text-center !text-pink')}>
-              {formatCurrencyWithDecimals(format, totalValue, 2, true)}
-            </td>
-          </tr>
-        </tfoot>
+        {totalValue && (
+          <tfoot className="bg-backgroundHeader border-t-4 border-t-backgroundHeader">
+            <tr>
+              <td colSpan={footerColSpan} className={footerStyle}>
+                Total Value
+              </td>
+              <td className={classNames(footerStyle, 'text-center !text-pink')}>
+                {formatCurrencyWithDecimals(format, totalValue, 2, true)}
+              </td>
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );
@@ -246,12 +251,19 @@ function PortfolioTabTable({
               className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10"
             >
               <td className={classNames(cellStyle, 'text-start min-w-[250px]')}>
-                <img
-                  src={`${ASSET_URL}/${item.token}.svg`}
-                  alt=""
-                  className="w-8 h-8 mr-4 inline-block"
-                />
-                <span>{item.fullName}</span>
+                <Link
+                  href={{
+                    pathname: '/charts',
+                    query: { token: item.token },
+                  }}
+                >
+                  <img
+                    src={`${ASSET_URL}/${item.token}.svg`}
+                    alt=""
+                    className="w-8 h-8 mr-4 inline-block"
+                  />
+                  <span>{item.fullName}</span>
+                </Link>
               </td>
               <td className={cellStyle}>
                 {formatToCurrency(format, item.price)}
@@ -323,12 +335,19 @@ function PortfolioStakingAndRewardTab({
               className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10"
             >
               <td className={classNames(cellStyle, 'text-start')}>
-                <img
-                  src={`${ASSET_URL}/${item.token}.svg`}
-                  alt=""
-                  className="w-8 h-8 mr-4 inline-block"
-                />
-                <span>{item.fullName}</span>
+                <Link
+                  href={{
+                    pathname: '/charts',
+                    query: { token: item.token },
+                  }}
+                >
+                  <img
+                    src={`${ASSET_URL}/${item.token}.svg`}
+                    alt=""
+                    className="w-8 h-8 mr-4 inline-block"
+                  />
+                  <span>{item.fullName}</span>
+                </Link>
               </td>
               <td className={cellStyle}>
                 {formatToCurrency(format, item.price)}
@@ -404,6 +423,7 @@ function PortfolioLiquidityTab({
 }
 
 function TabRenderer({
+  selectedWallet,
   selectedTab,
   totalValue,
   portfolioItems,
@@ -413,6 +433,7 @@ function TabRenderer({
   goToNextPage,
   goToLastPage,
 }: {
+  selectedWallet: WalletAddress | null;
   selectedTab: string;
   totalValue: number;
   portfolioItems: (
@@ -420,6 +441,7 @@ function TabRenderer({
     | PortfolioStakingRewardsItem
     | PortfolioLiquidityItem
     | Swap
+    | PortfolioTransferItem
   )[];
   pageMeta: PageMeta | undefined;
   goToFirstPage: () => void;
@@ -427,7 +449,7 @@ function TabRenderer({
   goToNextPage: () => void;
   goToLastPage: () => void;
 }) {
-  if (selectedTab === 'Portfolio') {
+  if (selectedTab === 'portfolio') {
     return (
       <PortfolioTabTable
         portfolioItems={portfolioItems as PortfolioItem[]}
@@ -436,7 +458,7 @@ function TabRenderer({
     );
   }
 
-  if (selectedTab === 'Staking') {
+  if (selectedTab === 'staking') {
     return (
       <PortfolioStakingAndRewardTab
         portfolioItems={portfolioItems as PortfolioStakingRewardsItem[]}
@@ -445,7 +467,7 @@ function TabRenderer({
     );
   }
 
-  if (selectedTab === 'Rewards') {
+  if (selectedTab === 'rewards') {
     return (
       <PortfolioStakingAndRewardTab
         portfolioItems={portfolioItems as PortfolioStakingRewardsItem[]}
@@ -454,7 +476,7 @@ function TabRenderer({
     );
   }
 
-  if (selectedTab === 'Swaps') {
+  if (selectedTab === 'swaps') {
     return (
       <div className="max-w-full overflow-x-auto">
         <SwapsTable
@@ -466,6 +488,23 @@ function TabRenderer({
           goToNextPage={goToNextPage}
           goToLastPage={goToLastPage}
           showAccount={false}
+          linkToChart
+        />
+      </div>
+    );
+  }
+
+  if (selectedTab === 'transfers') {
+    return (
+      <div className="max-w-full overflow-x-auto">
+        <TransfersTable
+          selectedWallet={selectedWallet}
+          transfers={portfolioItems as PortfolioTransferItem[]}
+          pageMeta={pageMeta}
+          goToFirstPage={goToFirstPage}
+          goToPreviousPage={goToPreviousPage}
+          goToNextPage={goToNextPage}
+          goToLastPage={goToLastPage}
         />
       </div>
     );
@@ -540,14 +579,15 @@ export default function PortfolioTable() {
         </span>
       ) : portfolioItems.length === 0 ? (
         <span className="font-medium block text-opacity-50 mx-auto w-fit text-lg text-white">
-          {`No items in ${selectedTab.tab}.`}
+          {`No items in ${selectedTab}.`}
         </span>
       ) : (
         <TabRenderer
-          key={selectedTab.tab}
+          key={selectedTab}
+          selectedWallet={selectedWallet}
           portfolioItems={portfolioItems}
           totalValue={totalValue}
-          selectedTab={selectedTab.tab}
+          selectedTab={selectedTab}
           pageMeta={pageMeta}
           goToFirstPage={goToFirstPage}
           goToPreviousPage={goToPreviousPage}

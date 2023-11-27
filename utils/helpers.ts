@@ -17,13 +17,13 @@ export function formatWalletAddress(
 
 export function formatToCurrency(format: any, number: number): string {
   if (number !== null) {
-    const numberString = number.toString();
+    const numberString = number?.toString();
 
-    if (numberString.includes('e')) {
+    if (numberString?.includes('e')) {
       return `$${numberString}`;
     }
 
-    if (numberString.includes('.')) {
+    if (numberString?.includes('.')) {
       const numberSplit = numberString.split('.');
       const firstPart = format.number(parseInt(numberSplit[0]), {
         style: 'currency',
@@ -92,7 +92,7 @@ export function formatNumberExceptDecimal(
 ) {
   const numberString = number?.toString();
 
-  if (numberString.includes('.')) {
+  if (numberString?.includes('.')) {
     const numberSplit = numberString.split('.');
     const firstPart = format.number(parseInt(numberSplit[0]), {
       style: 'decimal',
@@ -203,11 +203,15 @@ export function getAvatarTitle(accountName: string | undefined) {
   return '';
 }
 
-export const getEncodedAddress = (address: string | undefined) => {
+export function getEncodedAddress(address: string | undefined) {
   if (address) {
     const keyring = new Keyring();
     return keyring.encodeAddress(address, 69);
   }
 
   return '';
-};
+}
+
+export function capitalizeFirstLetter(input: string) {
+  return input.charAt(0).toUpperCase() + input.slice(1);
+}

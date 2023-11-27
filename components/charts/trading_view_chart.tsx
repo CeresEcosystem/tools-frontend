@@ -141,3 +141,24 @@ export default function TradingViewChart({
 
   return <div ref={chartContainerRef} className="h-full" />;
 }
+
+/* 
+function getInterval(storedPreferences: string | null) {
+    if (storedPreferences) {
+      const preferences = JSON.parse(storedPreferences);
+
+      if (
+        preferences[symbol]?.charts &&
+        preferences[symbol].charts[0].panes &&
+        preferences[symbol].charts[0].panes[0].sources &&
+        preferences[symbol].charts[0].panes[0].sources[0].state?.interval
+      ) {
+        return preferences[
+          symbol
+        ].charts[0].panes[0].sources[0].state?.interval?.toString();
+      }
+    }
+
+    return '30';
+  }
+*/

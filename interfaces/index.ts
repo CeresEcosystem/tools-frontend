@@ -294,6 +294,22 @@ export interface PortfolioLiquidityItem {
   value: number;
 }
 
+export interface PortfolioTransferItem {
+  sender: string;
+  amount: number;
+  asset: string;
+  receiver: string;
+  transferredAt: string;
+  senderFormatted?: string;
+  receiverFormatted?: string;
+  tokenFormatted?: string;
+}
+
+export interface TransferData {
+  data: PortfolioTransferItem[];
+  meta: PageMeta;
+}
+
 export interface PortfolioTab {
   tab: string;
   permalink: string;

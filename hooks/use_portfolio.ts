@@ -6,13 +6,15 @@ import {
   PortfolioLiquidityItem,
   PortfolioStakingRewardsItem,
   PortfolioTab,
+  PortfolioTransferItem,
   Swap,
   SwapsData,
   Token,
+  TransferData,
   WalletAddress,
 } from '@interfaces/index';
 import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
-import { getEncodedAddress } from '@utils/helpers';
+import { formatWalletAddress, getEncodedAddress } from '@utils/helpers';
 import usePersistState from './use_persist_state';
 import { useRouter } from 'next/router';
 import { showErrorNotify } from '@utils/toast';
@@ -23,6 +25,7 @@ const tabs = [
   { tab: 'Rewards', permalink: '/portfolio/rewards/' },
   { tab: 'Liquidity', permalink: '/portfolio/liquidity/' },
   { tab: 'Swaps', permalink: '/portfolio/swaps/' },
+  { tab: 'Transfers', permalink: '/portfolio/transfers/' },
 ];
 
 const WALLET_EXIST_ERROR = 'Wallet with entered address already exist.';
@@ -33,15 +36,13 @@ const usePortfolio = () => {
   const polkadot = usePolkadot();
 
   const [loadingStatus, setLoadingStatus] = useState(true);
-  const [selectedTab, setSelectedTab] = useState(tabs[0]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedWallet, setSelectedWallet] =
     usePersistState<WalletAddress | null>(
       null,
       'SELECTED_WALLET',
       (value: WalletAddress | null) => {
-        if (value && value.name !== '' && router.query.slug === undefined)
-          return true;
+        if (value && value.name !== '' && !router.query.address) return true;
         return false;
       }
     );
@@ -57,6 +58,7 @@ const usePortfolio = () => {
         | PortfolioStakingRewardsItem
         | PortfolioLiquidityItem
         | Swap
+        | PortfolioTransferItem
       )[]
     | undefined
     | 'throttle error'
@@ -93,6 +95,11 @@ const usePortfolio = () => {
     setLoading(false);
   }
 
+  const getTokens = useCallback(async () => {
+    const tokensResponse = await fetch(`${NEW_API_URL}/prices`);
+    return (await tokensResponse.json()) as Token[];
+  }, []);
+
   const fetchPortfolioItems = useCallback(
     async (address: string, page = 1) => {
       if (!loading) {
@@ -101,8 +108,12 @@ const usePortfolio = () => {
 
       if (address !== '') {
         try {
+          const permalink = router.query.slug
+            ? `/portfolio/${router.query.slug[0]}/`
+            : '/portfolio/';
+
           const response = await fetch(
-            `${NEW_API_URL}${selectedTab.permalink}${address}?page=${page}`
+            `${NEW_API_URL}${permalink}${address}?page=${page}`
           );
 
           if (response.status === 429) {
@@ -114,22 +125,21 @@ const usePortfolio = () => {
             if (response.status === 200 && json) {
               let array = [];
 
-              if (selectedTab.tab === 'Portfolio') {
+              if (router.query.slug === undefined) {
                 array = json as PortfolioItem[];
                 sortAndFilterItems(array);
               } else if (
-                selectedTab.tab === 'Staking' ||
-                selectedTab.tab === 'Rewards'
+                router.query.slug[0] === 'staking' ||
+                router.query.slug[0] === 'rewards'
               ) {
                 array = json as PortfolioStakingRewardsItem[];
                 sortAndFilterItems(array);
-              } else if (selectedTab.tab === 'Swaps') {
+              } else if (router.query.slug[0] === 'swaps') {
                 const jsonResponse = json as SwapsData;
                 pageMeta.current = jsonResponse.meta;
 
                 const swapsArray: Swap[] = [];
-                const tokensResponse = await fetch(`${NEW_API_URL}/prices`);
-                const tokensJson = (await tokensResponse.json()) as Token[];
+                const tokensJson = await getTokens();
 
                 jsonResponse.data.forEach((swap) =>
                   swapsArray.push({
@@ -144,6 +154,26 @@ const usePortfolio = () => {
                 );
 
                 portfolioItems.current = swapsArray;
+                setLoading(false);
+              } else if (router.query.slug[0] === 'transfers') {
+                const jsonResponse = json as TransferData;
+                pageMeta.current = jsonResponse.meta;
+
+                const transfersArray: PortfolioTransferItem[] = [];
+                const tokensJson = await getTokens();
+
+                jsonResponse.data.forEach((transfer) =>
+                  transfersArray.push({
+                    ...transfer,
+                    tokenFormatted: tokensJson.find(
+                      (token) => token.assetId === transfer.asset
+                    )?.token,
+                    senderFormatted: formatWalletAddress(transfer.sender),
+                    receiverFormatted: formatWalletAddress(transfer.receiver),
+                  })
+                );
+
+                portfolioItems.current = transfersArray;
                 setLoading(false);
               } else {
                 array = json as PortfolioLiquidityItem[];
@@ -166,7 +196,7 @@ const usePortfolio = () => {
         setLoading(false);
       }
     },
-    [selectedTab.permalink, selectedTab.tab, loading]
+    [router.query.slug, loading, getTokens]
   );
 
   const goToFirstPage = useCallback(() => {
@@ -208,12 +238,17 @@ const usePortfolio = () => {
     setSelectedWallet(wallet);
   };
 
-  const changeSelectedTab = (tab: PortfolioTab) => {
-    if (tab !== selectedTab) {
+  const changeSelectedTab = useCallback(
+    (tab: PortfolioTab) => {
       setLoading(true);
-      setSelectedTab(tab);
-    }
-  };
+      router.push(
+        `${tab.permalink}${
+          router.query.address ? `?address=${router.query.address}` : ''
+        }`
+      );
+    },
+    [router]
+  );
 
   const setWalletAddresses = useCallback(
     (connected: boolean) => {
@@ -245,10 +280,10 @@ const usePortfolio = () => {
         ...storageWallets.current,
       ];
 
-      if (router.query.slug && router.query.slug?.length > 0) {
+      if (router.query.address) {
         const wallet: WalletAddress = {
           name: '',
-          address: router.query.slug[0],
+          address: router.query.address as string,
           fromPolkadotExtension: false,
           temporaryAddress: true,
         };
@@ -271,7 +306,12 @@ const usePortfolio = () => {
 
       setLoadingStatus(false);
     },
-    [polkadot?.accounts, router.query.slug, selectedWallet, setSelectedWallet]
+    [
+      polkadot?.accounts,
+      router.query.address,
+      selectedWallet,
+      setSelectedWallet,
+    ]
   );
 
   const editWallet = useCallback(
@@ -400,12 +440,12 @@ const usePortfolio = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingStatus, selectedTab, selectedWallet]);
+  }, [loadingStatus, router.query.slug, selectedWallet]);
 
   return {
     loadingStatus,
     tabs,
-    selectedTab,
+    selectedTab: router.query.slug ? router.query.slug[0] : 'portfolio',
     changeSelectedTab,
     selectedWallet,
     walletAddresses: [...polkadotWallets.current, ...storageWallets.current],
