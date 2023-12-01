@@ -1,6 +1,8 @@
 import InputState from '@components/input/input_state';
 import Modal from '@components/modal';
 import { WalletAddress } from '@interfaces/index';
+import { validWalletAddress } from '@utils/helpers';
+import { showErrorNotify } from '@utils/toast';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 
 export default function PortfolioModal({
@@ -48,14 +50,18 @@ export default function PortfolioModal({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const newWallet: WalletAddress = {
-      name: formData.name,
-      address: formData.address,
-      fromPolkadotExtension: false,
-      temporaryAddress: formData.name === '',
-    };
+    if (validWalletAddress(formData.address)) {
+      const newWallet: WalletAddress = {
+        name: formData.name,
+        address: formData.address,
+        fromPolkadotExtension: false,
+        temporaryAddress: formData.name === '',
+      };
 
-    addEditWallet(newWallet, wallet);
+      addEditWallet(newWallet, wallet);
+    } else {
+      showErrorNotify('Entered wallet address is not valid', true);
+    }
   };
 
   return (

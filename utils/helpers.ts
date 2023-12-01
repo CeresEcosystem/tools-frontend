@@ -215,3 +215,9 @@ export function getEncodedAddress(address: string | undefined) {
 export function capitalizeFirstLetter(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
+
+export function validWalletAddress(address: string): boolean {
+  if (address !== '' && address.length === 49 && address.startsWith('cn'))
+    return true;
+  return false;
+}

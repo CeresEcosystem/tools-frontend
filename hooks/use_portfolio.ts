@@ -31,18 +31,19 @@ const tabs = [
 const WALLET_EXIST_ERROR = 'Wallet with entered address already exist.';
 
 const usePortfolio = () => {
-  const router = useRouter();
+  const { pathname, query, push, replace } = useRouter();
 
   const polkadot = usePolkadot();
 
   const [loadingStatus, setLoadingStatus] = useState(true);
+  const [walletsLoading, setWalletsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [selectedWallet, setSelectedWallet] =
     usePersistState<WalletAddress | null>(
       null,
       'SELECTED_WALLET',
       (value: WalletAddress | null) => {
-        if (value && value.name !== '' && !router.query.address) return true;
+        if (value && value.name !== '') return true;
         return false;
       }
     );
@@ -65,6 +66,16 @@ const usePortfolio = () => {
   >();
 
   const totalValue = useRef(0);
+
+  const setURLAddress = useCallback(
+    (address: string) => {
+      replace({
+        pathname,
+        query: { address, slug: query.slug ?? '' },
+      });
+    },
+    [pathname, replace, query.slug]
+  );
 
   function sortAndFilterItems(
     array: (
@@ -101,94 +112,98 @@ const usePortfolio = () => {
   }, []);
 
   const fetchPortfolioItems = useCallback(
-    async (address: string, page = 1) => {
+    async (page = 1, sw = selectedWallet) => {
       if (!loading) {
         setLoading(true);
       }
 
-      if (address !== '') {
-        try {
-          const permalink = router.query.slug
-            ? `/portfolio/${router.query.slug[0]}/`
-            : '/portfolio/';
+      if (sw) {
+        if (
+          [...polkadotWallets.current, ...storageWallets.current].length > 0
+        ) {
+          try {
+            const permalink = query.slug
+              ? `/portfolio/${query.slug[0]}/`
+              : '/portfolio/';
 
-          const response = await fetch(
-            `${NEW_API_URL}${permalink}${address}?page=${page}`
-          );
+            const response = await fetch(
+              `${NEW_API_URL}${permalink}${sw.address}?page=${page}`
+            );
 
-          if (response.status === 429) {
-            portfolioItems.current = 'throttle error';
-            setLoading(false);
-          } else {
-            const json = await response.json();
-
-            if (response.status === 200 && json) {
-              let array = [];
-
-              if (router.query.slug === undefined) {
-                array = json as PortfolioItem[];
-                sortAndFilterItems(array);
-              } else if (
-                router.query.slug[0] === 'staking' ||
-                router.query.slug[0] === 'rewards'
-              ) {
-                array = json as PortfolioStakingRewardsItem[];
-                sortAndFilterItems(array);
-              } else if (router.query.slug[0] === 'swaps') {
-                const jsonResponse = json as SwapsData;
-                pageMeta.current = jsonResponse.meta;
-
-                const swapsArray: Swap[] = [];
-                const tokensJson = await getTokens();
-
-                jsonResponse.data.forEach((swap) =>
-                  swapsArray.push({
-                    ...swap,
-                    inputAsset: tokensJson.find(
-                      (token) => token.assetId === swap.inputAssetId
-                    )?.token,
-                    outputAsset: tokensJson.find(
-                      (token) => token.assetId === swap.outputAssetId
-                    )?.token,
-                  })
-                );
-
-                portfolioItems.current = swapsArray;
-                setLoading(false);
-              } else if (router.query.slug[0] === 'transfers') {
-                const jsonResponse = json as TransferData;
-                pageMeta.current = jsonResponse.meta;
-
-                const transfersArray: PortfolioTransferItem[] = [];
-                const tokensJson = await getTokens();
-
-                jsonResponse.data.forEach((transfer) =>
-                  transfersArray.push({
-                    ...transfer,
-                    tokenFormatted: tokensJson.find(
-                      (token) => token.assetId === transfer.asset
-                    )?.token,
-                    senderFormatted: formatWalletAddress(transfer.sender),
-                    receiverFormatted: formatWalletAddress(transfer.receiver),
-                  })
-                );
-
-                portfolioItems.current = transfersArray;
-                setLoading(false);
-              } else {
-                array = json as PortfolioLiquidityItem[];
-                sortAndFilterItems(array);
-              }
-            } else {
-              portfolioItems.current = [];
-              totalValue.current = 0;
+            if (response.status === 429) {
+              portfolioItems.current = 'throttle error';
               setLoading(false);
+            } else {
+              const json = await response.json();
+
+              if (response.status === 200 && json) {
+                let array = [];
+
+                if (query.slug === undefined) {
+                  array = json as PortfolioItem[];
+                  sortAndFilterItems(array);
+                } else if (
+                  query.slug[0] === 'staking' ||
+                  query.slug[0] === 'rewards'
+                ) {
+                  array = json as PortfolioStakingRewardsItem[];
+                  sortAndFilterItems(array);
+                } else if (query.slug[0] === 'swaps') {
+                  const jsonResponse = json as SwapsData;
+                  pageMeta.current = jsonResponse.meta;
+
+                  const swapsArray: Swap[] = [];
+                  const tokensJson = await getTokens();
+
+                  jsonResponse.data.forEach((swap) =>
+                    swapsArray.push({
+                      ...swap,
+                      inputAsset: tokensJson.find(
+                        (token) => token.assetId === swap.inputAssetId
+                      )?.token,
+                      outputAsset: tokensJson.find(
+                        (token) => token.assetId === swap.outputAssetId
+                      )?.token,
+                    })
+                  );
+
+                  portfolioItems.current = swapsArray;
+                  setLoading(false);
+                } else if (query.slug[0] === 'transfers') {
+                  const jsonResponse = json as TransferData;
+                  pageMeta.current = jsonResponse.meta;
+
+                  const transfersArray: PortfolioTransferItem[] = [];
+                  const tokensJson = await getTokens();
+
+                  jsonResponse.data.forEach((transfer) =>
+                    transfersArray.push({
+                      ...transfer,
+                      tokenFormatted: tokensJson.find(
+                        (token) => token.assetId === transfer.asset
+                      )?.token,
+                      senderFormatted: formatWalletAddress(transfer.sender),
+                      receiverFormatted: formatWalletAddress(transfer.receiver),
+                    })
+                  );
+
+                  portfolioItems.current = transfersArray;
+                  setLoading(false);
+                } else {
+                  array = json as PortfolioLiquidityItem[];
+                  sortAndFilterItems(array);
+                }
+              } else {
+                portfolioItems.current = [];
+                totalValue.current = 0;
+                setLoading(false);
+              }
             }
+          } catch {
+            portfolioItems.current = [];
+            totalValue.current = 0;
+            setLoading(false);
           }
-        } catch {
-          portfolioItems.current = [];
-          totalValue.current = 0;
-          setLoading(false);
         }
       } else {
         portfolioItems.current = undefined;
@@ -196,66 +211,92 @@ const usePortfolio = () => {
         setLoading(false);
       }
     },
-    [router.query.slug, loading, getTokens]
+    [loading, selectedWallet, query.slug, getTokens]
   );
 
   const goToFirstPage = useCallback(() => {
-    if (pageMeta.current?.hasPreviousPage && selectedWallet) {
-      fetchPortfolioItems(selectedWallet.address);
+    if (pageMeta.current?.hasPreviousPage) {
+      fetchPortfolioItems();
     }
-  }, [fetchPortfolioItems, selectedWallet]);
+  }, [fetchPortfolioItems]);
 
   const goToPreviousPage = useCallback(() => {
-    if (pageMeta.current?.hasPreviousPage && selectedWallet) {
-      fetchPortfolioItems(
-        selectedWallet.address,
-        pageMeta.current.pageNumber - 1
-      );
+    if (pageMeta.current?.hasPreviousPage) {
+      fetchPortfolioItems(pageMeta.current.pageNumber - 1);
     }
-  }, [fetchPortfolioItems, selectedWallet]);
+  }, [fetchPortfolioItems]);
 
   const goToNextPage = useCallback(() => {
-    if (pageMeta.current?.hasNextPage && selectedWallet) {
-      fetchPortfolioItems(
-        selectedWallet.address,
-        pageMeta.current.pageNumber + 1
-      );
+    if (pageMeta.current?.hasNextPage) {
+      fetchPortfolioItems(pageMeta.current.pageNumber + 1);
     }
-  }, [fetchPortfolioItems, selectedWallet]);
+  }, [fetchPortfolioItems]);
 
   const goToLastPage = useCallback(() => {
-    if (pageMeta.current?.hasNextPage && selectedWallet) {
-      fetchPortfolioItems(selectedWallet.address, pageMeta.current.pageCount);
+    if (pageMeta.current?.hasNextPage) {
+      fetchPortfolioItems(pageMeta.current.pageCount);
     }
-  }, [fetchPortfolioItems, selectedWallet]);
+  }, [fetchPortfolioItems]);
 
-  const handleWalletChange = (newWallet?: string) => {
-    const wallet =
-      [...polkadotWallets.current, ...storageWallets.current].find(
-        (w) => w.address === newWallet
-      ) ?? null;
+  const handleWalletChange = useCallback(
+    (newWallet?: string) => {
+      if (newWallet && newWallet !== selectedWallet?.address) {
+        if (!loading) {
+          setLoading(true);
+        }
 
-    setSelectedWallet(wallet);
-  };
+        setURLAddress(newWallet);
+      }
+    },
+    [loading, selectedWallet?.address, setURLAddress]
+  );
 
   const changeSelectedTab = useCallback(
     (tab: PortfolioTab) => {
-      setLoading(true);
-      router.push(
-        `${tab.permalink}${
-          router.query.address ? `?address=${router.query.address}` : ''
-        }`
+      if (!loading) {
+        setLoading(true);
+      }
+      push(
+        `${tab.permalink}${query.address ? `?address=${query.address}` : ''}`
       );
     },
-    [router]
+    [loading, push, query.address]
   );
+
+  const setWallet = useCallback(() => {
+    if (query.address !== selectedWallet?.address) {
+      const wallet = [
+        ...polkadotWallets.current,
+        ...storageWallets.current,
+      ].find((w) => w.address === query.address) ?? {
+        name: '',
+        address: query.address as string,
+        fromPolkadotExtension: false,
+        temporaryAddress: true,
+      };
+
+      if (wallet.name === '') {
+        storageWallets.current?.push(wallet);
+      }
+
+      setSelectedWallet(wallet);
+      setLoadingStatus(false);
+      fetchPortfolioItems(1, wallet);
+    } else {
+      setLoadingStatus(false);
+      fetchPortfolioItems();
+    }
+  }, [
+    fetchPortfolioItems,
+    query.address,
+    selectedWallet?.address,
+    setSelectedWallet,
+  ]);
 
   const setWalletAddresses = useCallback(
     (connected: boolean) => {
-      let accounts: WalletAddress[] = [];
-
       if (connected) {
-        accounts =
+        polkadotWallets.current =
           polkadot?.accounts?.map((acc) => {
             return {
               name: acc.meta.name,
@@ -266,8 +307,6 @@ const usePortfolio = () => {
           }) ?? [];
       }
 
-      polkadotWallets.current = accounts;
-
       const wallets = localStorage.getItem(WALLET_ADDRESSES);
       const walletsDB = wallets ? (JSON.parse(wallets) as WalletAddress[]) : [];
 
@@ -275,43 +314,25 @@ const usePortfolio = () => {
         return { ...w, temporaryAddress: w.name === '' };
       });
 
-      const allWallets = [
-        ...polkadotWallets.current,
-        ...storageWallets.current,
-      ];
+      setWalletsLoading(false);
 
-      if (router.query.address) {
-        const wallet: WalletAddress = {
-          name: '',
-          address: router.query.address as string,
-          fromPolkadotExtension: false,
-          temporaryAddress: true,
-        };
-
-        const walletExist = allWallets.find(
-          (w) => w.address === wallet.address
-        );
-
-        if (walletExist) {
-          setSelectedWallet(walletExist);
+      if (!query.address) {
+        if (selectedWallet) {
+          setURLAddress(selectedWallet.address);
+        } else if (
+          !selectedWallet &&
+          [...polkadotWallets.current, ...storageWallets.current].length > 0
+        ) {
+          setURLAddress(
+            [...polkadotWallets.current, ...storageWallets.current][0].address
+          );
         } else {
-          storageWallets.current?.push(wallet);
-          setSelectedWallet(wallet);
-        }
-      } else {
-        if (!selectedWallet && allWallets.length > 0) {
-          setSelectedWallet(allWallets[0]);
+          setLoadingStatus(false);
+          setLoading(false);
         }
       }
-
-      setLoadingStatus(false);
     },
-    [
-      polkadot?.accounts,
-      router.query.address,
-      selectedWallet,
-      setSelectedWallet,
-    ]
+    [polkadot?.accounts, query.address, selectedWallet, setURLAddress]
   );
 
   const editWallet = useCallback(
@@ -342,12 +363,12 @@ const usePortfolio = () => {
             storageWallets.current.filter((w) => !w.temporaryAddress)
           )
         );
-        setSelectedWallet(wallet);
+        setURLAddress(wallet.address);
       } else {
         showErrorNotify(WALLET_EXIST_ERROR, true);
       }
     },
-    [setSelectedWallet]
+    [setURLAddress]
   );
 
   const addWallet = useCallback(
@@ -370,10 +391,10 @@ const usePortfolio = () => {
           );
         }
 
-        setSelectedWallet(wallet);
+        setURLAddress(wallet.address);
       }
     },
-    [setSelectedWallet]
+    [setURLAddress]
   );
 
   const addEditWallet = useCallback(
@@ -406,12 +427,24 @@ const usePortfolio = () => {
       ];
 
       if (allWallets.length > 0) {
-        setSelectedWallet(allWallets[0]);
+        setURLAddress(allWallets[0].address);
       } else {
         setSelectedWallet(null);
+        delete query.address;
+        replace({
+          pathname,
+          query: { slug: query.slug ?? '' },
+        });
       }
     },
-    [setSelectedWallet]
+    [
+      pathname,
+      replace,
+      query.address,
+      query.slug,
+      setSelectedWallet,
+      setURLAddress,
+    ]
   );
 
   useEffect(() => {
@@ -426,26 +459,16 @@ const usePortfolio = () => {
   }, [polkadot?.accounts, polkadot?.loading]);
 
   useEffect(() => {
-    if (!loadingStatus) {
-      if (selectedWallet) {
-        if (
-          [...polkadotWallets.current, ...storageWallets.current].length > 0
-        ) {
-          fetchPortfolioItems(selectedWallet.address);
-        }
-      } else {
-        if (portfolioItems.current && portfolioItems.current?.length > 0) {
-          portfolioItems.current = undefined;
-        }
-      }
+    if (!walletsLoading && query.address) {
+      setWallet();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingStatus, router.query.slug, selectedWallet]);
+  }, [query, walletsLoading]);
 
   return {
     loadingStatus,
     tabs,
-    selectedTab: router.query.slug ? router.query.slug[0] : 'portfolio',
+    selectedTab: query.slug ? query.slug[0] : 'portfolio',
     changeSelectedTab,
     selectedWallet,
     walletAddresses: [...polkadotWallets.current, ...storageWallets.current],
@@ -453,7 +476,6 @@ const usePortfolio = () => {
     portfolioItems: portfolioItems.current,
     loading,
     totalValue: totalValue.current,
-    fetchPortfolioItems,
     addEditWallet,
     removeWallet,
     pageMeta: pageMeta.current,
