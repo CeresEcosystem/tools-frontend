@@ -182,8 +182,18 @@ const usePortfolio = () => {
                       tokenFormatted: tokensJson.find(
                         (token) => token.assetId === transfer.asset
                       )?.token,
-                      senderFormatted: formatWalletAddress(transfer.sender),
-                      receiverFormatted: formatWalletAddress(transfer.receiver),
+                      senderFormatted:
+                        [
+                          ...polkadotWallets.current,
+                          ...storageWallets.current,
+                        ].find((w) => w.address === transfer.sender)?.name ??
+                        formatWalletAddress(transfer.sender),
+                      receiverFormatted:
+                        [
+                          ...polkadotWallets.current,
+                          ...storageWallets.current,
+                        ].find((w) => w.address === transfer.receiver)?.name ??
+                        formatWalletAddress(transfer.receiver),
                     })
                   );
 
