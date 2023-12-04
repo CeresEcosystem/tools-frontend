@@ -96,7 +96,7 @@ export default function PairsLiquidityModal({
                     </td>
 
                     <td className={cellStyle}>
-                      <Link href={`/portfolio/${liq.signerId}`}>
+                      <Link href={`/portfolio?address=${liq.signerId}`}>
                         {liq.accountIdFormatted}
                       </Link>
                       <Clipboard text={liq.signerId}>
