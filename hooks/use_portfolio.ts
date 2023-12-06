@@ -176,7 +176,12 @@ const usePortfolio = () => {
                   const transfersArray: PortfolioTransferItem[] = [];
                   const tokensJson = await getTokens();
 
-                  jsonResponse.data.forEach((transfer) =>
+                  jsonResponse.data.forEach((transfer) => {
+                    const wallet: WalletAddress | undefined = [
+                      ...polkadotWallets.current,
+                      ...storageWallets.current,
+                    ].find((w) => w.address === transfer.receiver);
+
                     transfersArray.push({
                       ...transfer,
                       tokenFormatted: tokensJson.find(
@@ -189,13 +194,11 @@ const usePortfolio = () => {
                         ].find((w) => w.address === transfer.sender)?.name ??
                         formatWalletAddress(transfer.sender),
                       receiverFormatted:
-                        [
-                          ...polkadotWallets.current,
-                          ...storageWallets.current,
-                        ].find((w) => w.address === transfer.receiver)?.name ??
-                        formatWalletAddress(transfer.receiver),
-                    })
-                  );
+                        wallet && wallet.name !== ''
+                          ? wallet.name
+                          : formatWalletAddress(transfer.receiver),
+                    });
+                  });
 
                   portfolioItems.current = transfersArray;
                   setLoading(false);
