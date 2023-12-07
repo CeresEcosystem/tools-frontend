@@ -177,7 +177,11 @@ const usePortfolio = () => {
                   const tokensJson = await getTokens();
 
                   jsonResponse.data.forEach((transfer) => {
-                    const wallet: WalletAddress | undefined = [
+                    const walletSender: WalletAddress | undefined = [
+                      ...polkadotWallets.current,
+                      ...storageWallets.current,
+                    ].find((w) => w.address === transfer.sender);
+                    const walletReceiver: WalletAddress | undefined = [
                       ...polkadotWallets.current,
                       ...storageWallets.current,
                     ].find((w) => w.address === transfer.receiver);
@@ -188,14 +192,12 @@ const usePortfolio = () => {
                         (token) => token.assetId === transfer.asset
                       )?.token,
                       senderFormatted:
-                        [
-                          ...polkadotWallets.current,
-                          ...storageWallets.current,
-                        ].find((w) => w.address === transfer.sender)?.name ??
-                        formatWalletAddress(transfer.sender),
+                        walletSender && walletSender.name !== ''
+                          ? walletSender.name
+                          : formatWalletAddress(transfer.sender),
                       receiverFormatted:
-                        wallet && wallet.name !== ''
-                          ? wallet.name
+                        walletReceiver && walletReceiver.name !== ''
+                          ? walletReceiver.name
                           : formatWalletAddress(transfer.receiver),
                     });
                   });
