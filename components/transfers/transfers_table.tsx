@@ -56,7 +56,7 @@ export default function TransfersTable({
   };
 
   const bridgeTransfer = (sender: string, receiver: string) => {
-    if (sender.startsWith('cn') || receiver.startsWith('0x')) {
+    if (sender.startsWith('0x') || receiver.startsWith('0x')) {
       return (
         <div className="w-3 bg-pink rounded-sm absolute top-1 bottom-1 left-1 flex justify-center items-center">
           <span className="transform -rotate-90 inline-block text-[10px]">
