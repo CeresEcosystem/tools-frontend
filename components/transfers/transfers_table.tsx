@@ -18,7 +18,7 @@ import Link from 'next/link';
 
 const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
 const cellStyle =
-  'text-center text-white px-2 py-4 text-xs font-medium whitespace-nowrap';
+  'relative text-center text-white px-2 py-4 text-xs font-medium whitespace-nowrap';
 
 export default function TransfersTable({
   selectedWallet,
@@ -40,7 +40,7 @@ export default function TransfersTable({
   const format = useFormatter();
 
   const walletAddress = (address: string, addressFormatted?: string) => {
-    if (address !== selectedWallet?.address) {
+    if (address !== selectedWallet?.address && address.startsWith('cn')) {
       return (
         <Link
           target="_blank"
@@ -53,6 +53,20 @@ export default function TransfersTable({
     }
 
     return addressFormatted;
+  };
+
+  const bridgeTransfer = (sender: string, receiver: string) => {
+    if (sender.startsWith('cn') || receiver.startsWith('0x')) {
+      return (
+        <div className="w-3 bg-pink rounded-sm absolute top-1 bottom-1 left-1 flex justify-center items-center">
+          <span className="transform -rotate-90 inline-block text-[10px]">
+            BRIDGE
+          </span>
+        </div>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -73,6 +87,7 @@ export default function TransfersTable({
             className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10 hover:bg-backgroundHeader"
           >
             <td className={classNames(cellStyle, 'min-w-[150px]')}>
+              {bridgeTransfer(transfer.sender, transfer.receiver)}
               {formatDate(transfer.transferredAt)}
             </td>
             <td className={classNames(cellStyle, 'min-w-[150px]')}>

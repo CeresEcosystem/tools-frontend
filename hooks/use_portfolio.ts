@@ -279,7 +279,10 @@ const usePortfolio = () => {
   );
 
   const setWallet = useCallback(() => {
-    if (query.address !== selectedWallet?.address) {
+    if (
+      query.address !== selectedWallet?.address &&
+      query.address?.toString().startsWith('cn')
+    ) {
       const wallet = [
         ...polkadotWallets.current,
         ...storageWallets.current,

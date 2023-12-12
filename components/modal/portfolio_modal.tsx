@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import InputState from '@components/input/input_state';
 import Modal from '@components/modal';
 import { WalletAddress } from '@interfaces/index';
@@ -16,12 +17,9 @@ export default function PortfolioModal({
   closeModal: () => void;
   wallet: WalletAddress | null;
   addEditWallet: (
-    // eslint-disable-next-line no-unused-vars
     wallet: WalletAddress,
-    // eslint-disable-next-line no-unused-vars
     previousWallet: WalletAddress | null
   ) => void;
-  // eslint-disable-next-line no-unused-vars
   removeWallet: (wallet: WalletAddress) => void;
 }) {
   const [formData, setFormData] = useState({
