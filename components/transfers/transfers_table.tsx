@@ -1,6 +1,6 @@
 import Clipboard from '@components/clipboard';
 import ListPagination from '@components/pagination/list_pagination';
-import { ASSET_URL } from '@constants/index';
+import { ASSET_URL, ETHSCAN_URL } from '@constants/index';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
 import {
   PageMeta,
@@ -40,12 +40,16 @@ export default function TransfersTable({
   const format = useFormatter();
 
   const walletAddress = (address: string, addressFormatted?: string) => {
-    if (address !== selectedWallet?.address && address.startsWith('cn')) {
+    if (address !== selectedWallet?.address) {
+      const href = address.startsWith('0x')
+        ? `${ETHSCAN_URL}${address}`
+        : `/portfolio?address=${address}`;
+
       return (
         <Link
           target="_blank"
           className="cursor-pointer inline-block"
-          href={`/portfolio?address=${address}`}
+          href={href}
         >
           {addressFormatted}
         </Link>
