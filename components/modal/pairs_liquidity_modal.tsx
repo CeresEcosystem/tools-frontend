@@ -37,7 +37,7 @@ function LiquidityChart({
   }
 
   return (
-    <div className="p-4 rounded-xl bg-backgroundItem">
+    <div className="p-4 rounded-xl bg-backgroundItem max-w-4xl mx-auto">
       <LineChart
         data={pairLiquidityChartData.map((point) => point.liquidity)}
         labels={pairLiquidityChartData?.map((point) =>
@@ -205,7 +205,7 @@ export default function PairsLiquidityModal({
 
   return (
     <Modal showModal={showModal} closeModal={closeModal} fullScreen>
-      <div className="flex-grow h-screen">
+      <div className="flex-grow">
         <div className="flex items-center">
           <div className="mr-4 flex flex-shrink-0">
             <img
