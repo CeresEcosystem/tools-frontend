@@ -1,4 +1,4 @@
-import TrackerChart from '@components/charts/tracker_chart';
+import LineChart from '@components/charts/line_chart';
 import Title from '@components/title';
 import { Burning } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
@@ -19,7 +19,7 @@ export default function BurningChart({
       <Title title={`Track ${selectedToken} burning`} topMargin />
       <div className="mt-16 p-4 rounded-xl bg-backgroundItem">
         {burning ? (
-          <TrackerChart
+          <LineChart
             data={burning.map((point) => point.y)}
             labels={burning?.map((point) =>
               new Date(point.x).toLocaleDateString('en-US', {

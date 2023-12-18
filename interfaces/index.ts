@@ -371,6 +371,13 @@ export interface PairLiquidityData {
   meta: PageMeta;
 }
 
+export interface PairLiquidityChartData {
+  baseAssetSymbol: string;
+  tokenAssetSymbol: string;
+  liquidity: number;
+  updatedAt: string;
+}
+
 export interface SwapFilterData {
   dateFrom: Date | null;
   dateTo: Date | null;

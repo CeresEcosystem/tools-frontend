@@ -1,4 +1,4 @@
-import TrackerChart from '@components/charts/tracker_chart';
+import LineChart from '@components/charts/line_chart';
 import Title from '@components/title';
 import { Supply } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
@@ -27,7 +27,7 @@ export default function SupplyChart({
         )}
       >
         {supply ? (
-          <TrackerChart
+          <LineChart
             data={supply.map((point) => point.y)}
             labels={supply?.map((point) =>
               new Date(point.x).toLocaleDateString('en-US', {

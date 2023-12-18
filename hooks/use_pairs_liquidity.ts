@@ -3,6 +3,7 @@ import {
   PageMeta,
   Pair,
   PairLiquidity,
+  PairLiquidityChartData,
   PairLiquidityData,
   WalletAddress,
 } from '@interfaces/index';
@@ -11,14 +12,20 @@ import BigNumber from 'bignumber.js';
 import { formatDateFromTimestamp, getEncodedAddress } from '@utils/helpers';
 import { usePolkadot } from '@context/polkadot_context';
 
+const tabs = ['Liquidity changes', 'Liquidity chart'];
+
 const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
   const polkadot = usePolkadot();
 
+  const [walletsLoading, setWalletsLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [liquidity, setLiquidity] = useState<PairLiquidity[]>([]);
 
   const pageMeta = useRef<PageMeta | undefined>();
   const walletsStorage = useRef<WalletAddress[]>([]);
+
+  const pairLiquidityChartData = useRef<PairLiquidityChartData[]>([]);
 
   const fetchPairLiquidity = useCallback(
     async (page = 1) => {
@@ -66,6 +73,29 @@ const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
         });
     },
     [pair]
+  );
+
+  const fetchLiquidityChartData = useCallback(async () => {
+    const response = await fetch(
+      `${NEW_API_URL}/pairs-liquidity/history/${pair?.baseAsset}/${pair?.token}`
+    );
+
+    if (response.ok) {
+      const json = await response.json();
+
+      pairLiquidityChartData.current = json;
+    }
+
+    setLoading(false);
+  }, [pair]);
+
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      if (tab !== selectedTab) {
+        setSelectedTab(tab);
+      }
+    },
+    [selectedTab]
   );
 
   const goToFirstPage = useCallback(() => {
@@ -116,23 +146,36 @@ const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
 
       walletsStorage.current = [...accounts, ...walletDB];
 
-      fetchPairLiquidity();
+      setWalletsLoading(false);
     },
-    [polkadot?.accounts, fetchPairLiquidity]
+    [polkadot?.accounts]
   );
 
   useEffect(() => {
-    if (showModal) {
-      setLoading(true);
-      if (!polkadot?.loading) {
-        if (polkadot?.accounts && polkadot?.accounts?.length > 0) {
-          setWalletAddresses(true);
-        } else {
-          setWalletAddresses(false);
-        }
+    setWalletsLoading(true);
+    setLoading(true);
+
+    if (!polkadot?.loading) {
+      if (polkadot?.accounts && polkadot?.accounts?.length > 0) {
+        setWalletAddresses(true);
+      } else {
+        setWalletAddresses(false);
       }
     }
-  }, [polkadot?.accounts, polkadot?.loading, setWalletAddresses, showModal]);
+  }, [polkadot?.accounts, polkadot?.loading, setWalletAddresses]);
+
+  useEffect(() => {
+    if (showModal && !walletsLoading) {
+      setLoading(true);
+
+      if (selectedTab === tabs[0]) {
+        fetchPairLiquidity();
+      } else {
+        fetchLiquidityChartData();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showModal, walletsLoading, selectedTab]);
 
   return {
     loading,
@@ -142,6 +185,10 @@ const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
     goToPreviousPage,
     goToNextPage,
     goToLastPage,
+    tabs,
+    selectedTab,
+    handleTabChange,
+    pairLiquidityChartData: pairLiquidityChartData.current,
   };
 };
 

@@ -45,7 +45,7 @@ export default function Modal({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Panel className="relative flex flex-col rounded-xl px-2 py-6 overflow-hidden bg-backgroundBody max-h-full sm:px-6">
+              <Dialog.Panel className="relative flex flex-col rounded-xl px-2 py-6 overflow-x-hidden overflow-y-auto bg-backgroundBody max-h-full sm:px-6">
                 {children}
                 {showCloseButton && (
                   <button

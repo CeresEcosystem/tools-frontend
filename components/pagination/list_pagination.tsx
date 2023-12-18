@@ -59,7 +59,7 @@ export default function ListPagination({
       </button>
       <div
         className={classNames(
-          'h-9 px-4 bg-pink rounded-lg flex items-center',
+          'h-9 px-4 whitespace-nowrap bg-pink rounded-lg flex items-center',
           small && 'h-6'
         )}
       >

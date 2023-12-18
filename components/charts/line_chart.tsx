@@ -24,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-export default function TrackerChart({
+export default function LineChart({
   data,
   labels,
   callbackTitle,
@@ -32,8 +32,8 @@ export default function TrackerChart({
 }: {
   data: number[] | string[];
   labels: string[];
-  callbackTitle: (tooltipItems: any) => string | void | string[];
-  callbackLabel: (context: any) => string | void | string[];
+  callbackTitle?: (tooltipItems: any) => string | void | string[];
+  callbackLabel?: (context: any) => string | void | string[];
 }) {
   return (
     <Line
@@ -47,8 +47,12 @@ export default function TrackerChart({
             displayColors: false,
             backgroundColor: 'rgb(83, 41, 104)',
             callbacks: {
-              title: (tooltipItems: any) => callbackTitle(tooltipItems),
-              label: (context: any) => callbackLabel(context),
+              title: callbackTitle
+                ? (tooltipItems: any) => callbackTitle(tooltipItems)
+                : () => {},
+              label: callbackLabel
+                ? (context: any) => callbackLabel(context)
+                : () => {},
             },
           },
         },
