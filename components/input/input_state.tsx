@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { ChangeEvent } from 'react';
 
 export default function InputState({
@@ -11,11 +12,13 @@ export default function InputState({
   label = '',
   required = false,
   disabled = false,
+  labelStyle,
+  inputStyle,
 }: {
   type?: string;
   name: string;
   id?: string;
-  value: string;
+  value: string | undefined;
   // eslint-disable-next-line no-unused-vars
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   showIcon?: boolean;
@@ -23,13 +26,18 @@ export default function InputState({
   label?: string;
   required?: boolean;
   disabled?: boolean;
+  labelStyle?: string;
+  inputStyle?: string;
 }) {
   return (
     <div>
       {label !== '' && (
         <label
           htmlFor={id}
-          className="block mb-2 text-sm font-medium text-white"
+          className={classNames(
+            'block mb-2 text-sm font-medium text-white',
+            labelStyle
+          )}
         >
           {label}
         </label>
@@ -48,7 +56,10 @@ export default function InputState({
           disabled={disabled}
           onChange={handleChange}
           required={required}
-          className="block w-full rounded-xl border-0 bg-transparent py-2 px-6 text-white placeholder:text-white placeholder:text-opacity-50 focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none"
+          className={classNames(
+            'block w-full rounded-xl border-0 bg-transparent py-2 px-6 text-white placeholder:text-white placeholder:text-opacity-50 focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none',
+            inputStyle
+          )}
           placeholder={placeholder}
         />
       </div>

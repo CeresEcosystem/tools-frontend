@@ -1,6 +1,6 @@
 import Input from '@components/input';
 import Modal from '@components/modal';
-import { ASSET_URL, FAVORITE_TOKENS } from '@constants/index';
+import { ALL_TOKENS, ASSET_URL, FAVORITE_TOKENS } from '@constants/index';
 import { Token } from '@interfaces/index';
 import { formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
@@ -69,6 +69,17 @@ export default function PricesModal({
             </div>
             <span className="text-xs text-white font-bold sm:text-sm">
               Favorite tokens
+            </span>
+          </li>
+          <li
+            onClick={() => onChangeCurrentTokenFromModal(ALL_TOKENS)}
+            className="bg-backgroundItem cursor-pointer p-3 rounded-xl overflow-hidden flex items-center"
+          >
+            <div className="rounded-full flex items-center justify-center w-6 h-6 mr-2 bg-white bg-opacity-20">
+              <i className="flaticon-token text-yellow text-base mt-1.5 w-4.5"></i>
+            </div>
+            <span className="text-xs text-white font-bold sm:text-sm">
+              All tokens
             </span>
           </li>
           {tokenList.map((token) => (

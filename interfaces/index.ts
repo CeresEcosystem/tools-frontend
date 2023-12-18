@@ -10,6 +10,11 @@ export interface PageMeta {
   hasNextPage: boolean;
 }
 
+export interface SelectOption {
+  label: string;
+  value: string;
+}
+
 export interface Banner {
   sm: string;
   md: string;
@@ -364,4 +369,12 @@ export interface PairLiquidity {
 export interface PairLiquidityData {
   data: PairLiquidity[];
   meta: PageMeta;
+}
+
+export interface SwapFilterData {
+  dateFrom: Date | null;
+  dateTo: Date | null;
+  minAmount: string | null;
+  maxAmount: string | null;
+  token: SelectOption | '';
 }

@@ -1,5 +1,5 @@
 import PricesModal from '@components/modal/prices_modal';
-import { ASSET_URL } from '@constants/index';
+import { ASSET_URL, FAVORITE_TOKENS } from '@constants/index';
 import { Token } from '@interfaces/index';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -20,15 +20,29 @@ export default function Price({
 }) {
   const [showPriceModal, setShowPriceModal] = useState(false);
 
+  const favoriteOrAllTokens = () => {
+    if (token === FAVORITE_TOKENS) {
+      return (
+        <div className="rounded-full p-2 flex items-center justify-center w-12 h-12 mr-4 bg-pink">
+          <HeartIcon className="w-8 h-8 text-white" />
+        </div>
+      );
+    }
+
+    return (
+      <div className="rounded-full p-2 flex items-center justify-center w-12 h-12 mr-4 bg-white bg-opacity-20">
+        <i className="flaticon-token text-yellow text-2xl mt-2 w-4.5"></i>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="w-full flex justify-center">
         <div className="bg-backgroundItem space-x-10 flex rounded-xl items-center mt-16 py-4 px-8">
           <div className="flex items-center">
             {typeof token === 'string' ? (
-              <div className="rounded-full p-2 flex items-center justify-center w-12 h-12 mr-4 bg-pink">
-                <HeartIcon className="w-8 h-8 text-white" />
-              </div>
+              favoriteOrAllTokens()
             ) : (
               <img
                 className="rounded-full w-12 h-12 mr-4"
@@ -38,13 +52,17 @@ export default function Price({
             )}
             <div className="flex flex-col">
               <h4 className="text-base font-bold text-white sm:text-lg">
-                {typeof token === 'string' ? 'Favorite tokens' : token.fullName}
+                {typeof token === 'string'
+                  ? token === FAVORITE_TOKENS
+                    ? 'Favorite tokens'
+                    : 'All tokens'
+                  : token.fullName}
               </h4>
               <span
                 onClick={() => setShowPriceModal(true)}
                 className="text-xs text-white cursor-pointer font-bold text-opacity-50 hover:text-opacity-100 hover:text-pink"
               >
-                Show all tokens
+                Show menu
               </span>
             </div>
           </div>
