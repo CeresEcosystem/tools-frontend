@@ -20,7 +20,7 @@ export default function TBCReserves() {
 
   return (
     <Container>
-      <div className="p-4 rounded-xl bg-backgroundItem text-center">
+      <div className="p-4 truncate text-white rounded-xl bg-backgroundItem text-center">
         <span className="text-sm text-white text-opacity-50 md:text-base">
           TBC Reserves Address:{' '}
           <Link
@@ -46,6 +46,7 @@ export default function TBCReserves() {
                   format,
                   tbcReserves.currentValue
                 )}
+                smallInfo
               />
             </div>
             <div className="p-4 mt-8 rounded-xl bg-backgroundItem">
