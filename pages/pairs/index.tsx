@@ -5,7 +5,7 @@ import PairsList from '@components/list/pairs_list';
 import PairsLiquidityModalClient from '@components/modal/pairs_liquidity_modal_client';
 import PairsModal from '@components/modal/pairs_modal';
 import ListPagination from '@components/pagination/list_pagination';
-import PairsStats from '@components/stats/pairs_stats';
+import GridStats from '@components/stats/grid_stats';
 import { NEW_API_URL } from '@constants/index';
 import useLocks from '@hooks/use_locks';
 import usePairs from '@hooks/use_pairs';
@@ -60,7 +60,12 @@ export default function Pairs({ data }: { data?: Pair[] }) {
 
   return (
     <Container>
-      <PairsStats totalLiquidity={totalLiquidity} totalVolume={totalVolume} />
+      <GridStats
+        firstLabel="Total liquidity"
+        firstValue={totalLiquidity}
+        secondLabel="Total volume"
+        secondValue={totalVolume}
+      />
       <Input handleChange={handlePairSearch} />
       <PairsFilter
         baseAssets={baseAssets}

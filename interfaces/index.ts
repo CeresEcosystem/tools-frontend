@@ -385,3 +385,18 @@ export interface SwapFilterData {
   maxAmount: string | null;
   token: SelectOption | '';
 }
+
+export interface TBCReservesItem {
+  id: number;
+  tokenName: string;
+  tokenSymbol: string;
+  balance: number;
+  value: number;
+  updatedAt: string;
+}
+
+export interface TBCReservesData {
+  currentBalance: number;
+  currentValue: number;
+  data: TBCReservesItem[];
+}

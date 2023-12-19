@@ -3,22 +3,26 @@ const labelStyle =
 const numberStyle =
   'text-xl text-white text-center font-bold tracking-wide sm:text-2xl lg:text-3xl';
 
-export default function PairsStats({
-  totalLiquidity,
-  totalVolume,
+export default function GridStats({
+  firstLabel,
+  firstValue,
+  secondLabel,
+  secondValue,
 }: {
-  totalLiquidity: string;
-  totalVolume: string;
+  firstLabel: string;
+  firstValue: string;
+  secondLabel: string;
+  secondValue: string;
 }) {
   return (
     <div className="grid mb-8 gap-4 xxs:grid-cols-2 md:gap-x-8">
       <div className="flex-col bg-backgroundItem px-3 py-8 rounded-xl flex justify-center items-center">
-        <span className={labelStyle}>Total liquidity</span>
-        <h1 className={numberStyle}>{totalLiquidity}</h1>
+        <span className={labelStyle}>{firstLabel}</span>
+        <h1 className={numberStyle}>{firstValue}</h1>
       </div>
       <div className="flex-col bg-backgroundItem px-3 py-8 rounded-xl flex justify-center items-center">
-        <span className={labelStyle}>Total volume</span>
-        <h1 className={numberStyle}>{totalVolume}</h1>
+        <span className={labelStyle}>{secondLabel}</span>
+        <h1 className={numberStyle}>{secondValue}</h1>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { StarIcon } from '@heroicons/react/24/solid';
+import { FaCoins } from 'react-icons/fa';
 
 export const navigation = [
   { name: 'Tokens', href: '/', icon: 'token' },
@@ -11,6 +12,7 @@ export const navigation = [
     icon: 'chart',
   },
   { name: 'Portfolio', href: '/portfolio', icon: StarIcon },
+  { name: 'TBC Reserves', href: '/tbc-reserves', icon: FaCoins },
 ];
 
 export const websites = [
