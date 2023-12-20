@@ -1,7 +1,8 @@
 import { StarIcon } from '@heroicons/react/24/solid';
+import { SideMenuNavigationItem } from '@interfaces/index';
 import { FaCoins } from 'react-icons/fa';
 
-export const navigation = [
+export const navigation: SideMenuNavigationItem[] = [
   { name: 'Tokens', href: '/', icon: 'token' },
   { name: 'Pairs', href: '/pairs', icon: 'ring' },
   { name: 'Farming', href: '/farming', icon: 'sprout' },

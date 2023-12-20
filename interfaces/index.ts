@@ -1,6 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { ChangeEvent } from 'react';
 
+export interface SideMenuNavigationItem {
+  name: string;
+  href: string;
+  icon: any;
+}
+
 export interface PageMeta {
   pageNumber: number;
   pageSize: number;

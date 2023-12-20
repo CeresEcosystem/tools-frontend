@@ -8,6 +8,7 @@ import {
   websites,
 } from '@layouts/sidebar/sidebar.helper';
 import { useRouter } from 'next/router';
+import { SideMenuNavigationItem } from '@interfaces/index';
 
 export default function SideBar({
   setSidebarOpen,
@@ -16,6 +17,30 @@ export default function SideBar({
   setSidebarOpen?: (value: boolean) => void;
 }) {
   const router = useRouter();
+
+  const sideMenuItem = (item: SideMenuNavigationItem, active: boolean) => {
+    const Icon = item.icon;
+
+    return (
+      <div
+        className={classNames(
+          active
+            ? 'bg-backgroundHeader opacity-100'
+            : 'opacity-70 hover:bg-backgroundHeader hover:opacity-100',
+          'text-white block text-base rounded-md p-2 font-medium'
+        )}
+      >
+        {typeof Icon === 'string' ? (
+          <i className={`flaticon-${Icon} float-left text-2xl w-10`}></i>
+        ) : (
+          <div className="w-10 float-left">
+            <Icon className="h-6 w-auto" aria-hidden="true" />
+          </div>
+        )}
+        {item.name}
+      </div>
+    );
+  };
 
   return (
     <div className="flex grow gutter flex-col gap-y-5 overscroll-contain overflow-y-auto bg-backgroundSidebar pl-6 pb-4 lg:overflow-y-hidden hover:lg:overflow-y-auto">
@@ -44,35 +69,23 @@ export default function SideBar({
                   item.href === '/'
                     ? router.pathname === item.href
                     : router.pathname.includes(item.href);
-                const Icon = item.icon;
 
                 return (
                   <li key={item.name}>
-                    <Link
-                      href={item.href}
-                      onClick={() => {
-                        if (setSidebarOpen) {
-                          setSidebarOpen(false);
-                        }
-                      }}
-                      className={classNames(
-                        active
-                          ? 'bg-backgroundHeader opacity-100'
-                          : 'opacity-70 hover:bg-backgroundHeader hover:opacity-100',
-                        'text-white block text-base rounded-md p-2 font-medium'
-                      )}
-                    >
-                      {typeof Icon === 'string' ? (
-                        <i
-                          className={`flaticon-${Icon} float-left text-2xl w-10`}
-                        ></i>
-                      ) : (
-                        <div className="w-10 float-left">
-                          <Icon className="h-6 w-auto" aria-hidden="true" />
-                        </div>
-                      )}
-                      {item.name}
-                    </Link>
+                    {active ? (
+                      sideMenuItem(item, active)
+                    ) : (
+                      <Link
+                        href={item.href}
+                        onClick={() => {
+                          if (setSidebarOpen) {
+                            setSidebarOpen(false);
+                          }
+                        }}
+                      >
+                        {sideMenuItem(item, active)}
+                      </Link>
+                    )}
                   </li>
                 );
               })}
