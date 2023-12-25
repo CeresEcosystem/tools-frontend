@@ -392,6 +392,10 @@ export interface SwapFilterData {
   token: SelectOption | '';
 }
 
+export interface SwapTokens {
+  tokens: string[];
+}
+
 export interface TBCReservesItem {
   id: number;
   tokenName: string;

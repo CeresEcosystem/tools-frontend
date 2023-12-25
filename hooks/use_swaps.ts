@@ -10,6 +10,7 @@ import {
   PageMeta,
   Swap,
   SwapFilterData,
+  SwapTokens,
   SwapsData,
   Token,
   WalletAddress,
@@ -51,19 +52,17 @@ const useSwaps = (tokens: Token[], address: string) => {
     socket.current = undefined;
   }, []);
 
-  const getTokenParams = useCallback((addr: string): string => {
+  const getSwapTokens = useCallback((addr: string): SwapTokens => {
     if (addr === FAVORITE_TOKENS) {
-      let params = '';
+      const swapTokens: string[] = [];
 
       favoriteTokens.current.forEach((t) => {
-        params += `&token=${t.assetId}`;
+        swapTokens.push(t.assetId);
       });
 
-      return params;
-    } else if (addr === ALL_TOKENS) {
-      return '';
+      return { tokens: swapTokens };
     } else {
-      return `&token=${addr}`;
+      return { tokens: [addr] };
     }
   }, []);
 
@@ -163,92 +162,104 @@ const useSwaps = (tokens: Token[], address: string) => {
   }, []);
 
   const fetchSwaps = useCallback(
-    (addr: string, page = 1, swapFilterData = lastFilterOptions.current) => {
-      const params = getTokenParams(addr);
+    async (
+      addr: string,
+      page = 1,
+      swapFilterData = lastFilterOptions.current
+    ) => {
       const swapOptions = swapFilterData ? getSwapFilters(swapFilterData) : '';
-      const permalink = addr === ALL_TOKENS ? '/swaps/all' : '/swaps';
 
-      fetch(`${NEW_API_URL}${permalink}?page=${page}${params}${swapOptions}`)
-        .then(async (response) => {
-          if (response.ok) {
-            const responseData = (await response.json()) as SwapsData;
+      let response: Response;
 
-            const swapsArray: Swap[] = [];
+      if (addr === ALL_TOKENS) {
+        response = await fetch(
+          `${NEW_API_URL}/swaps/all?page=${page}${swapOptions}`
+        );
+      } else {
+        const swapTokens = getSwapTokens(addr);
 
-            responseData.data.forEach((swap) =>
-              swapsArray.push(getFormattedSwap(swap, addr))
-            );
-
-            pageMeta.current = responseData.meta;
-            setSwaps(swapsArray);
-            setLoading(false);
-            setPageLoading(false);
-
-            if (
-              page > 1 ||
-              (swapFilterData && swapFilterData.dateTo !== null)
-            ) {
-              socket.current?.disconnect();
-            } else {
-              if (!socket.current?.active) {
-                connectSocket();
-              }
-
-              socket.current?.removeAllListeners();
-
-              const addresses =
-                addr === FAVORITE_TOKENS
-                  ? favoriteTokens.current.map((ft) => ft.assetId)
-                  : addr === ALL_TOKENS
-                  ? tokens.map((t) => t.assetId)
-                  : [addr];
-
-              addresses.forEach((a) => {
-                socket.current?.on(a, (data) => {
-                  const swap = data as Swap;
-
-                  if (validateSwapFilters(swap, swapFilterData)) {
-                    setSwaps((prevSwaps) => {
-                      if (!prevSwaps?.find((pSwap) => pSwap.id === swap.id)) {
-                        const s: Swap = getFormattedSwap(swap, a);
-
-                        let updatedSwaps = [s];
-
-                        if (pageMeta.current && prevSwaps) {
-                          const numberOfSwapsOnPage = prevSwaps?.length;
-                          updatedSwaps = [s, ...prevSwaps].slice(0, 10);
-                          pageMeta.current.totalCount++;
-
-                          if (
-                            numberOfSwapsOnPage === pageMeta.current.pageSize
-                          ) {
-                            pageMeta.current.hasNextPage = true;
-                          }
-                        }
-
-                        return updatedSwaps;
-                      }
-
-                      return prevSwaps;
-                    });
-                  }
-                });
-              });
-            }
-          } else {
-            clearSwaps();
+        response = await fetch(
+          `${NEW_API_URL}/swaps?page=${page}${swapOptions}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(swapTokens),
           }
-        })
-        .catch(() => {
-          clearSwaps();
-        });
+        );
+      }
+
+      if (response.ok) {
+        const responseData = (await response.json()) as SwapsData;
+
+        const swapsArray: Swap[] = [];
+
+        responseData.data.forEach((swap) =>
+          swapsArray.push(getFormattedSwap(swap, addr))
+        );
+
+        pageMeta.current = responseData.meta;
+        setSwaps(swapsArray);
+        setLoading(false);
+        setPageLoading(false);
+
+        if (page > 1 || (swapFilterData && swapFilterData.dateTo !== null)) {
+          socket.current?.disconnect();
+        } else {
+          if (!socket.current?.active) {
+            connectSocket();
+          }
+
+          socket.current?.removeAllListeners();
+
+          const addresses =
+            addr === FAVORITE_TOKENS
+              ? favoriteTokens.current.map((ft) => ft.assetId)
+              : addr === ALL_TOKENS
+              ? tokens.map((t) => t.assetId)
+              : [addr];
+
+          addresses.forEach((a) => {
+            socket.current?.on(a, (data) => {
+              const swap = data as Swap;
+
+              if (validateSwapFilters(swap, swapFilterData)) {
+                setSwaps((prevSwaps) => {
+                  if (!prevSwaps?.find((pSwap) => pSwap.id === swap.id)) {
+                    const s: Swap = getFormattedSwap(swap, a);
+
+                    let updatedSwaps = [s];
+
+                    if (pageMeta.current && prevSwaps) {
+                      const numberOfSwapsOnPage = prevSwaps?.length;
+                      updatedSwaps = [s, ...prevSwaps].slice(0, 10);
+                      pageMeta.current.totalCount++;
+
+                      if (numberOfSwapsOnPage === pageMeta.current.pageSize) {
+                        pageMeta.current.hasNextPage = true;
+                      }
+                    }
+
+                    return updatedSwaps;
+                  }
+
+                  return prevSwaps;
+                });
+              }
+            });
+          });
+        }
+      } else {
+        clearSwaps();
+      }
     },
     [
       clearSwaps,
       connectSocket,
       getFormattedSwap,
       getSwapFilters,
-      getTokenParams,
+      getSwapTokens,
       tokens,
       validateSwapFilters,
     ]

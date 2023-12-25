@@ -36,7 +36,9 @@ export default function Swaps({
         ) : (
           <>
             {swaps.length === 0 ? (
-              <span className="p-8 text-white font-medium">No swaps</span>
+              <div className="flex">
+                <span className="p-8 text-white font-medium">No swaps</span>
+              </div>
             ) : (
               <>
                 <SwapsTable
