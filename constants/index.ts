@@ -23,3 +23,4 @@ export const SYNTHETICS_FILTER = '0x0300';
 export const WALLET_ADDRESSES = 'WALLET_ADDRESSES';
 export const FAVORITE_TOKENS = 'FAVORITE_TOKENS';
 export const ALL_TOKENS = 'ALL_TOKENS';
+export const XOR = 'XOR';

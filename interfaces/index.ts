@@ -168,6 +168,11 @@ export interface ModalSupply {
   supply: Supply[];
 }
 
+export interface ModalTokenHolders {
+  show: boolean;
+  item: Token | null;
+}
+
 export interface Reward {
   apr: string;
   rewards: number;
@@ -409,4 +414,16 @@ export interface TBCReservesData {
   currentBalance: number;
   currentValue: number;
   data: TBCReservesItem[];
+}
+
+export interface TokenHolder {
+  holder: string;
+  holderFormatted?: string;
+  balance: number;
+  balanceFormatted?: string;
+}
+
+export interface TokenHolderData {
+  data: TokenHolder[];
+  meta: PageMeta;
 }

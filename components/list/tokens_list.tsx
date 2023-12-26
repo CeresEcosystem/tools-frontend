@@ -1,18 +1,23 @@
 /* eslint-disable no-unused-vars */
 import VerticalSeparator from '@components/separator/vertical_separator';
-import { ASSET_URL } from '@constants/index';
+import { ASSET_URL, XOR } from '@constants/index';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import Clipboard from '@components/clipboard';
 import { Token } from '@interfaces/index';
 import Link from 'next/link';
-import { ChartBarIcon, StarIcon } from '@heroicons/react/24/outline';
+import {
+  ChartBarIcon,
+  StarIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import { StarIcon as StarFavorite } from '@heroicons/react/24/solid';
 
 export default function TokensList({
   tokens,
   showModal,
   showSupplyModal,
+  showHoldersModal,
   addTokenToFavorites,
   removeTokenFromFavorites,
   favoriteTokens,
@@ -21,6 +26,7 @@ export default function TokensList({
   tokens: Token[];
   showModal: (show: boolean, token: Token) => void;
   showSupplyModal: (show: boolean, token: Token) => void;
+  showHoldersModal: (show: boolean, token: Token) => void;
   addTokenToFavorites: (token: Token) => void;
   removeTokenFromFavorites: (token: Token) => void;
   favoriteTokens: string[];
@@ -40,7 +46,7 @@ export default function TokensList({
           >
             <div className="flex-col items-start w-full flex gap-x-2 justify-between xs:flex-row xs:items-center">
               <div className="flex justify-between w-full items-center">
-                <div className="flex flex-1">
+                <div className="flex flex-1 items-center">
                   <div className="mr-4 flex-shrink-0 self-center">
                     <Link
                       href={{
@@ -49,7 +55,7 @@ export default function TokensList({
                       }}
                     >
                       <img
-                        className="rounded-full w-12 h-12"
+                        className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
                         src={`${ASSET_URL}/${token.token}.svg`}
                         alt={token.fullName}
                       />
@@ -115,6 +121,17 @@ export default function TokensList({
                   <VerticalSeparator />
                   <div className="flex flex-col space-y-2">
                     <button
+                      disabled={token.token === XOR}
+                      onClick={() => showHoldersModal(true, token)}
+                      className="disabled:cursor-not-allowed rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+                    >
+                      <UserGroupIcon
+                        aria-hidden="true"
+                        className="h-5 w-5 text-white"
+                      />
+                      View holders
+                    </button>
+                    <button
                       onClick={() => showSupplyModal(true, token)}
                       className="rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20"
                     >
@@ -141,23 +158,34 @@ export default function TokensList({
             </div>
             <div className="md:hidden">
               <hr className="w-full my-4 border border-white border-opacity-5" />
-              <div className="flex space-x-2">
+              <div className="flex space-x-1">
+                <button
+                  disabled={token.token === XOR}
+                  onClick={() => showHoldersModal(true, token)}
+                  className="disabled:cursor-not-allowed w-full rounded-md bg-white bg-opacity-10 px-2 py-1.5 flex items-center justify-center text-white text-xs gap-x-1 hover:bg-opacity-20"
+                >
+                  <UserGroupIcon
+                    aria-hidden="true"
+                    className="h-5 w-5 text-white"
+                  />
+                  Holders
+                </button>
                 <button
                   onClick={() => showSupplyModal(true, token)}
-                  className="w-full rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+                  className="w-full rounded-md bg-white bg-opacity-10 px-2 py-1.5 flex items-center justify-center text-white text-xs gap-x-1 hover:bg-opacity-20"
                 >
                   <ChartBarIcon
                     aria-hidden="true"
                     className="h-5 w-5 text-white"
                   />
-                  View supply
+                  Supply
                 </button>
                 <button
                   onClick={() => showModal(true, token)}
-                  className="w-full rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+                  className="w-full rounded-md bg-white bg-opacity-10 px-2 py-1.5 flex items-center justify-center text-white text-xs gap-x-1 hover:bg-opacity-20"
                 >
                   <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
-                  View locks
+                  Locks
                 </button>
               </div>
             </div>

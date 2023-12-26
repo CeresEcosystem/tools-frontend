@@ -2,6 +2,7 @@ import Container from '@components/container';
 import TokensFavoriteFilter from '@components/filters/tokens_favorite_filter';
 import Input from '@components/input';
 import TokensList from '@components/list/tokens_list';
+import TokenHolderModalClient from '@components/modal/token_holders_modal_client';
 import TokenSupplyModal from '@components/modal/token_supply_modal';
 import TokensModal from '@components/modal/tokens_modal';
 import ListPagination from '@components/pagination/list_pagination';
@@ -9,7 +10,12 @@ import { NEW_API_URL } from '@constants/index';
 import useLocks from '@hooks/use_locks';
 import useSupply from '@hooks/use_supply';
 import useTokens from '@hooks/use_tokens';
-import { ModalSupply, ModalTokens, Token } from '@interfaces/index';
+import {
+  ModalSupply,
+  ModalTokenHolders,
+  ModalTokens,
+  Token,
+} from '@interfaces/index';
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
 
@@ -43,6 +49,10 @@ export default function Tokens({ data }: { data?: Token[] }) {
     show: false,
     item: null,
     supply: [],
+  });
+  const [showHolders, setShowHolders] = useState<ModalTokenHolders>({
+    show: false,
+    item: null,
   });
 
   useEffect(() => {
@@ -82,6 +92,12 @@ export default function Tokens({ data }: { data?: Token[] }) {
         showSupplyModal={(show: boolean, token: Token) =>
           fetchSupplyData(show, token)
         }
+        showHoldersModal={(show: boolean, token: Token) =>
+          setShowHolders({
+            show,
+            item: token,
+          })
+        }
         addTokenToFavorites={addTokenToFavorites}
         removeTokenFromFavorites={removeTokenFromFavorites}
         favoriteTokens={favoriteTokens}
@@ -107,6 +123,16 @@ export default function Tokens({ data }: { data?: Token[] }) {
         }
         token={showLocks.item}
         locks={showLocks.locks}
+      />
+      <TokenHolderModalClient
+        showModal={showHolders.show}
+        closeModal={() => {
+          setShowHolders((oldState) => ({
+            ...oldState,
+            show: false,
+          }));
+        }}
+        token={showHolders.item}
       />
       <TokenSupplyModal
         showModal={showSupply.show}
