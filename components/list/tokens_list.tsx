@@ -121,9 +121,8 @@ export default function TokensList({
                   <VerticalSeparator />
                   <div className="flex flex-col space-y-2">
                     <button
-                      disabled={token.token === XOR}
                       onClick={() => showHoldersModal(true, token)}
-                      className="disabled:cursor-not-allowed rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20"
+                      className="rounded-md bg-white bg-opacity-10 px-3 py-1.5 flex items-center text-white text-sm gap-x-1 hover:bg-opacity-20"
                     >
                       <UserGroupIcon
                         aria-hidden="true"
@@ -160,9 +159,8 @@ export default function TokensList({
               <hr className="w-full my-4 border border-white border-opacity-5" />
               <div className="flex space-x-1">
                 <button
-                  disabled={token.token === XOR}
                   onClick={() => showHoldersModal(true, token)}
-                  className="disabled:cursor-not-allowed w-full rounded-md bg-white bg-opacity-10 px-2 py-1.5 flex items-center justify-center text-white text-xs gap-x-1 hover:bg-opacity-20"
+                  className="w-full rounded-md bg-white bg-opacity-10 px-2 py-1.5 flex items-center justify-center text-white text-xs gap-x-1 hover:bg-opacity-20"
                 >
                   <UserGroupIcon
                     aria-hidden="true"

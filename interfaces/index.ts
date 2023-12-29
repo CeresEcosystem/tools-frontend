@@ -423,6 +423,11 @@ export interface TokenHolder {
   balanceFormatted?: string;
 }
 
+export interface XorTokenHolder {
+  address: string;
+  balance: string;
+}
+
 export interface TokenHolderData {
   data: TokenHolder[];
   meta: PageMeta;

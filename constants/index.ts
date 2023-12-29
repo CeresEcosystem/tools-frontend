@@ -12,6 +12,7 @@ export const ETHSCAN_URL = 'https://etherscan.io/address/';
 export const POLKADOT_ACCOUNT = 'POLKADOT_ACCOUNT';
 export const SORA_API = 'wss://mof2.sora.org';
 export const POLKADOT_EXTENSION = 'https://polkadot.js.org/extension/';
+export const SORA_SUBSCAN = 'https://sora.webapi.subscan.io/api/v2/scan';
 
 export const HMX_ADDRESS =
   '0x002d4e9e03f192cc33b128319a049f353db98fbf4d98f717fd0b7f66a0462142';
