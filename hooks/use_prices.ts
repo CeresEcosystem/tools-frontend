@@ -1,9 +1,7 @@
 import { NEW_API_URL } from '@constants/index';
 import { Token } from '@interfaces/index';
-import { RootState } from '@store/index';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
 
 declare global {
   // eslint-disable-next-line no-unused-vars
@@ -17,10 +15,6 @@ const TOKEN = 'CHART_TOKEN';
 const usePrices = () => {
   const { query, isReady } = useRouter();
 
-  const favoriteTokens = useSelector(
-    (state: RootState) => state.tokens.favoriteTokens
-  );
-
   const [prices, setPrices] = useState<Token[]>([]);
 
   const [currentToken, setCurrentToken] = useState<
@@ -29,46 +23,22 @@ const usePrices = () => {
 
   const priceInterval = useRef<ReturnType<typeof setInterval> | undefined>();
 
-  const sortTokens = useCallback(
-    (tokenA: Token, tokenB: Token) => {
-      const aIsFavorite = favoriteTokens.includes(tokenA.assetId);
-      const bIsFavorite = favoriteTokens.includes(tokenB.assetId);
+  const getPrices = useCallback(async (token?: string) => {
+    return fetch(`${NEW_API_URL}/prices`)
+      .then(async (response) => {
+        if (response.ok) {
+          const json = (await response.json()) as Token[];
 
-      if (aIsFavorite && !bIsFavorite) {
-        return -1;
-      } else if (!aIsFavorite && bIsFavorite) {
-        return 1;
-      } else {
-        return 0;
-      }
-    },
-    [favoriteTokens]
-  );
+          setPrices(json);
 
-  const getPrices = useCallback(
-    async (token?: string) => {
-      return fetch(`${NEW_API_URL}/prices`)
-        .then(async (response) => {
-          if (response.ok) {
-            const json = (await response.json()) as Token[];
-            const sortedTokens = json.slice().sort(sortTokens);
-
-            for (let i = 0; i < favoriteTokens.length; i++) {
-              sortedTokens[i].isFavorite = true;
-            }
-
-            setPrices(json.slice().sort(sortTokens));
-
-            if (token) {
-              const t = json.find((t) => t.token === token)!;
-              setCurrentToken(t);
-            }
+          if (token) {
+            const t = json.find((t) => t.token === token)!;
+            setCurrentToken(t);
           }
-        })
-        .catch(() => {});
-    },
-    [favoriteTokens.length, sortTokens]
-  );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const changeCurrentToken = useCallback(
     (token: any) => {

@@ -20,6 +20,8 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     (state: RootState) => state.tokens.favoriteTokens
   );
 
+  const [showPriceConverter, setShowPriceConverter] = useState(false);
+
   const [filter, setFilter] = useState(
     favoriteTokens.length > 0 ? filters[1] : filters[0]
   );
@@ -133,6 +135,7 @@ const useTokens = (data?: Token[]): TokensReturnType => {
 
   return {
     tokens: tokenSlice,
+    allTokens: dataFormatted.current,
     totalPages: totalPages.current,
     currentPage: currentPage.current,
     goToFirstPage,
@@ -146,6 +149,8 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     filter,
     toggleFilter,
     favoriteTokens,
+    showPriceConverter,
+    setShowPriceConverter,
   };
 };
 

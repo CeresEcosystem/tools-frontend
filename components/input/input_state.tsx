@@ -14,6 +14,7 @@ export default function InputState({
   disabled = false,
   labelStyle,
   inputStyle,
+  inputBgColor = 'bg-backgroundItem',
 }: {
   type?: string;
   name: string;
@@ -28,6 +29,7 @@ export default function InputState({
   disabled?: boolean;
   labelStyle?: string;
   inputStyle?: string;
+  inputBgColor?: string;
 }) {
   return (
     <div>
@@ -42,7 +44,7 @@ export default function InputState({
           {label}
         </label>
       )}
-      <div className="relative w-full rounded-xl bg-backgroundItem">
+      <div className={classNames('relative w-full rounded-xl', inputBgColor)}>
         {showIcon && (
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <i className="flaticon-magnifier text-xl mt-1.5 text-white"></i>

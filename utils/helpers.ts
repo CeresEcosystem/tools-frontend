@@ -1,3 +1,4 @@
+import { Token } from '@interfaces/index';
 import { Keyring } from '@polkadot/api';
 import moment from 'moment';
 
@@ -15,7 +16,11 @@ export function formatWalletAddress(
   return '';
 }
 
-export function formatToCurrency(format: any, number: number): string {
+export function formatToCurrency(
+  format: any,
+  number: number,
+  currency = 'USD'
+): string {
   if (number !== null) {
     const numberString = number?.toString();
 
@@ -27,7 +32,7 @@ export function formatToCurrency(format: any, number: number): string {
       const numberSplit = numberString.split('.');
       const firstPart = format.number(parseInt(numberSplit[0]), {
         style: 'currency',
-        currency: 'USD',
+        currency,
         maximumFractionDigits: 0,
       });
       return `${firstPart}.${numberSplit[1]}`;
@@ -35,7 +40,7 @@ export function formatToCurrency(format: any, number: number): string {
 
     return format.number(number, {
       style: 'currency',
-      currency: 'USD',
+      currency,
       maximumFractionDigits: 0,
     });
   }
@@ -47,7 +52,8 @@ export function formatCurrencyWithDecimals(
   format: any,
   number: number | string,
   decimal = 2,
-  checkForEValue = false
+  checkForEValue = false,
+  currency = 'USD'
 ): string {
   if (checkForEValue) {
     const numberString = number?.toString();
@@ -59,7 +65,7 @@ export function formatCurrencyWithDecimals(
 
   return format.number(number, {
     style: 'currency',
-    currency: 'USD',
+    currency,
     minimumFractionDigits: decimal,
     maximumFractionDigits: decimal,
   });
@@ -220,4 +226,21 @@ export function validWalletAddress(address: string): boolean {
   if (address !== '' && address.length === 49 && address.startsWith('cn'))
     return true;
   return false;
+}
+
+export function sortTokens(
+  favoriteTokens: string[],
+  tokenA: Token,
+  tokenB: Token
+) {
+  const aIsFavorite = favoriteTokens.includes(tokenA.assetId);
+  const bIsFavorite = favoriteTokens.includes(tokenB.assetId);
+
+  if (aIsFavorite && !bIsFavorite) {
+    return -1;
+  } else if (!aIsFavorite && bIsFavorite) {
+    return 1;
+  } else {
+    return 0;
+  }
 }

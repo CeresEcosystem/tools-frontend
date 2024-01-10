@@ -94,6 +94,8 @@ export default function Price({
           changeCurrentTokenFromModal(token);
           setShowPriceModal(false);
         }}
+        showFavoriteTokensOption
+        showAllTokensOption
       />
     </>
   );

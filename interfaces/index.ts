@@ -98,6 +98,7 @@ export interface Token {
 
 export interface TokensReturnType {
   tokens: Token[];
+  allTokens: Token[];
   totalPages: number;
   currentPage: number;
   goToFirstPage: () => void;
@@ -111,6 +112,8 @@ export interface TokensReturnType {
   filter: string;
   toggleFilter: (filter: string) => void;
   favoriteTokens: string[];
+  showPriceConverter: boolean;
+  setShowPriceConverter: (show: boolean) => void;
 }
 
 export interface Block {

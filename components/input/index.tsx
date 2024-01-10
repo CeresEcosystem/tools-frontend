@@ -9,7 +9,7 @@ export default function Input({
   showIcon?: boolean;
 }) {
   return (
-    <div className="relative rounded-xl bg-backgroundItem">
+    <div className="relative w-full rounded-xl bg-backgroundItem">
       {showIcon && (
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <i className="flaticon-magnifier text-xl mt-1.5 text-white"></i>
