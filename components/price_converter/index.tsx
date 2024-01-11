@@ -1,12 +1,12 @@
-import InputState from '@components/input/input_state';
 import PricesModal from '@components/modal/prices_modal';
 import { ASSET_URL } from '@constants/index';
 import { Token } from '@interfaces/index';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import useTokenPriceConverter from '@hooks/use_token_price_converter';
 import { formatCurrencyWithDecimals } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
+import { NumericFormat, OnValueChange } from 'react-number-format';
 
 function TokenSelect({
   id,
@@ -21,7 +21,7 @@ function TokenSelect({
   tokens: Token[];
   value: string;
   // eslint-disable-next-line no-unused-vars
-  handleChange: (value: ChangeEvent<HTMLInputElement>) => void;
+  handleChange: OnValueChange;
   token: Token | undefined;
   filterOutToken: Token | undefined;
   // eslint-disable-next-line no-unused-vars
@@ -31,11 +31,11 @@ function TokenSelect({
 
   return (
     <>
-      <div className="bg-backgroundSidebar p-2 w-full rounded-xl flex gap-x-1">
-        <div className="flex min-w-[150px]">
+      <div className="bg-backgroundSidebar flex-col p-2 w-full rounded-xl flex gap-x-1 gap-y-2 xs:flex-row">
+        <div className="flex w-full xs:min-w-[150px] xs:w-auto">
           <div
             onClick={() => setShowPriceModal(true)}
-            className="flex h-full bg-white bg-opacity-10 rounded-xl cursor-pointer gap-x-2 items-center px-2"
+            className="flex py-1 h-full bg-white bg-opacity-10 rounded-xl cursor-pointer gap-x-2 items-center px-2"
           >
             {token ? (
               <>
@@ -58,15 +58,17 @@ function TokenSelect({
           </div>
         </div>
         <div className="flex-1">
-          <InputState
+          <NumericFormat
             id={id}
             name={id}
-            value={value}
             disabled={!token}
-            handleChange={handleChange}
-            showIcon={false}
+            allowNegative={false}
+            allowLeadingZeros={false}
+            thousandSeparator=","
+            value={value}
             placeholder="0.0"
-            type="number"
+            onValueChange={handleChange}
+            className="block bg-backgroundItem w-full rounded-xl border-0 py-2 px-6 text-white placeholder:text-white placeholder:text-opacity-50 focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none"
           />
         </div>
       </div>
@@ -128,7 +130,7 @@ export default function PriceConverter({
           setToken={changeSecondToken}
         />
         <span className="text-pink w-full truncate font-bold text-xl mt-2">
-          {formatCurrencyWithDecimals(format, result, 2, false, 'USD')}
+          {formatCurrencyWithDecimals(format, result, 3, false, 'USD')}
         </span>
       </div>
       <button

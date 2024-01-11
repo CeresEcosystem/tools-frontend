@@ -1,5 +1,6 @@
 import { Token } from '@interfaces/index';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
+import { NumberFormatValues, SourceInfo } from 'react-number-format';
 
 const useTokenPriceConverter = () => {
   const [formData, setFormData] = useState({
@@ -62,30 +63,37 @@ const useTokenPriceConverter = () => {
     }
   };
 
-  const handleFormDataChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleFormDataChange = (
+    values: NumberFormatValues,
+    sourceInfo: SourceInfo
+  ) => {
+    const { value } = values;
 
-    if (firstToken && secondToken) {
-      if (name === 'firstValue') {
-        const res = calculateTokenPrice(value, firstToken, secondToken);
-        setFormData({
-          firstValue: value,
-          secondValue: res.v,
-        });
-        setResult(res.vInCurrency);
+    if (sourceInfo.source === 'event') {
+      const { name } = sourceInfo!.event!.currentTarget;
+
+      if (firstToken && secondToken) {
+        if (name === 'firstValue') {
+          const res = calculateTokenPrice(value, firstToken, secondToken);
+          setFormData({
+            firstValue: value,
+            secondValue: res.v,
+          });
+          setResult(res.vInCurrency);
+        } else {
+          const res = calculateTokenPrice(value, secondToken, firstToken);
+          setFormData({
+            firstValue: res.v,
+            secondValue: value,
+          });
+          setResult(res.vInCurrency);
+        }
       } else {
-        const res = calculateTokenPrice(value, secondToken, firstToken);
-        setFormData({
-          firstValue: res.v,
-          secondValue: value,
-        });
-        setResult(res.vInCurrency);
+        setFormData((prevData) => ({
+          ...prevData,
+          [name]: value,
+        }));
       }
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
     }
   };
 
