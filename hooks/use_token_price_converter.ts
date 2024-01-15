@@ -1,3 +1,4 @@
+import { NEW_API_URL } from '@constants/index';
 import { Currency, Token } from '@interfaces/index';
 import { useCallback, useEffect, useState } from 'react';
 import { NumberFormatValues, SourceInfo } from 'react-number-format';
@@ -126,7 +127,7 @@ const useTokenPriceConverter = () => {
         const responseRates = await Promise.all(
           currencies.map(async (currency) => {
             const response = await fetch(
-              `http://localhost:3004/api/currency-rate/${currency.currency}`
+              `${NEW_API_URL}/currency-rate/${currency.currency}`
             );
             return await response.json();
           })
