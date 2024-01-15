@@ -1,6 +1,11 @@
-import { Token } from '@interfaces/index';
-import { useState } from 'react';
+import { Currency, Token } from '@interfaces/index';
+import { useCallback, useEffect, useState } from 'react';
 import { NumberFormatValues, SourceInfo } from 'react-number-format';
+
+const currencies: Currency[] = [
+  { currency: 'USD', sign: '$' },
+  { currency: 'EUR', sign: '€' },
+];
 
 const useTokenPriceConverter = () => {
   const [formData, setFormData] = useState({
@@ -8,26 +13,44 @@ const useTokenPriceConverter = () => {
     secondValue: '',
   });
 
+  const [selectedCurrency, setSelectedCurrency] = useState(0);
+  const [rates, setRates] = useState<number[] | undefined>();
+
   const [firstToken, setFirstToken] = useState<Token | undefined>();
   const [secondToken, setSecondToken] = useState<Token | undefined>();
 
   const [result, setResult] = useState(0);
 
-  const calculateTokenPrice = (
-    value: string,
-    token: Token,
-    otherToken: Token
-  ) => {
-    if (value !== '') {
-      const numberValue = Number(value);
-      const valueInCurrency = numberValue * token.price;
-      const otherValue = (valueInCurrency / otherToken.price).toString();
+  const calculateTokenPrice = useCallback(
+    (value: string, token: Token, otherToken: Token) => {
+      if (value !== '' && rates) {
+        const currencyRate = rates[selectedCurrency];
 
-      return { v: otherValue, vInCurrency: valueInCurrency };
-    }
+        const numberValue = Number(value);
+        const valueInCurrency = numberValue * token.price * currencyRate;
+        const otherValue = (
+          (valueInCurrency / otherToken.price) *
+          currencyRate
+        ).toString();
 
-    return { v: '', vInCurrency: 0 };
-  };
+        return { v: otherValue, vInCurrency: valueInCurrency };
+      }
+
+      return { v: '', vInCurrency: 0 };
+    },
+    [rates, selectedCurrency]
+  );
+
+  const changeCurrency = useCallback(
+    (index: number) => {
+      if (index !== selectedCurrency) {
+        setFormData({ firstValue: '', secondValue: '' });
+        setResult(0);
+        setSelectedCurrency(index);
+      }
+    },
+    [selectedCurrency]
+  );
 
   const changeFirstToken = (token: Token) => {
     if (token.token !== firstToken?.token) {
@@ -97,6 +120,26 @@ const useTokenPriceConverter = () => {
     }
   };
 
+  useEffect(() => {
+    async function fetchRates() {
+      try {
+        const responseRates = await Promise.all(
+          currencies.map(async (currency) => {
+            const response = await fetch(
+              `http://localhost:3004/api/currency-rate/${currency.currency}`
+            );
+            return await response.json();
+          })
+        );
+        setRates(responseRates.map((responseRate) => responseRate['rate']));
+      } catch (e) {
+        setRates([]);
+      }
+    }
+
+    fetchRates();
+  }, []);
+
   return {
     formData,
     handleFormDataChange,
@@ -105,6 +148,10 @@ const useTokenPriceConverter = () => {
     secondToken,
     changeSecondToken,
     result,
+    currencies,
+    currency: currencies[selectedCurrency],
+    changeCurrency,
+    rates,
   };
 };
 

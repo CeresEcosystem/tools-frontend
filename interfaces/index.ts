@@ -435,3 +435,8 @@ export interface TokenHolderData {
   data: TokenHolder[];
   meta: PageMeta;
 }
+
+export interface Currency {
+  currency: string;
+  sign: string;
+}

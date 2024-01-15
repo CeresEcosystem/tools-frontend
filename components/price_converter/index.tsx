@@ -7,6 +7,8 @@ import useTokenPriceConverter from '@hooks/use_token_price_converter';
 import { formatCurrencyWithDecimals } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { NumericFormat, OnValueChange } from 'react-number-format';
+import classNames from 'classnames';
+import Spinner from '@components/spinner';
 
 function TokenSelect({
   id,
@@ -101,38 +103,72 @@ export default function PriceConverter({
     secondToken,
     changeSecondToken,
     result,
+    currencies,
+    currency,
+    changeCurrency,
+    rates,
   } = useTokenPriceConverter();
 
   const format = useFormatter();
 
   return (
     <div className="bg-backgroundItem max-w-md mx-auto rounded-xl p-6 flex flex-col gap-y-6">
-      <h2 className="text-white font-semibold lg:text-lg">
-        Convert token prices
-      </h2>
-      <div className="flex flex-col gap-y-4">
-        <TokenSelect
-          id="firstValue"
-          tokens={tokens}
-          value={formData.firstValue}
-          handleChange={handleFormDataChange}
-          token={firstToken}
-          filterOutToken={secondToken}
-          setToken={changeFirstToken}
-        />
-        <TokenSelect
-          id="secondValue"
-          tokens={tokens}
-          value={formData.secondValue}
-          handleChange={handleFormDataChange}
-          token={secondToken}
-          filterOutToken={firstToken}
-          setToken={changeSecondToken}
-        />
-        <span className="text-pink w-full truncate font-bold text-xl mt-2">
-          {formatCurrencyWithDecimals(format, result, 3, false, 'USD')}
-        </span>
+      <div className="flex justify-between">
+        <h2 className="text-white font-semibold lg:text-lg">
+          Convert token prices
+        </h2>
+        <div className="flex gap-x-1">
+          {currencies.map((c, index) => {
+            const active = c === currency;
+
+            return (
+              <div
+                key={c.currency}
+                onClick={() => changeCurrency(index)}
+                className={classNames(
+                  'h-8 w-8 cursor-pointer rounded-full bg-backgroundSidebar flex items-center justify-center text-white text-lg font-semibold',
+                  active && 'bg-pink'
+                )}
+              >
+                {c.sign}
+              </div>
+            );
+          })}
+        </div>
       </div>
+      {rates ? (
+        <div className="flex flex-col gap-y-4">
+          <TokenSelect
+            id="firstValue"
+            tokens={tokens}
+            value={formData.firstValue}
+            handleChange={handleFormDataChange}
+            token={firstToken}
+            filterOutToken={secondToken}
+            setToken={changeFirstToken}
+          />
+          <TokenSelect
+            id="secondValue"
+            tokens={tokens}
+            value={formData.secondValue}
+            handleChange={handleFormDataChange}
+            token={secondToken}
+            filterOutToken={firstToken}
+            setToken={changeSecondToken}
+          />
+          <span className="text-pink w-full truncate font-bold text-xl mt-2">
+            {formatCurrencyWithDecimals(
+              format,
+              result,
+              3,
+              false,
+              currency.currency
+            )}
+          </span>
+        </div>
+      ) : (
+        <Spinner />
+      )}
       <button
         onClick={closePriceConverter}
         className="w-full mx-auto rounded-xl bg-pink px-3 py-1.5 text-white text-sm focus:outline-none focus:ring-0"
