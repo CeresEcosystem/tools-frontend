@@ -16,9 +16,11 @@ import {
   WalletAddress,
 } from '@interfaces/index';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
+import { RootState } from '@store/index';
 import { getEncodedAddress } from '@utils/helpers';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Socket, io } from 'socket.io-client';
 
 const useSwaps = (tokens: Token[], address: string) => {
@@ -31,7 +33,9 @@ const useSwaps = (tokens: Token[], address: string) => {
   const [pageLoading, setPageLoading] = useState(false);
   const [swaps, setSwaps] = useState<Swap[] | undefined>();
 
-  const favoriteTokens = useRef(tokens.filter((t) => t.isFavorite));
+  const favoriteTokens = useSelector(
+    (state: RootState) => state.tokens.favoriteTokens
+  );
 
   const walletsStorage = useRef<WalletAddress[]>([]);
 
@@ -52,19 +56,22 @@ const useSwaps = (tokens: Token[], address: string) => {
     socket.current = undefined;
   }, []);
 
-  const getSwapTokens = useCallback((addr: string): SwapTokens => {
-    if (addr === FAVORITE_TOKENS) {
-      const swapTokens: string[] = [];
+  const getSwapTokens = useCallback(
+    (addr: string): SwapTokens => {
+      if (addr === FAVORITE_TOKENS) {
+        const swapTokens: string[] = [];
 
-      favoriteTokens.current.forEach((t) => {
-        swapTokens.push(t.assetId);
-      });
+        favoriteTokens.forEach((assetId) => {
+          swapTokens.push(assetId);
+        });
 
-      return { tokens: swapTokens };
-    } else {
-      return { tokens: [addr] };
-    }
-  }, []);
+        return { tokens: swapTokens };
+      } else {
+        return { tokens: [addr] };
+      }
+    },
+    [favoriteTokens]
+  );
 
   const validateSwapFilters = useCallback(
     (swap: Swap, swapFilterData: SwapFilterData | undefined) => {
@@ -215,7 +222,7 @@ const useSwaps = (tokens: Token[], address: string) => {
 
           const addresses =
             addr === FAVORITE_TOKENS
-              ? favoriteTokens.current.map((ft) => ft.assetId)
+              ? favoriteTokens.map((assetId) => assetId)
               : addr === ALL_TOKENS
               ? tokens.map((t) => t.assetId)
               : [addr];
@@ -257,6 +264,7 @@ const useSwaps = (tokens: Token[], address: string) => {
     [
       clearSwaps,
       connectSocket,
+      favoriteTokens,
       getFormattedSwap,
       getSwapFilters,
       getSwapTokens,
