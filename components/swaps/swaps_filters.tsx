@@ -2,8 +2,11 @@ import DateTimePicker from '@components/datepicker/date_picker';
 import InputState from '@components/input/input_state';
 import Select from '@components/input/select';
 import Title from '@components/title';
+import { ALL_TOKENS, FAVORITE_TOKENS } from '@constants/index';
 import { SwapFilterData, Token } from '@interfaces/index';
+import { RootState } from '@store/index';
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function SwapsFilters({
   tokens,
@@ -15,6 +18,10 @@ export default function SwapsFilters({
   // eslint-disable-next-line no-unused-vars
   filterSwaps: (swapFilterData: SwapFilterData) => void;
 }) {
+  const favoriteTokens = useSelector(
+    (state: RootState) => state.tokens.favoriteTokens
+  );
+
   const [filterData, setFilterData] = useState<SwapFilterData>({
     dateFrom: null,
     dateTo: null,
@@ -55,10 +62,13 @@ export default function SwapsFilters({
   const allOptions = tokens.map((t) => {
     return { label: t.token, value: t.assetId };
   });
+
   const options =
-    typeof token === 'string'
+    token === ALL_TOKENS
       ? allOptions
-      : allOptions.filter((ao) => ao.value !== token.assetId);
+      : token === FAVORITE_TOKENS
+      ? allOptions.filter((ao) => !favoriteTokens.includes(ao.value))
+      : allOptions.filter((ao) => ao.value !== (token as Token).assetId);
 
   return (
     <div className="mb-6 px-8">
