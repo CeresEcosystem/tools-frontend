@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import VerticalSeparator from '@components/separator/vertical_separator';
-import { ASSET_URL, XOR } from '@constants/index';
+import { ASSET_URL } from '@constants/index';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import Clipboard from '@components/clipboard';

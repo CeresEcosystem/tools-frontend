@@ -21,6 +21,7 @@ const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
   const [loading, setLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
   const [liquidity, setLiquidity] = useState<PairLiquidity[]>([]);
+  const [selectedChart, setSelectedChart] = useState(0);
 
   const pageMeta = useRef<PageMeta | undefined>();
   const walletsStorage = useRef<WalletAddress[]>([]);
@@ -189,6 +190,8 @@ const usePairsLiquidity = (pair: Pair | null, showModal: boolean) => {
     selectedTab,
     handleTabChange,
     pairLiquidityChartData: pairLiquidityChartData.current,
+    selectedChart,
+    setSelectedChart,
   };
 };
 

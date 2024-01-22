@@ -8,7 +8,7 @@ import {
   WalletAddress,
 } from '@interfaces/index';
 import {
-  formatDate,
+  formatDateAndTime,
   formatNumber,
   formatNumberExceptDecimal,
 } from '@utils/helpers';
@@ -92,7 +92,7 @@ export default function TransfersTable({
           >
             <td className={classNames(cellStyle, 'min-w-[150px]')}>
               {bridgeTransfer(transfer.sender, transfer.receiver)}
-              {formatDate(transfer.transferredAt)}
+              {formatDateAndTime(transfer.transferredAt)}
             </td>
             <td className={classNames(cellStyle, 'min-w-[150px]')}>
               <Link

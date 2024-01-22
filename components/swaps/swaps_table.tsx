@@ -4,7 +4,7 @@ import { ASSET_URL } from '@constants/index';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
 import { PageMeta, Swap, Token } from '@interfaces/index';
 import {
-  formatDate,
+  formatDateAndTime,
   formatNumber,
   formatNumberExceptDecimal,
 } from '@utils/helpers';
@@ -94,7 +94,7 @@ export default function SwapsTable({
             className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10 hover:bg-backgroundHeader"
           >
             <td className={classNames(cellStyle, 'min-w-[150px]')}>
-              {formatDate(swap.swappedAt)}
+              {formatDateAndTime(swap.swappedAt)}
             </td>
             {typeof token !== 'string' && (
               <td

@@ -4,7 +4,7 @@ import moment from 'moment';
 
 export function formatWalletAddress(
   address: string | undefined,
-  formatDelimiter = 7
+  formatDelimiter = 8
 ) {
   if (address && address.length > 20) {
     return `${address.substring(0, formatDelimiter)}-${address.substring(
@@ -131,11 +131,16 @@ export function formatDateFromTimestamp(
   return `${date.format(format)} ${date.format('HH:mm')}`;
 }
 
-export function formatDate(date: string) {
+export function formatDateAndTime(date: string) {
   const dateFormatted = moment(date);
   return `${dateFormatted.format('YYYY-MM-DD')} ${dateFormatted.format(
     'HH:mm'
   )}`;
+}
+
+export function formatDate(date: string) {
+  const dateFormatted = moment(date);
+  return dateFormatted.format('YYYY-MM-DD');
 }
 
 export function formatTimeFrame(time: string): string {

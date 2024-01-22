@@ -23,8 +23,10 @@ const cellStyle =
 
 function LiquidityChart({
   pairLiquidityChartData,
+  selectedChart,
 }: {
   pairLiquidityChartData: PairLiquidityChartData[];
+  selectedChart: number;
 }) {
   const format = useFormatter();
 
@@ -38,27 +40,73 @@ function LiquidityChart({
 
   return (
     <div className="p-4 rounded-xl bg-backgroundItem max-w-4xl mx-auto">
-      <LineChart
-        data={pairLiquidityChartData.map((point) => point.liquidity)}
-        labels={pairLiquidityChartData?.map((point) =>
-          formatDate(point.updatedAt)
-        )}
-        callbackTitle={(tooltipItems: any) => {
-          const dataIndex = tooltipItems[0]?.dataIndex;
-          if (dataIndex !== undefined) {
-            const { updatedAt }: PairLiquidityChartData =
+      {selectedChart === 2 ? (
+        <LineChart
+          data={pairLiquidityChartData.map((point) => point.tokenAssetLiq)}
+          labels={pairLiquidityChartData?.map((point) =>
+            formatDate(point.updatedAt)
+          )}
+          callbackTitle={(tooltipItems: any) => {
+            const dataIndex = tooltipItems[0]?.dataIndex;
+            if (dataIndex !== undefined) {
+              const { updatedAt }: PairLiquidityChartData =
+                pairLiquidityChartData![dataIndex];
+              return `Date: ${formatDate(updatedAt)}`;
+            }
+            return '';
+          }}
+          callbackLabel={(context: any) => {
+            const { dataIndex }: { dataIndex: number } = context;
+            const { tokenAssetLiq }: PairLiquidityChartData =
               pairLiquidityChartData![dataIndex];
-            return `Date: ${formatDate(updatedAt)}`;
-          }
-          return '';
-        }}
-        callbackLabel={(context: any) => {
-          const { dataIndex }: { dataIndex: number } = context;
-          const { liquidity }: PairLiquidityChartData =
-            pairLiquidityChartData![dataIndex];
-          return `Liquidity: ${formatNumber(format, liquidity)}`;
-        }}
-      />
+            return `Liquidity: ${formatNumber(format, tokenAssetLiq)}`;
+          }}
+        />
+      ) : selectedChart === 1 ? (
+        <LineChart
+          data={pairLiquidityChartData.map((point) => point.baseAssetLiq)}
+          labels={pairLiquidityChartData?.map((point) =>
+            formatDate(point.updatedAt)
+          )}
+          callbackTitle={(tooltipItems: any) => {
+            const dataIndex = tooltipItems[0]?.dataIndex;
+            if (dataIndex !== undefined) {
+              const { updatedAt }: PairLiquidityChartData =
+                pairLiquidityChartData![dataIndex];
+              return `Date: ${formatDate(updatedAt)}`;
+            }
+            return '';
+          }}
+          callbackLabel={(context: any) => {
+            const { dataIndex }: { dataIndex: number } = context;
+            const { baseAssetLiq }: PairLiquidityChartData =
+              pairLiquidityChartData![dataIndex];
+            return `Liquidity: ${formatNumber(format, baseAssetLiq)}`;
+          }}
+        />
+      ) : (
+        <LineChart
+          data={pairLiquidityChartData.map((point) => point.liquidity)}
+          labels={pairLiquidityChartData?.map((point) =>
+            formatDate(point.updatedAt)
+          )}
+          callbackTitle={(tooltipItems: any) => {
+            const dataIndex = tooltipItems[0]?.dataIndex;
+            if (dataIndex !== undefined) {
+              const { updatedAt }: PairLiquidityChartData =
+                pairLiquidityChartData![dataIndex];
+              return `Date: ${formatDate(updatedAt)}`;
+            }
+            return '';
+          }}
+          callbackLabel={(context: any) => {
+            const { dataIndex }: { dataIndex: number } = context;
+            const { liquidity }: PairLiquidityChartData =
+              pairLiquidityChartData![dataIndex];
+            return `Liquidity: ${formatNumber(format, liquidity)}`;
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -201,6 +249,8 @@ export default function PairsLiquidityModal({
     selectedTab,
     handleTabChange,
     pairLiquidityChartData,
+    selectedChart,
+    setSelectedChart,
   } = usePairsLiquidity(pair, showModal);
 
   return (
@@ -223,7 +273,7 @@ export default function PairsLiquidityModal({
             {`${pair?.baseAsset} / ${pair?.token}`}
           </h4>
         </div>
-        <div className="my-6">
+        <div className="my-6 flex flex-wrap items-center gap-2">
           <nav className="flex gap-x-1 bg-backgroundItem w-min rounded-xl p-2">
             {tabs.map((tab) => {
               const current = tab === selectedTab;
@@ -245,6 +295,33 @@ export default function PairsLiquidityModal({
               );
             })}
           </nav>
+          {selectedTab === tabs[1] && (
+            <nav className="flex bg-white bg-opacity-5 w-min rounded-xl xs:gap-x-1 p-1">
+              {[
+                'Pair Liquidity',
+                `${pair?.baseAsset} Liquidity`,
+                `${pair?.token} Liquidity`,
+              ].map((tab, index) => {
+                const current = selectedChart === index;
+
+                return (
+                  <div
+                    key={tab}
+                    onClick={() => setSelectedChart(index)}
+                    className={classNames(
+                      current
+                        ? 'text-white bg-pink'
+                        : 'text-white text-opacity-50 hover:text-white',
+                      'text-xs capitalize font-medium whitespace-nowrap py-1 px-2 cursor-pointer rounded-xl'
+                    )}
+                    aria-current={current ? 'page' : undefined}
+                  >
+                    {tab}
+                  </div>
+                );
+              })}
+            </nav>
+          )}
         </div>
         {loading ? (
           <Spinner />
@@ -259,7 +336,10 @@ export default function PairsLiquidityModal({
             goToLastPage={goToLastPage}
           />
         ) : (
-          <LiquidityChart pairLiquidityChartData={pairLiquidityChartData} />
+          <LiquidityChart
+            pairLiquidityChartData={pairLiquidityChartData}
+            selectedChart={selectedChart}
+          />
         )}
       </div>
     </Modal>

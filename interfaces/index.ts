@@ -389,6 +389,8 @@ export interface PairLiquidityChartData {
   baseAssetSymbol: string;
   tokenAssetSymbol: string;
   liquidity: number;
+  baseAssetLiq: number;
+  tokenAssetLiq: number;
   updatedAt: string;
 }
 
