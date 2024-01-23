@@ -5,9 +5,10 @@ import {
   TimezoneId,
   widget,
 } from '@public/static/charting_library';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 type Preferences = { [key: string]: object } | null;
+type ChartData = { data: any; resolution: ResolutionString };
 
 const CHART_PREFERENCES = 'CHART_PREFERENCES';
 
@@ -24,6 +25,33 @@ export default function TradingViewChart({
 
   const tvWidget = useRef<IChartingLibraryWidget | undefined>();
 
+  const savedChart = useMemo<ChartData>(() => {
+    const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
+    const chartData: ChartData = {
+      data: undefined,
+      resolution: '30' as ResolutionString,
+    };
+
+    if (storedPreferences) {
+      const preferences = JSON.parse(storedPreferences);
+
+      chartData.data = preferences[symbol];
+
+      if (
+        preferences[symbol]?.charts &&
+        preferences[symbol].charts[0].panes &&
+        preferences[symbol].charts[0].panes[0].sources &&
+        preferences[symbol].charts[0].panes[0].sources[0].state?.interval
+      ) {
+        chartData.resolution = preferences[
+          symbol
+        ].charts[0].panes[0].sources[0].state?.interval?.toString() as ResolutionString;
+      }
+    }
+
+    return chartData;
+  }, [symbol]);
+
   function saveChartPreferences() {
     try {
       const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
@@ -31,31 +59,18 @@ export default function TradingViewChart({
 
       tvWidget.current?.save((state) => {
         const stringState = JSON.stringify(state);
-        const stateFormatted = stringState.replaceAll('POLKASWAP:', '');
 
         if (storedPreferences) {
           preferences = JSON.parse(storedPreferences);
-          preferences![symbol] = JSON.parse(stateFormatted);
+          preferences![symbol] = JSON.parse(stringState);
         } else {
-          preferences = { [symbol]: JSON.parse(stateFormatted) };
+          preferences = { [symbol]: JSON.parse(stringState) };
         }
 
         localStorage.setItem(CHART_PREFERENCES, JSON.stringify(preferences));
       });
     } catch (error) {
       console.error('Error saving chart preferences', error);
-    }
-  }
-
-  function loadChartPreferences() {
-    const storedPreferences = localStorage.getItem(CHART_PREFERENCES);
-
-    if (storedPreferences) {
-      const preferences = JSON.parse(storedPreferences);
-
-      if (preferences[symbol]) {
-        tvWidget.current?.load(preferences[symbol]);
-      }
     }
   }
 
@@ -66,15 +81,19 @@ export default function TradingViewChart({
       symbol,
       datafeed: new (window as any).Datafeeds.UDFCompatibleDatafeed(
         `${NEW_API_URL}/trading`,
-        30000
+        60000
       ),
-      interval: '30' as ResolutionString,
+      interval: savedChart.resolution,
       library_path: '/static/charting_library/',
       auto_save_delay: 2,
+      saved_data: savedChart.data,
       locale: 'en',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as TimezoneId,
       container: chartContainerRef.current,
-      disabled_features: ['header_fullscreen_button'],
+      disabled_features: [
+        'header_fullscreen_button',
+        'use_localstorage_for_settings',
+      ],
       loading_screen: {
         backgroundColor: 'rgb(43, 10, 57)',
       },
@@ -117,8 +136,6 @@ export default function TradingViewChart({
     });
 
     tvWidget.current.onChartReady(() => {
-      loadChartPreferences();
-
       tvWidget.current
         ?.activeChart()
         .onSymbolChanged()
@@ -141,24 +158,3 @@ export default function TradingViewChart({
 
   return <div ref={chartContainerRef} className="h-full" />;
 }
-
-/* 
-function getInterval(storedPreferences: string | null) {
-    if (storedPreferences) {
-      const preferences = JSON.parse(storedPreferences);
-
-      if (
-        preferences[symbol]?.charts &&
-        preferences[symbol].charts[0].panes &&
-        preferences[symbol].charts[0].panes[0].sources &&
-        preferences[symbol].charts[0].panes[0].sources[0].state?.interval
-      ) {
-        return preferences[
-          symbol
-        ].charts[0].panes[0].sources[0].state?.interval?.toString();
-      }
-    }
-
-    return '30';
-  }
-*/
