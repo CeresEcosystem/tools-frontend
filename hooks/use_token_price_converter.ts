@@ -28,13 +28,10 @@ const useTokenPriceConverter = () => {
         const currencyRate = rates[selectedCurrency];
 
         const numberValue = Number(value);
-        const valueInCurrency = numberValue * token.price * currencyRate;
-        const otherValue = (
-          (valueInCurrency / otherToken.price) *
-          currencyRate
-        ).toString();
+        const valueInDollars = numberValue * token.price;
+        const otherValue = (valueInDollars / otherToken.price).toString();
 
-        return { v: otherValue, vInCurrency: valueInCurrency };
+        return { v: otherValue, vInCurrency: valueInDollars * currencyRate };
       }
 
       return { v: '', vInCurrency: 0 };
