@@ -378,12 +378,14 @@ function PortfolioLiquidityTab({
   return (
     <Table
       totalValue={totalValue}
-      footerColSpan={1}
+      footerColSpan={3}
       renderHeader={
         <>
           <th className={classNames(tableHeadStyle, 'text-start')}>
             Liquidity pair
           </th>
+          <th className={tableHeadStyle}>Base asset</th>
+          <th className={tableHeadStyle}>Target asset</th>
           <th className={tableHeadStyle}>Value</th>
         </>
       }
@@ -410,6 +412,16 @@ function PortfolioLiquidityTab({
                   </div>
                   <span>{`${item.baseAsset} / ${item.token}`}</span>
                 </div>
+              </td>
+              <td className={cellStyle}>
+                {`${formatNumber(format, item.baseAssetLiqHolding, 3, true)} ${
+                  item.baseAsset
+                }`}
+              </td>
+              <td className={cellStyle}>
+                {`${formatNumber(format, item.tokenLiqHolding, 3, true)} ${
+                  item.token
+                }`}
               </td>
               <td className={cellStyle}>
                 {formatCurrencyWithDecimals(format, item.value, 3, true)}

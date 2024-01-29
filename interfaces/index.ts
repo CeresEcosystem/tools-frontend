@@ -311,6 +311,8 @@ export interface PortfolioLiquidityItem {
   token: string;
   baseAsset: string;
   value: number;
+  baseAssetLiqHolding: number;
+  tokenLiqHolding: number;
 }
 
 export interface PortfolioTransferItem {
