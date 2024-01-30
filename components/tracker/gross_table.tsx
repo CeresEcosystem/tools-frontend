@@ -1,36 +1,37 @@
-import { Block } from '@interfaces/index';
+import { BlockData } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import ListPagination from '@components/pagination/list_pagination';
 import useGross from '@hooks/use_gross';
 import { VAL_LATEST_BLOCK } from '@constants/index';
+import Spinner from '@components/spinner';
 
 const tableHeadStyle =
   'text-white p-2 text-left text-opacity-50 text-sm font-medium';
 
 const tableRowStyle = 'text-white text-sm p-2';
 
-function GrossTableData({
-  blocks,
+export default function GrossTable({
+  blocksFees,
   selectedToken,
 }: {
-  blocks?: Block[];
+  blocksFees?: BlockData;
   selectedToken: string;
 }) {
   const {
-    blocksSlice,
-    totalPages,
-    currentPage,
+    loading,
+    blocks,
+    pageMeta,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
     goToLastPage,
-  } = useGross(blocks);
+  } = useGross(selectedToken, blocksFees);
 
   const format = useFormatter();
 
-  if (blocks) {
-    return (
+  return (
+    <div className="relative px-4 py-8 max-w-full rounded-xl bg-backgroundItem md:col-span-2">
       <div className="flex flex-col space-y-4 overflow-x-hidden">
         <h1 className="text-white px-2 text-base">Burns by fees</h1>
         <div className="max-w-full overflow-x-auto">
@@ -50,7 +51,7 @@ function GrossTableData({
               </tr>
             </thead>
             <tbody>
-              {blocksSlice.map((block) => (
+              {blocks.map((block) => (
                 <tr key={block.blockNum}>
                   <td className={tableRowStyle}>{`${
                     selectedToken === 'VAL' &&
@@ -82,11 +83,10 @@ function GrossTableData({
             </tbody>
           </table>
         </div>
-
-        {totalPages > 1 && (
+        {pageMeta && pageMeta.pageCount > 1 && (
           <ListPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
+            currentPage={pageMeta.pageNumber - 1}
+            totalPages={pageMeta.pageCount}
             goToFirstPage={goToFirstPage}
             goToPreviousPage={goToPreviousPage}
             goToNextPage={goToNextPage}
@@ -95,22 +95,11 @@ function GrossTableData({
           />
         )}
       </div>
-    );
-  }
-
-  return <span className="text-white font-medium">No data</span>;
-}
-
-export default function GrossTable({
-  blocks,
-  selectedToken,
-}: {
-  blocks?: Block[];
-  selectedToken: string;
-}) {
-  return (
-    <div className="px-4 py-8 max-w-full rounded-xl bg-backgroundItem md:col-span-2">
-      <GrossTableData blocks={blocks} selectedToken={selectedToken} />
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-20">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 }

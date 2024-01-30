@@ -1,35 +1,67 @@
-import { Block } from '@interfaces/index';
-import { useRef, useState } from 'react';
-import usePagination from '@hooks/use_pagination';
+import { Block, BlockData, PageMeta } from '@interfaces/index';
+import { useCallback, useRef, useState } from 'react';
+import { NEW_API_URL } from '@constants/index';
 
-const limiter = 6;
+const useGross = (selectedToken: string, blocksFees?: BlockData) => {
+  const [loading, setLoading] = useState(false);
 
-const useGross = (blocks?: Block[]) => {
-  const allBlocks = useRef(
-    blocks?.filter((block) => block.burnType === 'FEES') ?? []
+  const blocks = useRef<Block[]>(blocksFees?.data ?? []);
+  const pageMeta = useRef<PageMeta | undefined>(blocksFees?.meta);
+
+  const fetchBlocks = useCallback(
+    async (page: number) => {
+      await fetch(
+        `${NEW_API_URL}/tracker/${selectedToken}/blocks/FEES?page=${page}&size=5`
+      )
+        .then(async (response) => {
+          if (response.ok) {
+            const responseJson = (await response.json()) as BlockData;
+
+            blocks.current = responseJson.data;
+            pageMeta.current = responseJson.meta;
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          blocks.current = [];
+          setLoading(false);
+        });
+    },
+    [selectedToken]
   );
 
-  const [blocksSlice, setBlocksSlice] = useState(
-    allBlocks.current.slice(0, limiter) ?? []
-  );
+  const goToFirstPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage) {
+      setLoading(true);
+      fetchBlocks(1);
+    }
+  }, [fetchBlocks]);
 
-  const currentPage = useRef(0);
-  const totalPages = useRef(Math.ceil(allBlocks.current.length / limiter));
+  const goToPreviousPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageNumber - 1);
+    }
+  }, [fetchBlocks]);
 
-  const { goToFirstPage, goToPreviousPage, goToNextPage, goToLastPage } =
-    usePagination<Block>(
-      currentPage.current,
-      totalPages.current,
-      allBlocks.current,
-      (cp: number) => (currentPage.current = cp),
-      (array: Array<Block>) => setBlocksSlice(array),
-      limiter
-    );
+  const goToNextPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageNumber + 1);
+    }
+  }, [fetchBlocks]);
+
+  const goToLastPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageCount);
+    }
+  }, [fetchBlocks]);
 
   return {
-    blocksSlice,
-    totalPages: totalPages.current,
-    currentPage: currentPage.current,
+    loading,
+    blocks: blocks.current,
+    pageMeta: pageMeta.current,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,

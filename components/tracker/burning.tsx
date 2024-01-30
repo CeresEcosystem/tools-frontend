@@ -3,6 +3,7 @@ import { formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { useState } from 'react';
 import TimeTab from '@components/tracker/time_tab';
+import { timeFrames } from '@hooks/use_tracker';
 
 const labelStyle = 'text-white text-opacity-50 text-sm mb-1';
 
@@ -13,7 +14,9 @@ function BurnData({
   burn?: Burn;
   selectedToken: string;
 }) {
-  const [selectedTimeFrame, setSelectedTimeFrame] = useState('24');
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState(
+    Object.keys(timeFrames)[0]
+  );
 
   const format = useFormatter();
 

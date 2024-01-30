@@ -1,71 +1,77 @@
-import { Block } from '@interfaces/index';
-import { useRef, useState } from 'react';
-import usePagination from '@hooks/use_pagination';
-import { getBlockLimiter } from '@utils/helpers';
-
-const limiter = 5;
+import { NEW_API_URL } from '@constants/index';
+import { Block, BlockData, PageMeta } from '@interfaces/index';
+import { useCallback, useRef, useState } from 'react';
 
 const useXORSpent = (
   selectedToken: string,
-  blocks?: Block[],
-  last?: number
+  blocksFees?: BlockData,
+  blocksTbc?: BlockData
 ) => {
-  const allBlocks = useRef(
-    blocks
-      ? selectedToken === 'VAL'
-        ? blocks.filter((block) => block.burnType === 'TBC')
-        : blocks
-      : []
+  const [loading, setLoading] = useState(false);
+
+  const blocks = useRef<Block[]>(
+    selectedToken === 'PSWAP' ? blocksFees?.data ?? [] : blocksTbc?.data ?? []
   );
-  const selectedTimeFrame = useRef('24');
+  const pageMeta = useRef<PageMeta | undefined>(
+    selectedToken === 'PSWAP' ? blocksFees?.meta : blocksTbc?.meta
+  );
 
-  const getBlocksFiltered = () => {
-    const blockLimiter = getBlockLimiter(selectedTimeFrame.current, last);
+  const fetchBlocks = useCallback(
+    async (page: number) => {
+      const type = selectedToken === 'PSWAP' ? 'FEES' : 'TBC';
 
-    if (blockLimiter !== -1) {
-      return allBlocks.current.filter(
-        (block) => block.blockNum >= blockLimiter
-      );
+      await fetch(
+        `${NEW_API_URL}/tracker/${selectedToken}/blocks/${type}?page=${page}&size=5`
+      )
+        .then(async (response) => {
+          if (response.ok) {
+            const responseJson = (await response.json()) as BlockData;
+
+            blocks.current = responseJson.data;
+            pageMeta.current = responseJson.meta;
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          blocks.current = [];
+          setLoading(false);
+        });
+    },
+    [selectedToken]
+  );
+
+  const goToFirstPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage) {
+      setLoading(true);
+      fetchBlocks(1);
     }
+  }, [fetchBlocks]);
 
-    return allBlocks.current;
-  };
+  const goToPreviousPage = useCallback(() => {
+    if (pageMeta.current?.hasPreviousPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageNumber - 1);
+    }
+  }, [fetchBlocks]);
 
-  const blocksTimeFiltered = useRef(getBlocksFiltered());
+  const goToNextPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageNumber + 1);
+    }
+  }, [fetchBlocks]);
 
-  const [blocksSlice, setBlocksSlice] = useState(
-    blocksTimeFiltered.current.slice(0, limiter) ?? []
-  );
-
-  const currentPage = useRef(0);
-  const totalPages = useRef(
-    Math.ceil(blocksTimeFiltered.current.length / limiter)
-  );
-
-  const { goToFirstPage, goToPreviousPage, goToNextPage, goToLastPage } =
-    usePagination<Block>(
-      currentPage.current,
-      totalPages.current,
-      blocksTimeFiltered.current,
-      (cp: number) => (currentPage.current = cp),
-      (array: Array<Block>) => setBlocksSlice(array),
-      limiter
-    );
-
-  const setSelectedTimeFrame = (time: string) => {
-    selectedTimeFrame.current = time;
-    blocksTimeFiltered.current = getBlocksFiltered();
-    currentPage.current = 0;
-    totalPages.current = Math.ceil(blocksTimeFiltered.current.length / limiter);
-    setBlocksSlice(blocksTimeFiltered.current.slice(0, limiter));
-  };
+  const goToLastPage = useCallback(() => {
+    if (pageMeta.current?.hasNextPage) {
+      setLoading(true);
+      fetchBlocks(pageMeta.current.pageCount);
+    }
+  }, [fetchBlocks]);
 
   return {
-    blocksSlice,
-    totalPages: totalPages.current,
-    currentPage: currentPage.current,
-    selectedTimeFrame: selectedTimeFrame.current,
-    setSelectedTimeFrame,
+    loading,
+    blocks: blocks.current,
+    pageMeta: pageMeta.current,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,

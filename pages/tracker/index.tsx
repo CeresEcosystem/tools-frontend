@@ -31,13 +31,13 @@ export default function Tracker() {
             <div className="flex flex-col space-y-8 md:flex-row md:space-y-0 md:space-x-8">
               <Burning burn={trackerData?.burn} selectedToken={selectedToken} />
               <XorSpent
-                blocks={trackerData?.blocks}
-                last={trackerData?.last}
+                blocksFees={trackerData?.blocksFees}
+                blocksTbc={trackerData?.blocksTbc}
                 selectedToken={selectedToken}
               />
             </div>
             <GrossTable
-              blocks={trackerData?.blocks}
+              blocksFees={trackerData?.blocksFees}
               selectedToken={selectedToken}
             />
           </TableGrid>

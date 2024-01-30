@@ -1,7 +1,5 @@
-import { formatTimeFrame } from '@utils/helpers';
+import { timeFrames } from '@hooks/use_tracker';
 import classNames from 'classnames';
-
-const timeFrames = ['24', '7', '30', '-1'];
 
 export default function TimeTab({
   selectedTimeFrame,
@@ -21,20 +19,24 @@ export default function TimeTab({
         </span>
       )}
       <div className="flex px-2 space-x-4 xs:space-x-6">
-        {timeFrames.map((time) => {
+        {Object.keys(timeFrames).map((time) => {
           const active = selectedTimeFrame === time;
 
           return (
             <span
               key={time}
-              onClick={() => setSelectedTimeFrame(time)}
+              onClick={() => {
+                if (!active) {
+                  setSelectedTimeFrame(time);
+                }
+              }}
               className={classNames(
                 'text-white cursor-pointer text-lg',
                 active ? 'text-opacity-100' : 'text-opacity-50',
                 'hover:text-opacity-100'
               )}
             >
-              {formatTimeFrame(time)}
+              {timeFrames[time]}
             </span>
           );
         })}

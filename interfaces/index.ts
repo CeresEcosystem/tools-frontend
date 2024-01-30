@@ -127,9 +127,18 @@ export interface Block {
   xorDedicatedForBuyBack: number;
 }
 
+export interface BlockData {
+  data: Block[];
+  meta: PageMeta;
+}
+
 export interface BurnObject {
   gross: number;
   net: number;
+}
+
+export interface TimeFrame {
+  [key: string]: string;
 }
 
 export interface Burn {
@@ -152,8 +161,8 @@ export interface Supply {
 }
 
 export interface TrackerData {
-  blocks: Block[];
-  last: number;
+  blocksFees: BlockData;
+  blocksTbc: BlockData;
   burn: Burn;
   graphBurning: Burning[];
   graphSupply: Supply[];

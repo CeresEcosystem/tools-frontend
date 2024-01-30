@@ -1,44 +1,40 @@
-import { Block } from '@interfaces/index';
+import { BlockData } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import TimeTab from '@components/tracker/time_tab';
 import useXORSpent from '@hooks/use_xor_spent';
 import ListPagination from '@components/pagination/list_pagination';
+import Spinner from '@components/spinner';
 
-function XorSpentData({
-  blocks,
-  last,
+export default function XorSpent({
+  blocksFees,
+  blocksTbc,
   selectedToken,
 }: {
-  blocks?: Block[];
-  last?: number;
+  blocksFees?: BlockData;
+  blocksTbc?: BlockData;
   selectedToken: string;
 }) {
   const {
-    blocksSlice,
-    totalPages,
-    currentPage,
-    selectedTimeFrame,
-    setSelectedTimeFrame,
+    loading,
+    blocks,
+    pageMeta,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
     goToLastPage,
-  } = useXORSpent(selectedToken, blocks, last);
+  } = useXORSpent(selectedToken, blocksFees, blocksTbc);
 
   const format = useFormatter();
 
-  if (blocks) {
-    return (
+  return (
+    <div className="px-4 py-8 rounded-xl w-full bg-backgroundItem relative">
       <div className="flex flex-col space-y-4">
-        <TimeTab
-          selectedTimeFrame={selectedTimeFrame}
-          setSelectedTimeFrame={setSelectedTimeFrame}
-          label={selectedToken === 'PSWAP' ? 'XOR spent' : 'TBC burns'}
-        />
+        <span className="text-white px-2 text-opacity-50 text-base">
+          {selectedToken === 'PSWAP' ? 'XOR spent' : 'TBC burns'}
+        </span>
         <table>
           <tbody>
-            {blocksSlice.map((block) => (
+            {blocks.map((block) => (
               <tr key={block.blockNum}>
                 <td className="text-white text-sm p-2">{`block #${formatNumber(
                   format,
@@ -54,10 +50,10 @@ function XorSpentData({
             ))}
           </tbody>
         </table>
-        {totalPages > 1 && (
+        {pageMeta && pageMeta.pageCount > 1 && (
           <ListPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
+            currentPage={pageMeta.pageNumber - 1}
+            totalPages={pageMeta.pageCount}
             goToFirstPage={goToFirstPage}
             goToPreviousPage={goToPreviousPage}
             goToNextPage={goToNextPage}
@@ -66,24 +62,11 @@ function XorSpentData({
           />
         )}
       </div>
-    );
-  }
-
-  return <span className="text-white font-medium">No data</span>;
-}
-
-export default function XorSpent({
-  blocks,
-  last,
-  selectedToken,
-}: {
-  blocks?: Block[];
-  last?: number;
-  selectedToken: string;
-}) {
-  return (
-    <div className="px-4 py-8 rounded-xl w-full bg-backgroundItem">
-      <XorSpentData blocks={blocks} last={last} selectedToken={selectedToken} />
+      {loading && (
+        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-20">
+          <Spinner />
+        </div>
+      )}
     </div>
   );
 }

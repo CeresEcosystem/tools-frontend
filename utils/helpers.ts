@@ -143,38 +143,6 @@ export function formatDate(date: string) {
   return dateFormatted.format('YYYY-MM-DD');
 }
 
-export function formatTimeFrame(time: string): string {
-  switch (time) {
-    case '24':
-      return '24h';
-    case '7':
-      return '7d';
-    case '30':
-      return '30d';
-    case '-1':
-      return 'all';
-    default:
-      return '';
-  }
-}
-
-export function getBlockLimiter(timeFrame: string, last?: number): number {
-  if (last != null) {
-    switch (timeFrame) {
-      case '24':
-        return last - 14400;
-      case '7':
-        return last - 100800;
-      case '30':
-        return last - 432000;
-      default:
-        return -1;
-    }
-  }
-
-  return -1;
-}
-
 export function checkNumberValue(number: any) {
   if (number && number !== 0 && number !== undefined && number !== Infinity) {
     return true;
