@@ -7,9 +7,9 @@ import { VAL_LATEST_BLOCK } from '@constants/index';
 import Spinner from '@components/spinner';
 
 const tableHeadStyle =
-  'text-white p-2 text-left text-opacity-50 text-sm font-medium';
+  'text-white p-2 text-left text-opacity-50 text-sm font-medium text-center';
 
-const tableRowStyle = 'text-white text-sm p-2';
+const tableRowStyle = 'text-white text-sm p-2 text-center';
 
 export default function GrossTable({
   blocksFees,
