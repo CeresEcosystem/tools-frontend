@@ -88,6 +88,7 @@ export interface PairsReturnType {
 export interface Token {
   token: string;
   price: number;
+  marketCap: number;
   assetId: string;
   fullName: string;
   lockedTokens: number;

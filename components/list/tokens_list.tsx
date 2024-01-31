@@ -12,6 +12,8 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarFavorite } from '@heroicons/react/24/solid';
+import { formatToCurrency } from '@utils/helpers';
+import { useFormatter } from 'next-intl';
 
 export default function TokensList({
   tokens,
@@ -32,6 +34,8 @@ export default function TokensList({
   favoriteTokens: string[];
   showOnlyFavorites: boolean;
 }) {
+  const format = useFormatter();
+
   return (
     <ul role="list" className="space-y-2 mt-8">
       {tokens.map((token) => {
@@ -83,6 +87,12 @@ export default function TokensList({
                         </span>
                       </span>
                     </Clipboard>
+                    <span className="text-sm pt-2 block text-white text-opacity-50">
+                      {'Market Cap: '}
+                      <span className="text-white">
+                        {formatToCurrency(format, token.marketCap)}
+                      </span>
+                    </span>
                     <span className="text-lg text-pink font-bold xs:hidden">
                       {token.priceFormatted}
                     </span>
