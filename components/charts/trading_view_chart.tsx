@@ -145,6 +145,10 @@ export default function TradingViewChart({
           (symbolName) => changeCurrentToken(symbolName)
         );
 
+      tvWidget.current?.applyOverrides({
+        'paneProperties.legendProperties.showVolume': true,
+      });
+
       tvWidget.current?.subscribe('onAutoSaveNeeded', () => {
         saveChartPreferences();
       });
