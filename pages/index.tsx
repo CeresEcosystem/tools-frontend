@@ -20,6 +20,8 @@ import {
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
 import { useSpring, animated } from 'react-spring';
+import { FireIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
 
 export default function Tokens({ data }: { data?: Token[] }) {
   const {
@@ -85,6 +87,21 @@ export default function Tokens({ data }: { data?: Token[] }) {
 
   return (
     <Container>
+      <div className="bg-backgroundSidebar mb-16 p-4 rounded-xl flex items-center gap-x-3">
+        <FireIcon
+          aria-hidden="true"
+          className="h-12 w-12 text-yellow flex-shrink-0"
+        />
+        <span className="text-white font-medium text-xs sm:text-sm">
+          KEN (Kensetsu) will be allocated to accounts on the SORA network that
+          burn at least 1 million XOR before block 14,939,200, at a rate of 1
+          KEN per 1 million XOR burned. Click{' '}
+          <Link href="/kensetsu-burning" className="text-pink">
+            here
+          </Link>{' '}
+          to track XOR burning.
+        </span>
+      </div>
       <animated.div
         className={showPriceConverter ? 'hidden' : 'block'}
         style={useSpring({

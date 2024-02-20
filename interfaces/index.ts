@@ -454,3 +454,23 @@ export interface Currency {
   currency: string;
   sign: string;
 }
+
+export interface KensetsuFilterData {
+  dateFrom: Date | null;
+  dateTo: Date | null;
+  accountId: string;
+}
+
+export interface KensetsuBurn {
+  accountId: string;
+  assetId: string;
+  amountBurned: number;
+  createdAt: string;
+  accountIdFormatted?: string;
+  kenAllocated: number;
+}
+
+export interface KensetsuBurnData {
+  data: KensetsuBurn[];
+  meta: PageMeta;
+}

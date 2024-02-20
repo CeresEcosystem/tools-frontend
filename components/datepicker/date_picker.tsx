@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { ChangeEvent } from 'react';
 
 import DatePicker from 'react-datepicker';
@@ -11,6 +12,9 @@ const DateTimePicker = ({
   label,
   showTimeSelect = true,
   required = false,
+  containerClassName,
+  className,
+  minDate,
 }: {
   name: string;
   id: string;
@@ -20,6 +24,9 @@ const DateTimePicker = ({
   label?: string;
   showTimeSelect?: boolean;
   required?: boolean;
+  containerClassName?: string;
+  className?: string;
+  minDate?: Date;
 }) => {
   const handleDateChangeRaw = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -32,7 +39,7 @@ const DateTimePicker = ({
   };
 
   return (
-    <div className="w-full">
+    <div className={classNames('w-full', containerClassName)}>
       {label !== '' && (
         <label
           htmlFor={id}
@@ -45,10 +52,13 @@ const DateTimePicker = ({
         id={id}
         name={name}
         required={required}
-        className="text-xs w-full rounded-xl py-2 px-4 bg-backgroundItem placeholder-white placeholder:opacity-80 text-white focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none"
+        className={classNames(
+          'text-xs w-full rounded-xl py-2 px-4 bg-backgroundItem placeholder-white placeholder:opacity-80 text-white focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none',
+          className
+        )}
         selected={value}
         onChange={(date: Date) => onChangeDate(date)}
-        minDate={getMinDate()}
+        minDate={minDate ?? getMinDate()}
         maxDate={new Date()}
         showTimeSelect={showTimeSelect}
         dateFormat="dd.MM.yyyy HH:mm"
