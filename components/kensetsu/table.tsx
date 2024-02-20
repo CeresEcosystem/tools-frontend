@@ -36,7 +36,7 @@ export default function KensetsuTable({
       <thead className="bg-white bg-opacity-10">
         <tr className="border-collapse border-4 border-backgroundHeader">
           <th className={tableHeadStyle}>Date</th>
-          <th className={tableHeadStyle}>Account Id</th>
+          <th className={tableHeadStyle}>Account</th>
           <th className={tableHeadStyle}>Burned XOR</th>
           <th className={tableHeadStyle}>KEN Allocated</th>
         </tr>

@@ -41,7 +41,7 @@ export default function KensetsuFilters({
 
   return (
     <div className="mb-12">
-      <Title title="Kensetsu burning" titleStyle="text-start" />
+      <Title title="Kensetsu Burning" titleStyle="text-start" />
       <div className="mt-8 flex flex-wrap gap-8 items-center justify-center xl:justify-between">
         <div className="flex flex-wrap gap-y-2 gap-x-4 justify-center items-center">
           <DateTimePicker
