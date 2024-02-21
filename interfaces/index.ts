@@ -470,7 +470,17 @@ export interface KensetsuBurn {
   kenAllocated: number;
 }
 
+export interface KensetsuSummary {
+  amountBurnedTotal: string;
+}
+
+export interface KensetsuSummaryFormatted {
+  xorBurned: string;
+  kenAllocated: string;
+}
+
 export interface KensetsuBurnData {
   data: KensetsuBurn[];
   meta: PageMeta;
+  summary: KensetsuSummary;
 }

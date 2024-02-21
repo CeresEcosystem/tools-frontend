@@ -1,14 +1,19 @@
 import DateTimePicker from '@components/datepicker/date_picker';
 import InputState from '@components/input/input_state';
 import Title from '@components/title';
-import { KensetsuFilterData } from '@interfaces/index';
+import {
+  KensetsuFilterData,
+  KensetsuSummaryFormatted,
+} from '@interfaces/index';
 import { ChangeEvent, useCallback, useState } from 'react';
 
 export default function KensetsuFilters({
   filterKensetsuBurns,
+  summary,
 }: {
   // eslint-disable-next-line no-unused-vars
   filterKensetsuBurns: (kensetsuFilterData: KensetsuFilterData) => void;
+  summary: KensetsuSummaryFormatted | undefined;
 }) {
   const [filterData, setFilterData] = useState<KensetsuFilterData>({
     dateFrom: null,
@@ -42,6 +47,18 @@ export default function KensetsuFilters({
   return (
     <div className="mb-12">
       <Title title="Kensetsu Burning" titleStyle="text-start" />
+      {summary && (
+        <div className="flex mt-2 items-center flex-wrap gap-y-2 gap-x-4 text-white text-opacity-50">
+          <span>
+            Total XOR Burned:{' '}
+            <span className="text-white">{summary.xorBurned}</span>
+          </span>
+          <span>
+            Total KEN Allocated:{' '}
+            <span className="text-white">{summary.kenAllocated}</span>
+          </span>
+        </div>
+      )}
       <div className="mt-8 flex flex-wrap gap-8 items-center justify-center xl:justify-between">
         <div className="flex flex-wrap gap-y-2 gap-x-4 justify-center items-center">
           <DateTimePicker

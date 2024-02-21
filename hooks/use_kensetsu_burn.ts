@@ -4,13 +4,17 @@ import {
   KensetsuBurn,
   KensetsuBurnData,
   KensetsuFilterData,
+  KensetsuSummaryFormatted,
   PageMeta,
   WalletAddress,
 } from '@interfaces/index';
-import { getEncodedAddress } from '@utils/helpers';
+import { formatNumber, getEncodedAddress } from '@utils/helpers';
+import { useFormatter } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const useKensetsuBurn = () => {
+  const format = useFormatter();
+
   const polkadot = usePolkadot();
 
   const [loadingStatus, setLoadingStatus] = useState(true);
@@ -20,6 +24,7 @@ const useKensetsuBurn = () => {
 
   const walletsStorage = useRef<WalletAddress[]>([]);
   const pageMeta = useRef<PageMeta | undefined>();
+  const summary = useRef<KensetsuSummaryFormatted | undefined>();
   const lastFilterOptions = useRef<KensetsuFilterData | undefined>();
 
   const getKensetsuFilters = useCallback(
@@ -105,6 +110,12 @@ const useKensetsuBurn = () => {
         );
 
         pageMeta.current = responseData.meta;
+
+        const kensutsuSummary = Number(responseData.summary.amountBurnedTotal);
+        summary.current = {
+          xorBurned: formatNumber(format, kensutsuSummary),
+          kenAllocated: formatNumber(format, kensutsuSummary / 1000000),
+        };
         setKensetsuBurns(kensetsuArray);
         setLoading(false);
         setPageLoading(false);
@@ -112,7 +123,7 @@ const useKensetsuBurn = () => {
         clearBurns();
       }
     },
-    [clearBurns, getKensetsuFilters, getFormattedKensetsuBurn]
+    [clearBurns, getKensetsuFilters, getFormattedKensetsuBurn, format]
   );
 
   useEffect(() => {
@@ -177,6 +188,7 @@ const useKensetsuBurn = () => {
   return {
     loading,
     pageMeta: pageMeta.current,
+    summary: summary.current,
     pageLoading,
     kensetsuBurns,
     goToFirstPage,

@@ -7,6 +7,7 @@ export default function Kensetsu() {
   const {
     kensetsuBurns,
     pageMeta,
+    summary,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
@@ -18,7 +19,10 @@ export default function Kensetsu() {
 
   return (
     <>
-      <KensetsuFilters filterKensetsuBurns={filterKensetsuBurns} />
+      <KensetsuFilters
+        filterKensetsuBurns={filterKensetsuBurns}
+        summary={summary}
+      />
       <div className="max-w-full overflow-x-auto relative">
         {loading ? (
           <Spinner />
