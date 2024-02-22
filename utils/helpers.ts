@@ -195,8 +195,18 @@ export function capitalizeFirstLetter(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
+export function isAlphaNumeric(str: string) {
+  let regex = /^[a-zA-Z0-9]+$/;
+  return regex.test(str);
+}
+
 export function validWalletAddress(address: string): boolean {
-  if (address !== '' && address.length === 49 && address.startsWith('cn'))
+  if (
+    address !== '' &&
+    address.length === 49 &&
+    address.startsWith('cn') &&
+    isAlphaNumeric(address)
+  )
     return true;
   return false;
 }

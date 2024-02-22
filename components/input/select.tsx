@@ -25,7 +25,7 @@ export default function Select({
   inputStyle?: string;
 }) {
   return (
-    <div>
+    <div className="flex-shrink-0">
       {label !== '' && (
         <label
           htmlFor={id}

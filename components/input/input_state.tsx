@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, KeyboardEvent } from 'react';
 
 export default function InputState({
   type = 'text',
@@ -15,6 +15,8 @@ export default function InputState({
   labelStyle,
   inputStyle,
   inputBgColor = 'bg-backgroundItem',
+  containerClassName,
+  onKeyDown,
 }: {
   type?: string;
   name: string;
@@ -30,9 +32,12 @@ export default function InputState({
   labelStyle?: string;
   inputStyle?: string;
   inputBgColor?: string;
+  containerClassName?: string;
+  // eslint-disable-next-line no-unused-vars
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }) {
   return (
-    <div>
+    <div className={containerClassName}>
       {label !== '' && (
         <label
           htmlFor={id}
@@ -57,6 +62,7 @@ export default function InputState({
           value={value}
           disabled={disabled}
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           required={required}
           className={classNames(
             'block w-full rounded-xl border-0 bg-transparent py-2 px-6 text-white placeholder:text-white placeholder:text-opacity-50 focus:ring-2 focus:ring-inset focus:ring-pink focus:outline-none',

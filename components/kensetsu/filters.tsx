@@ -48,7 +48,7 @@ export default function KensetsuFilters({
     <div className="mb-12">
       <Title title="Kensetsu Burning" titleStyle="text-start" />
       {summary && (
-        <div className="flex mt-2 items-center flex-wrap gap-y-2 gap-x-4 text-white text-opacity-50">
+        <div className="flex mt-2 items-center flex-wrap gap-y-2 gap-x-4 text-white text-opacity-50 text-xs sm:text-base">
           <span>
             Total XOR Burned:{' '}
             <span className="text-white">{summary.xorBurned}</span>
@@ -73,7 +73,7 @@ export default function KensetsuFilters({
               }))
             }
             label={'Date from'}
-            containerClassName="!w-auto"
+            containerClassName="w-full flex flex-col xs:!w-auto"
           />
           <DateTimePicker
             name="dateTo"
@@ -86,7 +86,7 @@ export default function KensetsuFilters({
               }))
             }
             label={'Date to'}
-            containerClassName="!w-auto"
+            containerClassName="w-full flex flex-col xs:!w-auto"
           />
           <InputState
             id="accountId"
@@ -103,6 +103,7 @@ export default function KensetsuFilters({
             label="Account Id"
             labelStyle="text-xs text-opacity-50"
             inputStyle="text-xs !px-4 placeholder:text-opacity-80"
+            containerClassName="w-full xs:w-auto"
           />
         </div>
         <div className="flex gap-x-2">

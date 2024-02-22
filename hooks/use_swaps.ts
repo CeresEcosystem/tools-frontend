@@ -109,6 +109,9 @@ const useSwaps = (tokens: Token[], address: string) => {
         ) {
           return false;
         }
+        if (swapFilterData.excludedAccounts.includes(swap.accountId)) {
+          return false;
+        }
       }
 
       return true;
@@ -156,6 +159,12 @@ const useSwaps = (tokens: Token[], address: string) => {
 
     if (swapFilterData.token !== '') {
       swapOptions += `&assetId=${swapFilterData.token.value}`;
+    }
+
+    if (swapFilterData.excludedAccounts.length > 0) {
+      swapFilterData.excludedAccounts.forEach((acc) => {
+        swapOptions += `&excludedAccIds=${acc}`;
+      });
     }
 
     return swapOptions;

@@ -412,6 +412,7 @@ export interface SwapFilterData {
   minAmount: string | null;
   maxAmount: string | null;
   token: SelectOption | '';
+  excludedAccounts: string[];
 }
 
 export interface SwapTokens {
