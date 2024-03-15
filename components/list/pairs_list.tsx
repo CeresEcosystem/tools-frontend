@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { ASSET_URL } from '@constants/index';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
 import { Pair } from '@interfaces/index';
 import VerticalSeparator from '@components/separator/vertical_separator';
-import { CircleStackIcon } from '@heroicons/react/24/outline';
+import { CircleStackIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 
 const labelStyle =
   'text-xs text-white text-opacity-50 text-right block sm:text-sm';
@@ -13,12 +14,12 @@ export default function PairsList({
   pairs,
   showModal,
   showLiquidityModal,
+  showLiquidityProvidersModal,
 }: {
   pairs: Pair[];
-  // eslint-disable-next-line no-unused-vars
   showModal: (show: boolean, pair: Pair) => void;
-  // eslint-disable-next-line no-unused-vars
   showLiquidityModal: (show: boolean, pair: Pair) => void;
+  showLiquidityProvidersModal: (show: boolean, pair: Pair) => void;
 }) {
   return (
     <ul role="list" className="space-y-2 mt-8">
@@ -86,6 +87,14 @@ export default function PairsList({
             <VerticalSeparator className="hidden sm:block" />
             <div className="flex space-x-2 sm:flex-col sm:justify-center sm:space-y-2 sm:space-x-0">
               <button
+                onClick={() => showModal(true, pair)}
+                className="rounded-md whitespace-nowrap bg-white w-full bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1.5 hover:bg-opacity-20"
+              >
+                <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
+                <span className="hidden sm:block">View locks</span>
+                <span className="sm:hidden text-xs">Locks</span>
+              </button>
+              <button
                 onClick={() => showLiquidityModal(true, pair)}
                 className="rounded-md whitespace-nowrap bg-white w-full bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1 hover:bg-opacity-20"
               >
@@ -93,14 +102,19 @@ export default function PairsList({
                   aria-hidden="true"
                   className="h-5 w-5 text-white"
                 />
-                View liquidity
+                <span className="hidden sm:block">View liquidity</span>
+                <span className="sm:hidden text-xs">Liquidity</span>
               </button>
               <button
-                onClick={() => showModal(true, pair)}
+                onClick={() => showLiquidityProvidersModal(true, pair)}
                 className="rounded-md whitespace-nowrap bg-white w-full bg-opacity-10 px-3 py-1.5 flex items-center justify-center text-white text-sm gap-x-1.5 hover:bg-opacity-20"
               >
-                <Image className="h-5 w-auto shrink-0" src={Lock} alt="" />
-                View locks
+                <UserGroupIcon
+                  aria-hidden="true"
+                  className="h-5 w-auto shrink-0 text-white"
+                />
+                <span className="hidden sm:block">View providers</span>
+                <span className="sm:hidden text-xs">Providers</span>
               </button>
             </div>
           </div>

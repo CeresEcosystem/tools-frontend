@@ -3,6 +3,7 @@ import PairsFilter from '@components/filters/pairs_filter';
 import Input from '@components/input';
 import PairsList from '@components/list/pairs_list';
 import PairsLiquidityModalClient from '@components/modal/pairs_liquidity_modal_client';
+import PairsLiquidityProvidersModalClient from '@components/modal/pairs_liquidity_providers_modal_client';
 import PairsModal from '@components/modal/pairs_modal';
 import ListPagination from '@components/pagination/list_pagination';
 import GridStats from '@components/stats/grid_stats';
@@ -45,6 +46,12 @@ export default function Pairs({ data }: { data?: Pair[] }) {
     item: null,
   });
 
+  const [showLiquidityProviders, setShowLiquidityProviders] =
+    useState<ModalPairsLiquidity>({
+      show: false,
+      item: null,
+    });
+
   useEffect(() => {
     scrollToTop();
   }, [pairs]);
@@ -80,6 +87,9 @@ export default function Pairs({ data }: { data?: Pair[] }) {
         showLiquidityModal={(show: boolean, pair: Pair) =>
           setShowLiquidity({ show, item: pair })
         }
+        showLiquidityProvidersModal={(show: boolean, pair: Pair) =>
+          setShowLiquidityProviders({ show, item: pair })
+        }
       />
       {totalPages > 1 && (
         <ListPagination
@@ -111,6 +121,16 @@ export default function Pairs({ data }: { data?: Pair[] }) {
           }))
         }
         pair={showLiquidity.item}
+      />
+      <PairsLiquidityProvidersModalClient
+        showModal={showLiquidityProviders.show}
+        closeModal={() =>
+          setShowLiquidityProviders((oldState) => ({
+            ...oldState,
+            show: false,
+          }))
+        }
+        pair={showLiquidityProviders.item}
       />
     </Container>
   );

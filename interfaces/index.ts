@@ -485,3 +485,9 @@ export interface KensetsuBurnData {
   meta: PageMeta;
   summary: KensetsuSummary;
 }
+
+export interface PairLiquidityProvider {
+  address: string;
+  liquidity: number;
+  accountIdFormatted?: string;
+}
