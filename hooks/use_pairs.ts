@@ -2,10 +2,16 @@ import { formatNumber, formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import usePagination from '@hooks/use_pagination';
-import { Pair, PairData, PairsReturnType } from '@interfaces/index';
+import {
+  Pair,
+  PairData,
+  PairsReturnType,
+  VolumeInterval,
+} from '@interfaces/index';
 import { SYNTHETICS_FILTER } from '@constants/index';
 
 const limiter = 10;
+export const volumeIntervals = ['24h', '7d', '1M', '3M'];
 
 const usePairs = (data?: Pair[]): PairsReturnType => {
   const format = useFormatter();
@@ -23,7 +29,6 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
           baseLiquidityFormatted: formatNumber(format, pair.baseAssetLiq),
           tokenLiquidityFormatted: formatNumber(format, pair.targetAssetLiq),
           liquidityFormatted: formatToCurrency(format, pair.liquidity ?? 0),
-          volumeFormatted: formatToCurrency(format, pair.volume ?? 0),
           lockedLiquidityFormatted: `${formatNumber(
             format,
             pair.lockedLiquidity
@@ -56,6 +61,8 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
   const [pairsSlice, setPairsSlice] = useState(
     allPairs.current.allData.slice(0, limiter) ?? []
   );
+  const [volumeTimeInterval, setVolumeTimeInterval] =
+    useState<keyof VolumeInterval>('24h');
 
   const selectedBaseAsset = useRef('All');
 
@@ -167,6 +174,8 @@ const usePairs = (data?: Pair[]): PairsReturnType => {
     handlePairSearch,
     syntheticsFilter,
     handleSyntheticsFilter,
+    volumeTimeInterval,
+    setVolumeTimeInterval,
   };
 };
 

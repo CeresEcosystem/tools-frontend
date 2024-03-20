@@ -41,6 +41,13 @@ export interface Lock {
   timestampFormatted: string | '';
 }
 
+export interface VolumeInterval {
+  '24h': number;
+  '7d': number;
+  '1M': number;
+  '3M': number;
+}
+
 export interface Pair {
   token: string;
   tokenFullName: string;
@@ -53,10 +60,10 @@ export interface Pair {
   targetAssetLiq: number;
   lockedLiquidity: number;
   volume?: number;
+  volumes: VolumeInterval;
   baseLiquidityFormatted: string | '';
   tokenLiquidityFormatted: string | '';
   liquidityFormatted: string | '';
-  volumeFormatted: string | '';
   lockedLiquidityFormatted: string;
 }
 
@@ -83,6 +90,8 @@ export interface PairsReturnType {
   handlePairSearch: (search: ChangeEvent<HTMLInputElement>) => void;
   syntheticsFilter: boolean;
   handleSyntheticsFilter: () => void;
+  volumeTimeInterval: keyof VolumeInterval;
+  setVolumeTimeInterval: (volumeTimeInterval: keyof VolumeInterval) => void;
 }
 
 export interface Token {

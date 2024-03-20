@@ -2,9 +2,11 @@
 import { ASSET_URL } from '@constants/index';
 import Image from 'next/image';
 import Lock from '@public/lock.svg';
-import { Pair } from '@interfaces/index';
+import { Pair, VolumeInterval } from '@interfaces/index';
 import VerticalSeparator from '@components/separator/vertical_separator';
 import { CircleStackIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { formatToCurrency } from '@utils/helpers';
+import { useFormatter } from 'next-intl';
 
 const labelStyle =
   'text-xs text-white text-opacity-50 text-right block sm:text-sm';
@@ -12,15 +14,19 @@ const infoStyle = 'block text-pink text-base text-end font-bold sm:text-xl';
 
 export default function PairsList({
   pairs,
+  volumeTimeInterval,
   showModal,
   showLiquidityModal,
   showLiquidityProvidersModal,
 }: {
   pairs: Pair[];
+  volumeTimeInterval: keyof VolumeInterval;
   showModal: (show: boolean, pair: Pair) => void;
   showLiquidityModal: (show: boolean, pair: Pair) => void;
   showLiquidityProvidersModal: (show: boolean, pair: Pair) => void;
 }) {
+  const format = useFormatter();
+
   return (
     <ul role="list" className="space-y-2 mt-8">
       {pairs.map((pair) => (
@@ -72,7 +78,9 @@ export default function PairsList({
               </p>
               <p>
                 <small className={labelStyle}>Volume</small>
-                <span className={infoStyle}>{pair.volumeFormatted}</span>
+                <span className={infoStyle}>
+                  {formatToCurrency(format, pair.volumes[volumeTimeInterval])}
+                </span>
               </p>
               <p>
                 <small className={labelStyle}>Locked liquidity</small>
