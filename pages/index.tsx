@@ -94,7 +94,7 @@ export default function Tokens({ data }: { data?: Token[] }) {
         />
         <span className="text-white font-medium text-xs sm:text-sm">
           KEN (Kensetsu) will be allocated to accounts on the SORA network that
-          burn at least 1 million XOR before block 14,939,200, at a rate of 1
+          burned at least 1 million XOR before block 14,939,200, at a rate of 1
           KEN per 1 million XOR burned. Click{' '}
           <Link href="/kensetsu-burning" className="text-pink">
             here
