@@ -31,6 +31,8 @@ export default function Pairs({ data }: { data?: Pair[] }) {
     handlePairSearch,
     syntheticsFilter,
     handleSyntheticsFilter,
+    volumeTimeInterval,
+    setVolumeTimeInterval,
   } = usePairs(data);
 
   const { getLocks } = useLocks();
@@ -80,9 +82,12 @@ export default function Pairs({ data }: { data?: Pair[] }) {
         handleBaseAssetChange={handleBaseAssetChange}
         syntheticsFilter={syntheticsFilter}
         handleSyntheticsFilter={handleSyntheticsFilter}
+        volumeTimeInterval={volumeTimeInterval}
+        setVolumeTimeInterval={setVolumeTimeInterval}
       />
       <PairsList
         pairs={pairs}
+        volumeTimeInterval={volumeTimeInterval}
         showModal={(show: boolean, pair: Pair) => fetchData(show, pair)}
         showLiquidityModal={(show: boolean, pair: Pair) =>
           setShowLiquidity({ show, item: pair })
