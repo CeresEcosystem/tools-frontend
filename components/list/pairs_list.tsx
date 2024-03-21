@@ -79,7 +79,10 @@ export default function PairsList({
               <p>
                 <small className={labelStyle}>Volume</small>
                 <span className={infoStyle}>
-                  {formatToCurrency(format, pair.volumes[volumeTimeInterval])}
+                  {formatToCurrency(
+                    format,
+                    pair.volumePeriods[volumeTimeInterval]
+                  )}
                 </span>
               </p>
               <p>

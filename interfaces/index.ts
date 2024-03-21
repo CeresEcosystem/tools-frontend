@@ -60,7 +60,7 @@ export interface Pair {
   targetAssetLiq: number;
   lockedLiquidity: number;
   volume?: number;
-  volumes: VolumeInterval;
+  volumePeriods: VolumeInterval;
   baseLiquidityFormatted: string | '';
   tokenLiquidityFormatted: string | '';
   liquidityFormatted: string | '';
