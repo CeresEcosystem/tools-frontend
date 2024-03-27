@@ -16,6 +16,7 @@ export default function Swaps({
   const {
     swaps,
     pageMeta,
+    stats,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
@@ -29,7 +30,12 @@ export default function Swaps({
 
   return (
     <div className="my-8">
-      <SwapsFilters tokens={tokens} token={token} filterSwaps={filterSwaps} />
+      <SwapsFilters
+        tokens={tokens}
+        token={token}
+        filterSwaps={filterSwaps}
+        stats={stats}
+      />
       <div className="max-w-full overflow-x-auto relative sm:px-8">
         {loading ? (
           <Spinner />

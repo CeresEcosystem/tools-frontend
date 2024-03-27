@@ -4,8 +4,10 @@ import InputState from '@components/input/input_state';
 import Select from '@components/input/select';
 import Title from '@components/title';
 import { ALL_TOKENS, FAVORITE_TOKENS } from '@constants/index';
-import { SwapFilterData, Token } from '@interfaces/index';
+import { SwapFilterData, SwapsStats, Token } from '@interfaces/index';
 import { RootState } from '@store/index';
+import { formatNumber } from '@utils/helpers';
+import { useFormatter } from 'next-intl';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -13,12 +15,16 @@ export default function SwapsFilters({
   tokens,
   token,
   filterSwaps,
+  stats,
 }: {
   tokens: Token[];
   token: Token | string;
   // eslint-disable-next-line no-unused-vars
   filterSwaps: (swapFilterData: SwapFilterData) => void;
+  stats: SwapsStats | undefined;
 }) {
+  const format = useFormatter();
+
   const favoriteTokens = useSelector(
     (state: RootState) => state.tokens.favoriteTokens
   );
@@ -58,6 +64,17 @@ export default function SwapsFilters({
     }
   };
 
+  const renderStatsInfo = (label: string, info: string) => {
+    return (
+      <div className="text-center xl:text-start">
+        <span className="block text-white text-opacity-50 text-sm">
+          {label}
+        </span>
+        <span className="text-white font-semibold">{info}</span>
+      </div>
+    );
+  };
+
   useEffect(() => {
     clearFilters(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +94,28 @@ export default function SwapsFilters({
   return (
     <div className="mb-6 px-8">
       <Title title="Swaps" titleStyle="text-start" />
-      <div className="mt-6 flex flex-col gap-x-4 gap-y-8 items-center justify-between xl:flex-row">
+      {stats && (
+        <div className="my-6 bg-backgroundHeader py-2 px-6 rounded-xl w-full inline-flex flex-col items-center justify-center flex-wrap gap-y-2 gap-x-6 xs:flex-row xl:w-auto xl:justify-start">
+          {renderStatsInfo(
+            'Total Swaps:',
+            formatNumber(format, stats.buys + stats.sells, 0)
+          )}
+          {renderStatsInfo('Total Buys:', formatNumber(format, stats.buys, 0))}
+          {renderStatsInfo(
+            'Total Tokens Bought:',
+            formatNumber(format, stats.tokensBought)
+          )}
+          {renderStatsInfo(
+            'Total Sells:',
+            formatNumber(format, stats.sells, 0)
+          )}
+          {renderStatsInfo(
+            'Total Tokens Sold:',
+            formatNumber(format, stats.tokensSold)
+          )}
+        </div>
+      )}
+      <div className="flex flex-col gap-x-4 gap-y-8 items-center justify-between xl:flex-row">
         <div className="flex justify-center items-center flex-wrap gap-4 xl:justify-start">
           <DateTimePicker
             name="dateFrom"

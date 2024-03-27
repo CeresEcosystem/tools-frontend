@@ -12,6 +12,7 @@ import {
   SwapFilterData,
   SwapTokens,
   SwapsData,
+  SwapsStats,
   Token,
   WalletAddress,
 } from '@interfaces/index';
@@ -40,6 +41,7 @@ const useSwaps = (tokens: Token[], address: string) => {
   const walletsStorage = useRef<WalletAddress[]>([]);
 
   const pageMeta = useRef<PageMeta | undefined>();
+  const stats = useRef<SwapsStats | undefined>();
 
   const socket = useRef<
     Socket<DefaultEventsMap, DefaultEventsMap> | undefined
@@ -170,6 +172,20 @@ const useSwaps = (tokens: Token[], address: string) => {
     return swapOptions;
   }, []);
 
+  const updateStats = useCallback((swap: Swap, addr: string) => {
+    if (stats.current) {
+      if (swap.inputAssetId === addr) {
+        stats.current.sells++;
+        stats.current.tokensSold += swap.assetInputAmount;
+      }
+
+      if (swap.outputAssetId === addr) {
+        stats.current.buys++;
+        stats.current.tokensBought += swap.assetOutputAmount;
+      }
+    }
+  }, []);
+
   const clearSwaps = useCallback(() => {
     setSwaps([]);
     setLoading(false);
@@ -216,6 +232,13 @@ const useSwaps = (tokens: Token[], address: string) => {
         );
 
         pageMeta.current = responseData.meta;
+
+        if (addr !== ALL_TOKENS && addr !== FAVORITE_TOKENS) {
+          stats.current = responseData.summary;
+        } else {
+          stats.current = undefined;
+        }
+
         setSwaps(swapsArray);
         setLoading(false);
         setPageLoading(false);
@@ -244,6 +267,14 @@ const useSwaps = (tokens: Token[], address: string) => {
                 setSwaps((prevSwaps) => {
                   if (!prevSwaps?.find((pSwap) => pSwap.id === swap.id)) {
                     const s: Swap = getFormattedSwap(swap, a);
+
+                    if (
+                      addresses.length === 1 &&
+                      addr !== ALL_TOKENS &&
+                      addr !== FAVORITE_TOKENS
+                    ) {
+                      updateStats(s, a);
+                    }
 
                     let updatedSwaps = [s];
 
@@ -279,6 +310,7 @@ const useSwaps = (tokens: Token[], address: string) => {
       getSwapTokens,
       tokens,
       validateSwapFilters,
+      updateStats,
     ]
   );
 
@@ -379,6 +411,7 @@ const useSwaps = (tokens: Token[], address: string) => {
   return {
     swaps,
     pageMeta: pageMeta.current,
+    stats: stats.current,
     loading,
     pageLoading,
     goToFirstPage,

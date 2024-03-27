@@ -384,6 +384,14 @@ export interface Swap {
 export interface SwapsData {
   data: Swap[];
   meta: PageMeta;
+  summary: SwapsStats;
+}
+
+export interface SwapsStats {
+  buys: number;
+  tokensBought: number;
+  sells: number;
+  tokensSold: number;
 }
 
 export interface PairLiquidity {
