@@ -14,9 +14,7 @@ export default function Swaps({
   token: Token | string;
 }) {
   const {
-    swaps,
-    pageMeta,
-    stats,
+    swapsData,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
@@ -26,7 +24,7 @@ export default function Swaps({
     filterSwaps,
   } = useSwaps(tokens, address);
 
-  if (swaps === undefined) return <Spinner />;
+  if (!swapsData) return <Spinner />;
 
   return (
     <div className="my-8">
@@ -34,14 +32,14 @@ export default function Swaps({
         tokens={tokens}
         token={token}
         filterSwaps={filterSwaps}
-        stats={stats}
+        stats={swapsData.summary}
       />
       <div className="max-w-full overflow-x-auto relative sm:px-8">
         {loading ? (
           <Spinner />
         ) : (
           <>
-            {swaps.length === 0 ? (
+            {swapsData.data.length === 0 ? (
               <div className="flex">
                 <span className="p-8 text-white font-medium">No swaps</span>
               </div>
@@ -49,8 +47,8 @@ export default function Swaps({
               <>
                 <SwapsTable
                   token={token}
-                  swaps={swaps}
-                  pageMeta={pageMeta}
+                  swaps={swapsData.data}
+                  pageMeta={swapsData.meta}
                   goToFirstPage={goToFirstPage}
                   goToPreviousPage={goToPreviousPage}
                   goToNextPage={goToNextPage}
