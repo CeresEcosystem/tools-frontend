@@ -1,21 +1,23 @@
 import DateTimePicker from '@components/datepicker/date_picker';
 import InputState from '@components/input/input_state';
 import Title from '@components/title';
-import {
-  KensetsuFilterData,
-  KensetsuSummaryFormatted,
-} from '@interfaces/index';
+import { BurningFilterData, BurningSummaryFormatted } from '@interfaces/index';
+import { capitalizeFirstLetter } from '@utils/helpers';
 import { ChangeEvent, useCallback, useState } from 'react';
 
-export default function KensetsuFilters({
-  filterKensetsuBurns,
+export default function BurningFilters({
+  filterBurns,
   summary,
+  tokenFullName,
+  tokenShortName,
 }: {
   // eslint-disable-next-line no-unused-vars
-  filterKensetsuBurns: (kensetsuFilterData: KensetsuFilterData) => void;
-  summary: KensetsuSummaryFormatted | undefined;
+  filterBurns: (burningFilterData: BurningFilterData) => void;
+  summary: BurningSummaryFormatted | undefined;
+  tokenFullName: string;
+  tokenShortName: string;
 }) {
-  const [filterData, setFilterData] = useState<KensetsuFilterData>({
+  const [filterData, setFilterData] = useState<BurningFilterData>({
     dateFrom: null,
     dateTo: null,
     accountId: '',
@@ -28,7 +30,7 @@ export default function KensetsuFilters({
         filterData.dateTo ||
         filterData.accountId !== ''
       ) {
-        const emptyFilters: KensetsuFilterData = {
+        const emptyFilters: BurningFilterData = {
           dateFrom: null,
           dateTo: null,
           accountId: '',
@@ -37,16 +39,19 @@ export default function KensetsuFilters({
         setFilterData(emptyFilters);
 
         if (fetchNewSwaps) {
-          filterKensetsuBurns(emptyFilters);
+          filterBurns(emptyFilters);
         }
       }
     },
-    [filterData, filterKensetsuBurns]
+    [filterData, filterBurns]
   );
 
   return (
     <div className="mb-12">
-      <Title title="Kensetsu Burning" titleStyle="text-start" />
+      <Title
+        title={`${capitalizeFirstLetter(tokenFullName)} Burning`}
+        titleStyle="text-start"
+      />
       {summary && (
         <div className="flex mt-2 items-center flex-wrap gap-y-2 gap-x-4 text-white text-opacity-50 text-xs sm:text-base">
           <span>
@@ -54,8 +59,8 @@ export default function KensetsuFilters({
             <span className="text-white">{summary.xorBurned}</span>
           </span>
           <span>
-            Total KEN Allocated:{' '}
-            <span className="text-white">{summary.kenAllocated}</span>
+            {`Total ${tokenShortName} Allocated: `}
+            <span className="text-white">{summary.tokenAllocated}</span>
           </span>
         </div>
       )}
@@ -108,7 +113,7 @@ export default function KensetsuFilters({
         </div>
         <div className="flex gap-x-2">
           <button
-            onClick={() => filterKensetsuBurns(filterData)}
+            onClick={() => filterBurns(filterData)}
             className="rounded-xl h-min py-2 whitespace-nowrap bg-pink px-3 text-white text-xs"
           >
             Filter burns

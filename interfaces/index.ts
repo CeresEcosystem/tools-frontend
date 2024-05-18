@@ -473,34 +473,34 @@ export interface Currency {
   sign: string;
 }
 
-export interface KensetsuFilterData {
+export interface BurningFilterData {
   dateFrom: Date | null;
   dateTo: Date | null;
   accountId: string;
 }
 
-export interface KensetsuBurn {
+export interface BurningData {
   accountId: string;
   assetId: string;
   amountBurned: number;
   createdAt: string;
   accountIdFormatted?: string;
-  kenAllocated: number;
+  tokenAllocated: number;
 }
 
-export interface KensetsuSummary {
+export interface BurningSummary {
   amountBurnedTotal: string;
 }
 
-export interface KensetsuSummaryFormatted {
+export interface BurningSummaryFormatted {
   xorBurned: string;
-  kenAllocated: string;
+  tokenAllocated: string;
 }
 
-export interface KensetsuBurnData {
-  data: KensetsuBurn[];
+export interface TokenBurningData {
+  data: BurningData[];
   meta: PageMeta;
-  summary: KensetsuSummary;
+  summary: BurningSummary;
 }
 
 export interface PairLiquidityProvider {

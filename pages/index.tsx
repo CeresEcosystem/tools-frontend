@@ -1,3 +1,4 @@
+import BurningInfo from '@components/burning/burning_info';
 import Container from '@components/container';
 import TokensFavoriteFilter from '@components/filters/tokens_favorite_filter';
 import Input from '@components/input';
@@ -20,8 +21,6 @@ import {
 import { scrollToTop } from '@utils/helpers';
 import { useEffect, useState } from 'react';
 import { useSpring, animated } from 'react-spring';
-import { FireIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
 
 export default function Tokens({ data }: { data?: Token[] }) {
   const {
@@ -87,21 +86,17 @@ export default function Tokens({ data }: { data?: Token[] }) {
 
   return (
     <Container>
-      <div className="bg-backgroundSidebar mb-16 p-4 rounded-xl flex items-center gap-x-3">
-        <FireIcon
-          aria-hidden="true"
-          className="h-12 w-12 text-yellow flex-shrink-0"
-        />
-        <span className="text-white font-medium text-xs sm:text-sm">
-          KEN (Kensetsu) will be allocated to accounts on the SORA network that
+      <BurningInfo
+        description="The initial $KARMA tokens will be earned by a burn-drop, where you can burn 100 million XOR by block 16,056,666 to earn 1 $KARMA."
+        link="/burning/karma"
+        bottomSpace={false}
+      />
+      <BurningInfo
+        description="KEN (Kensetsu) will be allocated to accounts on the SORA network that
           burned at least 1 million XOR before block 14,939,200, at a rate of 1
-          KEN per 1 million XOR burned. Click{' '}
-          <Link href="/kensetsu-burning" className="text-pink">
-            here
-          </Link>{' '}
-          to track XOR burning.
-        </span>
-      </div>
+          KEN per 1 million XOR burned."
+        link="/burning/kensetsu"
+      />
       <animated.div
         className={showPriceConverter ? 'hidden' : 'block'}
         style={useSpring({

@@ -1,7 +1,7 @@
 import Clipboard from '@components/clipboard';
 import ListPagination from '@components/pagination/list_pagination';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
-import { KensetsuBurn, PageMeta } from '@interfaces/index';
+import { BurningData, PageMeta } from '@interfaces/index';
 import {
   formatDateAndTime,
   formatNumber,
@@ -14,20 +14,22 @@ const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
 const cellStyle =
   'text-center text-white px-2 py-4 text-xs font-medium whitespace-nowrap';
 
-export default function KensetsuTable({
-  kensetsuBurns,
+export default function BurningTable({
+  burns,
   pageMeta,
   goToFirstPage,
   goToPreviousPage,
   goToNextPage,
   goToLastPage,
+  tokenShortName,
 }: {
-  kensetsuBurns: KensetsuBurn[];
+  burns: BurningData[];
   pageMeta: PageMeta | undefined;
   goToFirstPage: () => void;
   goToPreviousPage: () => void;
   goToNextPage: () => void;
   goToLastPage: () => void;
+  tokenShortName: string;
 }) {
   const format = useFormatter();
 
@@ -38,11 +40,11 @@ export default function KensetsuTable({
           <th className={tableHeadStyle}>Date</th>
           <th className={tableHeadStyle}>Account</th>
           <th className={tableHeadStyle}>Burned XOR</th>
-          <th className={tableHeadStyle}>KEN Allocated</th>
+          <th className={tableHeadStyle}>{`${tokenShortName} Allocated`}</th>
         </tr>
       </thead>
       <tbody>
-        {kensetsuBurns.map((burn, index) => (
+        {burns.map((burn, index) => (
           <tr
             key={`${burn.accountId + index}`}
             className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10 hover:bg-backgroundHeader"
@@ -60,7 +62,7 @@ export default function KensetsuTable({
               {formatNumberExceptDecimal(format, burn.amountBurned)}
             </td>
             <td className={cellStyle}>
-              {formatNumberExceptDecimal(format, burn.kenAllocated)}
+              {formatNumberExceptDecimal(format, burn.tokenAllocated)}
             </td>
           </tr>
         ))}

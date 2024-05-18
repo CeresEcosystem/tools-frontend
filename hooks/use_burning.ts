@@ -1,18 +1,18 @@
 import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
 import { usePolkadot } from '@context/polkadot_context';
 import {
-  KensetsuBurn,
-  KensetsuBurnData,
-  KensetsuFilterData,
-  KensetsuSummaryFormatted,
+  BurningData,
+  BurningFilterData,
+  BurningSummaryFormatted,
   PageMeta,
+  TokenBurningData,
   WalletAddress,
 } from '@interfaces/index';
 import { formatNumber, getEncodedAddress } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useKensetsuBurn = () => {
+const useBurning = (tokenFullName: string) => {
   const format = useFormatter();
 
   const polkadot = usePolkadot();
@@ -20,36 +20,33 @@ const useKensetsuBurn = () => {
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [loading, setLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
-  const [kensetsuBurns, setKensetsuBurns] = useState<KensetsuBurn[]>([]);
+  const [burns, setBurns] = useState<BurningData[]>([]);
 
   const walletsStorage = useRef<WalletAddress[]>([]);
   const pageMeta = useRef<PageMeta | undefined>();
-  const summary = useRef<KensetsuSummaryFormatted | undefined>();
-  const lastFilterOptions = useRef<KensetsuFilterData | undefined>();
+  const summary = useRef<BurningSummaryFormatted | undefined>();
+  const lastFilterOptions = useRef<BurningFilterData | undefined>();
 
-  const getKensetsuFilters = useCallback(
-    (kensetsuFilterData: KensetsuFilterData) => {
-      let kensetsuOptions = '';
+  const getFilters = useCallback((burningFilterData: BurningFilterData) => {
+    let filterOptions = '';
 
-      if (kensetsuFilterData.dateFrom) {
-        kensetsuOptions += `&dateFrom=${kensetsuFilterData.dateFrom.toISOString()}`;
-      }
+    if (burningFilterData.dateFrom) {
+      filterOptions += `&dateFrom=${burningFilterData.dateFrom.toISOString()}`;
+    }
 
-      if (kensetsuFilterData.dateTo) {
-        kensetsuOptions += `&dateTo=${kensetsuFilterData.dateTo.toISOString()}`;
-      }
+    if (burningFilterData.dateTo) {
+      filterOptions += `&dateTo=${burningFilterData.dateTo.toISOString()}`;
+    }
 
-      if (kensetsuFilterData.accountId !== '') {
-        kensetsuOptions += `&accountId=${kensetsuFilterData.accountId}`;
-      }
+    if (burningFilterData.accountId !== '') {
+      filterOptions += `&accountId=${burningFilterData.accountId}`;
+    }
 
-      return kensetsuOptions;
-    },
-    []
-  );
+    return filterOptions;
+  }, []);
 
   const clearBurns = useCallback(() => {
-    setKensetsuBurns([]);
+    setBurns([]);
     setLoading(false);
     setPageLoading(false);
   }, []);
@@ -79,51 +76,49 @@ const useKensetsuBurn = () => {
     [polkadot?.accounts]
   );
 
-  const getFormattedKensetsuBurn = useCallback((kensetsuBurn: KensetsuBurn) => {
+  const getFormattedBurningData = useCallback((burn: BurningData) => {
     return {
-      ...kensetsuBurn,
+      ...burn,
       accountIdFormatted:
         walletsStorage.current.find(
-          (wallet) => wallet.address === kensetsuBurn.accountId
-        )?.name ?? kensetsuBurn.accountId,
-      kenAllocated: kensetsuBurn.amountBurned / 1000000,
+          (wallet) => wallet.address === burn.accountId
+        )?.name ?? burn.accountId,
+      tokenAllocated: burn.amountBurned / 1000000,
     };
   }, []);
 
-  const fetchKensetsuBurns = useCallback(
-    async (page = 1, kensetsuFilterData = lastFilterOptions.current) => {
-      const kensetsuOptions = kensetsuFilterData
-        ? getKensetsuFilters(kensetsuFilterData)
-        : '';
+  const fetchBurningData = useCallback(
+    async (page = 1, burningFilterData = lastFilterOptions.current) => {
+      const options = burningFilterData ? getFilters(burningFilterData) : '';
 
-      let response = await fetch(
-        `${NEW_API_URL}/kensetsu/burns?page=${page}${kensetsuOptions}`
+      const response = await fetch(
+        `${NEW_API_URL}/burns/${tokenFullName}?page=${page}${options}`
       );
 
       if (response.ok) {
-        const responseData = (await response.json()) as KensetsuBurnData;
+        const responseData = (await response.json()) as TokenBurningData;
 
-        const kensetsuArray: KensetsuBurn[] = [];
+        const burningData: BurningData[] = [];
 
         responseData.data.forEach((burn) =>
-          kensetsuArray.push(getFormattedKensetsuBurn(burn))
+          burningData.push(getFormattedBurningData(burn))
         );
 
         pageMeta.current = responseData.meta;
 
-        const kensutsuSummary = Number(responseData.summary.amountBurnedTotal);
+        const burningSummary = Number(responseData.summary.amountBurnedTotal);
         summary.current = {
-          xorBurned: formatNumber(format, kensutsuSummary),
-          kenAllocated: formatNumber(format, kensutsuSummary / 1000000),
+          xorBurned: formatNumber(format, burningSummary),
+          tokenAllocated: formatNumber(format, burningSummary / 1000000),
         };
-        setKensetsuBurns(kensetsuArray);
+        setBurns(burningData);
         setLoading(false);
         setPageLoading(false);
       } else {
         clearBurns();
       }
     },
-    [clearBurns, getKensetsuFilters, getFormattedKensetsuBurn, format]
+    [getFilters, tokenFullName, format, getFormattedBurningData, clearBurns]
   );
 
   useEffect(() => {
@@ -140,7 +135,7 @@ const useKensetsuBurn = () => {
     if (!loadingStatus) {
       setLoading(true);
       lastFilterOptions.current = undefined;
-      fetchKensetsuBurns();
+      fetchBurningData();
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,40 +144,40 @@ const useKensetsuBurn = () => {
   const goToFirstPage = useCallback(() => {
     if (pageMeta.current?.hasPreviousPage) {
       setPageLoading(true);
-      fetchKensetsuBurns();
+      fetchBurningData();
     }
-  }, [fetchKensetsuBurns]);
+  }, [fetchBurningData]);
 
   const goToPreviousPage = useCallback(() => {
     if (pageMeta.current?.hasPreviousPage) {
       setPageLoading(true);
-      fetchKensetsuBurns(pageMeta.current.pageNumber - 1);
+      fetchBurningData(pageMeta.current.pageNumber - 1);
     }
-  }, [fetchKensetsuBurns]);
+  }, [fetchBurningData]);
 
   const goToNextPage = useCallback(() => {
     if (pageMeta.current?.hasNextPage) {
       setPageLoading(true);
-      fetchKensetsuBurns(pageMeta.current.pageNumber + 1);
+      fetchBurningData(pageMeta.current.pageNumber + 1);
     }
-  }, [fetchKensetsuBurns]);
+  }, [fetchBurningData]);
 
   const goToLastPage = useCallback(() => {
     if (pageMeta.current?.hasNextPage) {
       setPageLoading(true);
-      fetchKensetsuBurns(pageMeta.current.pageCount);
+      fetchBurningData(pageMeta.current.pageCount);
     }
-  }, [fetchKensetsuBurns]);
+  }, [fetchBurningData]);
 
-  const filterKensetsuBurns = useCallback(
-    (kensetsuFilterData: KensetsuFilterData) => {
-      if (kensetsuFilterData !== lastFilterOptions.current) {
+  const filterBurningData = useCallback(
+    (burningFilterData: BurningFilterData) => {
+      if (burningFilterData !== lastFilterOptions.current) {
         setPageLoading(true);
-        lastFilterOptions.current = kensetsuFilterData;
-        fetchKensetsuBurns(1, kensetsuFilterData);
+        lastFilterOptions.current = burningFilterData;
+        fetchBurningData(1, burningFilterData);
       }
     },
-    [fetchKensetsuBurns]
+    [fetchBurningData]
   );
 
   return {
@@ -190,13 +185,13 @@ const useKensetsuBurn = () => {
     pageMeta: pageMeta.current,
     summary: summary.current,
     pageLoading,
-    kensetsuBurns,
+    burns,
     goToFirstPage,
     goToPreviousPage,
     goToNextPage,
     goToLastPage,
-    filterKensetsuBurns,
+    filterBurningData,
   };
 };
 
-export default useKensetsuBurn;
+export default useBurning;
