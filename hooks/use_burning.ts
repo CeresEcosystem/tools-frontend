@@ -10,7 +10,12 @@ import {
 } from '@interfaces/index';
 import { formatNumber, getEncodedAddress } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
+const tokenAllocationDivider = [
+  { token: 'kensetsu', divider: 1000000 },
+  { token: 'karma', divider: 100000000 },
+];
 
 const useBurning = (tokenFullName: string) => {
   const format = useFormatter();
@@ -26,6 +31,12 @@ const useBurning = (tokenFullName: string) => {
   const pageMeta = useRef<PageMeta | undefined>();
   const summary = useRef<BurningSummaryFormatted | undefined>();
   const lastFilterOptions = useRef<BurningFilterData | undefined>();
+
+  const divider = useMemo(() => {
+    return tokenAllocationDivider.find(
+      (tokenDivider) => tokenDivider.token === tokenFullName
+    )!.divider;
+  }, [tokenFullName]);
 
   const getFilters = useCallback((burningFilterData: BurningFilterData) => {
     let filterOptions = '';
@@ -76,16 +87,19 @@ const useBurning = (tokenFullName: string) => {
     [polkadot?.accounts]
   );
 
-  const getFormattedBurningData = useCallback((burn: BurningData) => {
-    return {
-      ...burn,
-      accountIdFormatted:
-        walletsStorage.current.find(
-          (wallet) => wallet.address === burn.accountId
-        )?.name ?? burn.accountId,
-      tokenAllocated: burn.amountBurned / 1000000,
-    };
-  }, []);
+  const getFormattedBurningData = useCallback(
+    (burn: BurningData) => {
+      return {
+        ...burn,
+        accountIdFormatted:
+          walletsStorage.current.find(
+            (wallet) => wallet.address === burn.accountId
+          )?.name ?? burn.accountId,
+        tokenAllocated: burn.amountBurned / divider,
+      };
+    },
+    [divider]
+  );
 
   const fetchBurningData = useCallback(
     async (page = 1, burningFilterData = lastFilterOptions.current) => {
@@ -109,7 +123,7 @@ const useBurning = (tokenFullName: string) => {
         const burningSummary = Number(responseData.summary.amountBurnedTotal);
         summary.current = {
           xorBurned: formatNumber(format, burningSummary),
-          tokenAllocated: formatNumber(format, burningSummary / 1000000),
+          tokenAllocated: formatNumber(format, burningSummary / divider),
         };
         setBurns(burningData);
         setLoading(false);
@@ -118,7 +132,14 @@ const useBurning = (tokenFullName: string) => {
         clearBurns();
       }
     },
-    [getFilters, tokenFullName, format, getFormattedBurningData, clearBurns]
+    [
+      getFilters,
+      tokenFullName,
+      format,
+      getFormattedBurningData,
+      clearBurns,
+      divider,
+    ]
   );
 
   useEffect(() => {
