@@ -1,6 +1,5 @@
-import BurningInfo from '@components/burning/burning_info';
 import Container from '@components/container';
-import TokensFavoriteFilter from '@components/filters/tokens_favorite_filter';
+import TokensFilter from '@components/filters/tokens_filter';
 import Input from '@components/input';
 import TokensList from '@components/list/tokens_list';
 import TokenHolderModalClient from '@components/modal/token_holders_modal_client';
@@ -41,6 +40,8 @@ export default function Tokens({ data }: { data?: Token[] }) {
     favoriteTokens,
     showPriceConverter,
     setShowPriceConverter,
+    priceFilter,
+    togglePriceFilter,
   } = useTokens(data);
 
   const { getLocks } = useLocks();
@@ -86,17 +87,6 @@ export default function Tokens({ data }: { data?: Token[] }) {
 
   return (
     <Container>
-      <BurningInfo
-        description="The initial $KARMA tokens will be earned by a burn-drop, where you can burn 100 million XOR by block 16,056,666 to earn 1 $KARMA."
-        link="/burning/karma"
-        bottomSpace={false}
-      />
-      <BurningInfo
-        description="KEN (Kensetsu) will be allocated to accounts on the SORA network that
-          burned at least 1 million XOR before block 14,939,200, at a rate of 1
-          KEN per 1 million XOR burned."
-        link="/burning/kensetsu"
-      />
       <animated.div
         className={showPriceConverter ? 'hidden' : 'block'}
         style={useSpring({
@@ -113,10 +103,12 @@ export default function Tokens({ data }: { data?: Token[] }) {
             Convert token prices
           </button>
         </div>
-        <TokensFavoriteFilter
+        <TokensFilter
           filters={filters}
           filter={filter}
           toggleFilter={toggleFilter}
+          priceFilter={priceFilter}
+          togglePriceFilter={togglePriceFilter}
         />
         <TokensList
           tokens={tokens}
@@ -134,6 +126,7 @@ export default function Tokens({ data }: { data?: Token[] }) {
           removeTokenFromFavorites={removeTokenFromFavorites}
           favoriteTokens={favoriteTokens}
           showOnlyFavorites={filter === 'Favorites'}
+          priceFilter={priceFilter}
         />
         {filter !== 'Favorites' && totalPages > 1 && (
           <ListPagination

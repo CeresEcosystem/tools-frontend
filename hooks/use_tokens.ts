@@ -1,4 +1,8 @@
-import { formatToCurrency, formatWalletAddress } from '@utils/helpers';
+import {
+  formatNumber,
+  formatToCurrency,
+  formatWalletAddress,
+} from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import { ChangeEvent, useCallback, useRef, useState } from 'react';
 import usePagination from '@hooks/use_pagination';
@@ -6,7 +10,7 @@ import { Token, TokensReturnType } from '@interfaces/index';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/index';
 import { addToFavorites, removeFromFavorites } from '@store/tokens/token_slice';
-import { SYNTHETICS_FILTER } from '@constants/index';
+import { SYNTHETICS_FILTER, XOR } from '@constants/index';
 
 const limiter = 10;
 
@@ -25,6 +29,11 @@ const useTokens = (data?: Token[]): TokensReturnType => {
   const [filter, setFilter] = useState(
     favoriteTokens.length > 0 ? filters[1] : filters[0]
   );
+  const [priceFilter, setPriceFilter] = useState('$');
+
+  const xorPrice = useRef<number>(
+    data?.find((t) => t.token === XOR)?.price || 0
+  );
 
   const dataFormatted = useRef<Token[]>(
     data?.map((t) => {
@@ -32,6 +41,11 @@ const useTokens = (data?: Token[]): TokensReturnType => {
         ...t,
         assetIdFormatted: formatWalletAddress(t.assetId),
         priceFormatted: formatToCurrency(format, t.price),
+        priceInXor: `${formatNumber(
+          format,
+          t.price / xorPrice.current,
+          4
+        )} ${XOR}`,
       };
     }) || []
   );
@@ -125,6 +139,15 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     }
   };
 
+  const togglePriceFilter = useCallback(
+    (pFilter: string) => {
+      if (pFilter !== priceFilter) {
+        setPriceFilter(pFilter);
+      }
+    },
+    [priceFilter]
+  );
+
   const addTokenToFavorites = (token: Token) => {
     dispatch(addToFavorites(token.assetId));
   };
@@ -151,6 +174,8 @@ const useTokens = (data?: Token[]): TokensReturnType => {
     favoriteTokens,
     showPriceConverter,
     setShowPriceConverter,
+    priceFilter,
+    togglePriceFilter,
   };
 };
 

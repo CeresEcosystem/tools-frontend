@@ -24,6 +24,7 @@ export default function TokensList({
   removeTokenFromFavorites,
   favoriteTokens,
   showOnlyFavorites,
+  priceFilter,
 }: {
   tokens: Token[];
   showModal: (show: boolean, token: Token) => void;
@@ -33,6 +34,7 @@ export default function TokensList({
   removeTokenFromFavorites: (token: Token) => void;
   favoriteTokens: string[];
   showOnlyFavorites: boolean;
+  priceFilter: string;
 }) {
   const format = useFormatter();
 
@@ -94,7 +96,9 @@ export default function TokensList({
                       </span>
                     </span>
                     <span className="text-lg text-pink font-bold xs:hidden">
-                      {token.priceFormatted}
+                      {priceFilter === '$'
+                        ? token.priceFormatted
+                        : token.priceInXor}
                     </span>
                   </div>
                 </div>
@@ -114,7 +118,9 @@ export default function TokensList({
               </div>
               <div className="hidden flex-shrink-0 justify-end items-center xs:flex">
                 <span className="text-lg text-pink font-bold sm:text-xl">
-                  {token.priceFormatted}
+                  {priceFilter === '$'
+                    ? token.priceFormatted
+                    : token.priceInXor}
                 </span>
                 {isFavorite ? (
                   <StarFavorite

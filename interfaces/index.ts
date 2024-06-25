@@ -104,6 +104,7 @@ export interface Token {
   assetIdFormatted: string | '';
   priceFormatted: string | '';
   isFavorite?: boolean;
+  priceInXor?: string;
 }
 
 export interface TokensReturnType {
@@ -124,6 +125,8 @@ export interface TokensReturnType {
   favoriteTokens: string[];
   showPriceConverter: boolean;
   setShowPriceConverter: (show: boolean) => void;
+  priceFilter: string;
+  togglePriceFilter: (priceFilter: string) => void;
 }
 
 export interface Block {
