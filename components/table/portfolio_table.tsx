@@ -32,92 +32,12 @@ import Clipboard from '@components/clipboard';
 import SwapsTable from '@components/swaps/swaps_table';
 import Link from 'next/link';
 import TransfersTable from '@components/transfers/transfers_table';
+import ApolloDashboard from '@components/apollo';
+import Table from './table';
+import PriceCell from './price_sell';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
-
-function PriceInterval({
-  valuePercentage,
-  value,
-}: {
-  valuePercentage: number;
-  value: number;
-}) {
-  const format = useFormatter();
-
-  if (value === 0) {
-    return <span className="text-white text-opacity-50">0%</span>;
-  }
-
-  if (value < 0) {
-    return (
-      <div className="flex flex-col space-y-1">
-        <span className="text-red-400">{`${formatNumber(
-          format,
-          valuePercentage,
-          2
-        )}%`}</span>
-        <span className="text-red-400 text-xs">
-          {formatCurrencyWithDecimals(format, value, 2, true)}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col space-y-1">
-      <span className="text-green-400">{`${formatNumber(
-        format,
-        valuePercentage,
-        2
-      )}%`}</span>
-      <span className="text-green-400 text-xs">
-        {formatCurrencyWithDecimals(format, value, 2, true)}
-      </span>
-    </div>
-  );
-}
-
-function Table({
-  totalValue,
-  renderHeader,
-  renderBody,
-  footerColSpan,
-}: {
-  totalValue?: number;
-  renderHeader: React.ReactNode;
-  renderBody: React.ReactNode;
-  footerColSpan?: number;
-}) {
-  const format = useFormatter();
-
-  const footerStyle = 'text-white px-4 py-2 text-left text-base font-bold';
-
-  return (
-    <div className="max-w-full overflow-x-auto">
-      <table className="min-w-[768px] bg-backgroundItem border-collapse border-hidden rounded-xl md:min-w-full">
-        <thead className="bg-white bg-opacity-10">
-          <tr className="border-collapse border-4 border-backgroundHeader">
-            {renderHeader}
-          </tr>
-        </thead>
-        <tbody>{renderBody}</tbody>
-        {totalValue && (
-          <tfoot className="bg-backgroundHeader border-t-4 border-t-backgroundHeader">
-            <tr>
-              <td colSpan={footerColSpan} className={footerStyle}>
-                Total Value
-              </td>
-              <td className={classNames(footerStyle, 'text-center !text-pink')}>
-                {formatCurrencyWithDecimals(format, totalValue, 2, true)}
-              </td>
-            </tr>
-          </tfoot>
-        )}
-      </table>
-    </div>
-  );
-}
 
 function PortfolioInput({
   selectedWallet,
@@ -269,25 +189,25 @@ function PortfolioTabTable({
                 {formatToCurrency(format, item.price)}
               </td>
               <td className={cellStyle}>
-                <PriceInterval
+                <PriceCell
                   valuePercentage={item.oneHour}
                   value={item.oneHourValueDifference}
                 />
               </td>
               <td className={cellStyle}>
-                <PriceInterval
+                <PriceCell
                   valuePercentage={item.oneDay}
                   value={item.oneDayValueDifference}
                 />
               </td>
               <td className={cellStyle}>
-                <PriceInterval
+                <PriceCell
                   valuePercentage={item.oneWeek}
                   value={item.oneWeekValueDifference}
                 />
               </td>
               <td className={cellStyle}>
-                <PriceInterval
+                <PriceCell
                   valuePercentage={item.oneMonth}
                   value={item.oneMonthValueDifference}
                 />
@@ -445,7 +365,7 @@ function TabRenderer({
   goToNextPage,
   goToLastPage,
 }: {
-  selectedWallet: WalletAddress | null;
+  selectedWallet: WalletAddress;
   selectedTab: string;
   totalValue: number;
   portfolioItems: (
@@ -522,6 +442,10 @@ function TabRenderer({
     );
   }
 
+  if (selectedTab === 'apollo') {
+    return <ApolloDashboard selectedWallet={selectedWallet} />;
+  }
+
   return (
     <PortfolioLiquidityTab
       portfolioItems={portfolioItems as PortfolioLiquidityItem[]}
@@ -589,7 +513,7 @@ export default function PortfolioTable() {
         <span className="font-medium text-center block text-opacity-50 mx-auto w-fit text-lg text-white">
           To many requests. Please, try again in one minute.
         </span>
-      ) : portfolioItems.length === 0 ? (
+      ) : portfolioItems.length === 0 && selectedTab !== 'apollo' ? (
         <span className="font-medium block text-opacity-50 mx-auto w-fit text-lg text-white">
           {`No items in ${selectedTab}.`}
         </span>

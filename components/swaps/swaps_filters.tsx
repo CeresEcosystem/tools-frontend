@@ -2,6 +2,7 @@ import ExcludeAccounts from '@components/account/exclude_accounts';
 import DateTimePicker from '@components/datepicker/date_picker';
 import InputState from '@components/input/input_state';
 import Select from '@components/input/select';
+import StatsInfo from '@components/stats/stats_info';
 import Title from '@components/title';
 import { ALL_TOKENS, FAVORITE_TOKENS } from '@constants/index';
 import { SwapFilterData, SwapsStats, Token } from '@interfaces/index';
@@ -64,17 +65,6 @@ export default function SwapsFilters({
     }
   };
 
-  const renderStatsInfo = (label: string, info: string) => {
-    return (
-      <div className="text-center xl:text-start">
-        <span className="block text-white text-opacity-50 text-sm">
-          {label}
-        </span>
-        <span className="text-white font-semibold">{info}</span>
-      </div>
-    );
-  };
-
   useEffect(() => {
     clearFilters(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,23 +86,26 @@ export default function SwapsFilters({
       <Title title="Swaps" titleStyle="text-start" />
       {stats && (
         <div className="my-6 bg-backgroundHeader py-2 px-6 rounded-xl w-full inline-flex flex-col items-center justify-center flex-wrap gap-y-2 gap-x-6 xs:flex-row xl:w-auto xl:justify-start">
-          {renderStatsInfo(
-            'Total Swaps:',
-            formatNumber(format, stats.buys + stats.sells, 0)
-          )}
-          {renderStatsInfo('Total Buys:', formatNumber(format, stats.buys, 0))}
-          {renderStatsInfo(
-            'Total Tokens Bought:',
-            formatNumber(format, stats.tokensBought)
-          )}
-          {renderStatsInfo(
-            'Total Sells:',
-            formatNumber(format, stats.sells, 0)
-          )}
-          {renderStatsInfo(
-            'Total Tokens Sold:',
-            formatNumber(format, stats.tokensSold)
-          )}
+          <StatsInfo
+            label="Total Swaps:"
+            info={formatNumber(format, stats.buys + stats.sells, 0)}
+          />
+          <StatsInfo
+            label="Total Buys:"
+            info={formatNumber(format, stats.buys, 0)}
+          />
+          <StatsInfo
+            label="Total Tokens Bought:"
+            info={formatNumber(format, stats.tokensBought)}
+          />
+          <StatsInfo
+            label="Total Sells:"
+            info={formatNumber(format, stats.sells, 0)}
+          />
+          <StatsInfo
+            label="Total Tokens Sold:"
+            info={formatNumber(format, stats.tokensSold)}
+          />
         </div>
       )}
       <div className="flex flex-col gap-x-4 gap-y-8 items-center justify-between xl:flex-row">

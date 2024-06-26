@@ -16,7 +16,7 @@ export default function PortfolioTabs({
 }) {
   return (
     <>
-      <div className="hidden max-w-xl mb-10 px-2 py-2 mx-auto w-full bg-backgroundItem rounded-xl xs:flex sm:px-5">
+      <div className="hidden max-w-2xl mb-10 px-2 py-2 mx-auto w-full bg-backgroundItem rounded-xl xs:flex sm:px-5">
         {tabs.map((tab) => {
           const selected = tab.tab.toLowerCase() === selectedTab;
 

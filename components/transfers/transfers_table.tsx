@@ -29,7 +29,7 @@ export default function TransfersTable({
   goToNextPage,
   goToLastPage,
 }: {
-  selectedWallet: WalletAddress | null;
+  selectedWallet: WalletAddress;
   transfers: PortfolioTransferItem[];
   pageMeta: PageMeta | undefined;
   goToFirstPage: () => void;
@@ -40,7 +40,7 @@ export default function TransfersTable({
   const format = useFormatter();
 
   const walletAddress = (address: string, addressFormatted?: string) => {
-    if (address !== selectedWallet?.address) {
+    if (address !== selectedWallet.address) {
       const href = address.startsWith('0x')
         ? `${ETHSCAN_URL}${address}`
         : `/portfolio?address=${address}`;

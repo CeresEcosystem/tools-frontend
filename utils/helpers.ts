@@ -87,8 +87,8 @@ export function formatNumber(
 
   return format.number(number, {
     style: 'decimal',
-    minimumFractionDigits: decimal,
     maximumFractionDigits: decimal,
+    trailingZeroDisplay: 'stripIfInteger',
   });
 }
 

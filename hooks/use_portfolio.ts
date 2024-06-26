@@ -26,6 +26,7 @@ const tabs = [
   { tab: 'Liquidity', permalink: '/portfolio/liquidity/' },
   { tab: 'Swaps', permalink: '/portfolio/swaps/' },
   { tab: 'Transfers', permalink: '/portfolio/transfers/' },
+  { tab: 'Apollo', permalink: '/portfolio/apollo/' },
 ];
 
 const WALLET_EXIST_ERROR = 'Wallet with entered address already exist.';
@@ -121,6 +122,12 @@ const usePortfolio = () => {
         if (
           [...polkadotWallets.current, ...storageWallets.current].length > 0
         ) {
+          if (query.slug && query.slug[0] === 'apollo') {
+            portfolioItems.current = [];
+            setLoading(false);
+            return;
+          }
+
           try {
             const permalink = query.slug
               ? `/portfolio/${query.slug[0]}/`

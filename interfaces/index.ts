@@ -511,3 +511,51 @@ export interface PairLiquidityProvider {
   liquidity: number;
   accountIdFormatted?: string;
 }
+
+export interface LendingInfo {
+  poolAssetId: string;
+  poolAssetSymbol: string;
+  apr: number;
+  amount: string;
+  amountPrice: number;
+  rewards: string;
+  rewardPrice: number;
+}
+
+export interface Collateral {
+  collateralAssetId: string;
+  collateralAssetSymbol: string;
+  collateralAmount: string;
+  collateralAmountPrice: number;
+  borrowedAmount: string;
+  borrowedAmountPrice: number;
+  interest: string;
+  interestPrice: number;
+  rewards: string;
+  rewardPrice: number;
+}
+
+export interface BorrowingInfo {
+  poolAssetId: string;
+  poolAssetSymbol: string;
+  amount: string;
+  amountPrice: number;
+  interest: string;
+  interestPrice: number;
+  rewards: string;
+  rewardPrice: number;
+  collaterals: Collateral[];
+}
+
+export interface StatsData {
+  tvl: number;
+  totalLent: number;
+  totalBorrowed: number;
+  totalRewards: number;
+}
+
+export interface ApolloDashboardData {
+  lendingInfo: LendingInfo[];
+  borrowingInfo: BorrowingInfo[];
+  userData: StatsData;
+}

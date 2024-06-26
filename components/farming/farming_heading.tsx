@@ -22,13 +22,13 @@ export default function FarmingHeading({
     >
       <h1 className="text-3xl text-white font-bold">{title}</h1>
       <Link href={link} target="_blank" className="group">
-        <ArrowTopRightOnSquareIcon
-          aria-hidden="true"
-          className="h-6 w-6 sm:hidden text-white"
-        />
-        <span className="hidden text-white text-opacity-50 text-base sm:block group-hover:text-opacity-100">
+        <span className="hidden text-white mr-1 text-opacity-50 text-sm sm:inline-block group-hover:text-opacity-100">
           {linkText}
         </span>
+        <ArrowTopRightOnSquareIcon
+          aria-hidden="true"
+          className="h-4 w-4 inline-block text-white"
+        />
       </Link>
     </div>
   );
