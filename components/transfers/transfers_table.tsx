@@ -5,6 +5,7 @@ import { ClipboardIcon } from '@heroicons/react/24/outline';
 import {
   PageMeta,
   PortfolioTransferItem,
+  TransferType,
   WalletAddress,
 } from '@interfaces/index';
 import {
@@ -39,8 +40,15 @@ export default function TransfersTable({
 }) {
   const format = useFormatter();
 
-  const walletAddress = (address: string, addressFormatted?: string) => {
-    if (address !== selectedWallet.address) {
+  const walletAddress = (
+    type: string,
+    address: string,
+    addressFormatted?: string
+  ) => {
+    if (
+      address !== selectedWallet.address &&
+      (type === TransferType.SORA || type === TransferType.ETH)
+    ) {
       const href = address.startsWith('0x')
         ? `${ETHSCAN_URL}${address}`
         : `/portfolio?address=${address}`;
@@ -99,14 +107,22 @@ export default function TransfersTable({
               </Link>
             </td>
             <td className={cellStyle}>
-              {walletAddress(transfer.sender, transfer.senderFormatted)}
+              {walletAddress(
+                transfer.type,
+                transfer.sender,
+                transfer.senderFormatted
+              )}
               <Clipboard id="sender" text={transfer.sender}>
                 <ClipboardIcon className="h-4 w-4 inline-block ml-1 cursor-pointer" />
               </Clipboard>
             </td>
             <td className={cellStyle}>
               <span>
-                {walletAddress(transfer.receiver, transfer.receiverFormatted)}
+                {walletAddress(
+                  transfer.type,
+                  transfer.receiver,
+                  transfer.receiverFormatted
+                )}
               </span>
               <Clipboard id="receiver" text={transfer.receiver}>
                 <ClipboardIcon className="h-4 w-4 inline-block ml-1 cursor-pointer" />
