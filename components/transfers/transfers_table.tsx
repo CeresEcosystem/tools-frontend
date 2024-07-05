@@ -59,24 +59,11 @@ export default function TransfersTable({
     return addressFormatted;
   };
 
-  const bridgeTransfer = (sender: string, receiver: string) => {
-    if (sender.startsWith('0x') || receiver.startsWith('0x')) {
-      return (
-        <div className="w-3 bg-pink rounded-sm absolute top-1 bottom-1 left-1 flex justify-center items-center">
-          <span className="transform -rotate-90 inline-block text-[10px]">
-            BRIDGE
-          </span>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <table className="min-w-[768px] bg-backgroundItem border-collapse border-hidden rounded-xl md:min-w-full">
       <thead className="bg-white bg-opacity-10">
         <tr className="border-collapse border-4 border-backgroundHeader">
+          <th className={tableHeadStyle}>Direction</th>
           <th className={tableHeadStyle}>Date</th>
           <th className={tableHeadStyle}>Asset</th>
           <th className={tableHeadStyle}>Sender</th>
@@ -90,8 +77,8 @@ export default function TransfersTable({
             key={`${transfer.sender}${transfer.receiver}${index}`}
             className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10 hover:bg-backgroundHeader"
           >
+            <td className={cellStyle}>{transfer.directionFormatted}</td>
             <td className={classNames(cellStyle, 'min-w-[150px]')}>
-              {bridgeTransfer(transfer.sender, transfer.receiver)}
               {formatDateAndTime(transfer.transferredAt)}
             </td>
             <td className={classNames(cellStyle, 'min-w-[150px]')}>

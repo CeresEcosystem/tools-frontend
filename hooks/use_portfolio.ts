@@ -11,9 +11,19 @@ import {
   SwapsData,
   Token,
   TransferData,
+  TransferDirection,
+  TransferType,
   WalletAddress,
 } from '@interfaces/index';
-import { NEW_API_URL, WALLET_ADDRESSES } from '@constants/index';
+import {
+  ACALA_ADDRESS,
+  ASTAR_ADDRESS,
+  DOT_ADDRESS,
+  KSM_ADDRESS,
+  NEW_API_URL,
+  WALLET_ADDRESSES,
+  XOR_ADDRESS,
+} from '@constants/index';
 import { formatWalletAddress, getEncodedAddress } from '@utils/helpers';
 import usePersistState from './use_persist_state';
 import { useRouter } from 'next/router';
@@ -112,6 +122,54 @@ const usePortfolio = () => {
     return (await tokensResponse.json()) as Token[];
   }, []);
 
+  const getTransferDirection = useCallback(
+    (transfer: PortfolioTransferItem) => {
+      switch (transfer.type) {
+        case TransferType.SORA:
+          return 'SORA -> SORA';
+        case TransferType.ETH:
+          return transfer.direction === TransferDirection.BURNED
+            ? 'SORA -> ETH'
+            : 'ETH -> SORA';
+        case TransferType.POLKADOT:
+          if (transfer.asset === XOR_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> SORA Polkadot'
+              : 'SORA Polkadot -> SORA';
+          } else if (transfer.asset === DOT_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> Polkadot'
+              : 'Polkadot -> SORA';
+          } else if (transfer.asset === ASTAR_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> Astar Polkadot'
+              : 'Astar Polkadot -> SORA';
+          } else if (transfer.asset === ACALA_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> Acala Polkadot'
+              : 'Acala Polkadot -> SORA';
+          }
+          return '';
+        case TransferType.KUSAMA:
+          if (transfer.asset === XOR_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> SORA Kusama'
+              : 'SORA Kusama -> SORA';
+          } else if (transfer.asset === KSM_ADDRESS) {
+            return transfer.direction === TransferDirection.BURNED
+              ? 'SORA -> Kusama'
+              : 'Kusama -> SORA';
+          }
+          return '';
+        case TransferType.LIBERLAND:
+          return transfer.direction === TransferDirection.BURNED
+            ? 'SORA -> Liberland'
+            : 'Liberland -> SORA';
+      }
+    },
+    []
+  );
+
   const fetchPortfolioItems = useCallback(
     async (page = 1, sw = selectedWallet) => {
       if (!loading) {
@@ -206,6 +264,7 @@ const usePortfolio = () => {
                         walletReceiver && walletReceiver.name !== ''
                           ? walletReceiver.name
                           : formatWalletAddress(transfer.receiver),
+                      directionFormatted: getTransferDirection(transfer),
                     });
                   });
 
@@ -233,7 +292,7 @@ const usePortfolio = () => {
         setLoading(false);
       }
     },
-    [loading, selectedWallet, query.slug, getTokens]
+    [selectedWallet, loading, query.slug, getTokens, getTransferDirection]
   );
 
   const goToFirstPage = useCallback(() => {

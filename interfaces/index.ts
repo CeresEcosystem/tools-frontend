@@ -337,12 +337,28 @@ export interface PortfolioLiquidityItem {
   tokenLiqHolding: number;
 }
 
+export enum TransferDirection {
+  BURNED = 'burned',
+  MINTED = 'minted',
+}
+
+export enum TransferType {
+  SORA = 'Sora',
+  POLKADOT = 'Polkadot',
+  KUSAMA = 'Kusama',
+  ETH = 'ETH',
+  LIBERLAND = 'Liberland',
+}
+
 export interface PortfolioTransferItem {
   sender: string;
   amount: number;
   asset: string;
   receiver: string;
   transferredAt: string;
+  type: string;
+  direction: TransferDirection | null;
+  directionFormatted?: string;
   senderFormatted?: string;
   receiverFormatted?: string;
   tokenFormatted?: string;
