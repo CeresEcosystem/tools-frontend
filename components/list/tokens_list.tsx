@@ -14,6 +14,7 @@ import {
 import { StarIcon as StarFavorite } from '@heroicons/react/24/solid';
 import { formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
+import FallbackImage from '@components/image/fallback_image';
 
 export default function TokensList({
   tokens,
@@ -60,10 +61,11 @@ export default function TokensList({
                         query: { token: token.token },
                       }}
                     >
-                      <img
-                        className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
+                      <FallbackImage
                         src={`${ASSET_URL}/${token.token}.svg`}
+                        fallback={`${ASSET_URL}/${token.token}.png`}
                         alt={token.fullName}
+                        className="rounded-full w-12 h-12 sm:w-14 sm:h-14"
                       />
                     </Link>
                   </div>

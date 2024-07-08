@@ -9,6 +9,7 @@ import { formatNumber } from '@utils/helpers';
 import Link from 'next/link';
 import Clipboard from '@components/clipboard';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
+import FallbackImage from '@components/image/fallback_image';
 
 const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
 const cellStyle =
@@ -124,10 +125,11 @@ export default function TokenHoldersModal({
       <div className="flex-grow">
         <div className="flex items-center">
           <div className="mr-4 flex flex-shrink-0">
-            <img
-              className="rounded-full w-12 h-12 -mr-4 z-10"
+            <FallbackImage
+              className="rounded-full w-12 h-12"
               src={`${ASSET_URL}/${token?.token}.svg`}
-              alt={token?.token}
+              fallback={`${ASSET_URL}/${token?.token}.png`}
+              alt={token?.token ?? ''}
             />
           </div>
           <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">

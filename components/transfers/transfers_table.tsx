@@ -1,4 +1,5 @@
 import Clipboard from '@components/clipboard';
+import FallbackImage from '@components/image/fallback_image';
 import ListPagination from '@components/pagination/list_pagination';
 import { ASSET_URL, ETHSCAN_URL } from '@constants/index';
 import { ClipboardIcon } from '@heroicons/react/24/outline';
@@ -96,9 +97,10 @@ export default function TransfersTable({
                   query: { token: transfer.tokenFormatted },
                 }}
               >
-                <img
+                <FallbackImage
                   src={`${ASSET_URL}/${transfer.tokenFormatted}.svg`}
-                  alt=""
+                  fallback={`${ASSET_URL}/${transfer.tokenFormatted}.png`}
+                  alt={transfer.tokenFormatted ?? ''}
                   className="w-8 h-8 mr-3 inline-block"
                 />
                 <span className="text-left min-w-[50px] inline-block">

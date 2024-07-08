@@ -1,4 +1,5 @@
 import Clipboard from '@components/clipboard';
+import FallbackImage from '@components/image/fallback_image';
 import Modal from '@components/modal';
 import { ASSET_URL } from '@constants/index';
 import { Lock, Token } from '@interfaces/index';
@@ -19,10 +20,11 @@ export default function TokensModal({
   return (
     <Modal showModal={showModal} closeModal={closeModal}>
       <div className="flex items-center">
-        <img
+        <FallbackImage
           className="rounded-full w-12 h-12"
           src={`${ASSET_URL}/${token?.token}.svg`}
-          alt=""
+          fallback={`${ASSET_URL}/${token?.token}.png`}
+          alt={token?.token ?? ''}
         />
         <h4 className="pl-4 text-base font-bold text-white line-clamp-1 sm:text-lg">
           {token?.token}

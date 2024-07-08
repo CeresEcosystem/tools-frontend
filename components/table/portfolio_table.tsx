@@ -35,6 +35,7 @@ import TransfersTable from '@components/transfers/transfers_table';
 import ApolloDashboard from '@components/apollo';
 import Table from './table';
 import PriceCell from './price_sell';
+import FallbackImage from '@components/image/fallback_image';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -177,9 +178,10 @@ function PortfolioTabTable({
                     query: { token: item.token },
                   }}
                 >
-                  <img
+                  <FallbackImage
                     src={`${ASSET_URL}/${item.token}.svg`}
-                    alt=""
+                    fallback={`${ASSET_URL}/${item.token}.png`}
+                    alt={item.token}
                     className="w-8 h-8 mr-4 inline-block"
                   />
                   <span>{item.fullName}</span>
@@ -261,9 +263,10 @@ function PortfolioStakingAndRewardTab({
                     query: { token: item.token },
                   }}
                 >
-                  <img
+                  <FallbackImage
                     src={`${ASSET_URL}/${item.token}.svg`}
-                    alt=""
+                    fallback={`${ASSET_URL}/${item.token}.png`}
+                    alt={item.token}
                     className="w-8 h-8 mr-4 inline-block"
                   />
                   <span>{item.fullName}</span>
@@ -319,15 +322,17 @@ function PortfolioLiquidityTab({
               <td className={classNames(cellStyle, 'text-start')}>
                 <div className="flex items-center">
                   <div className="mr-2 inline-flex sm:mr-4">
-                    <img
-                      className="rounded-full w-8 h-8 -mr-4 z-10"
+                    <FallbackImage
                       src={`${ASSET_URL}/${item.baseAsset}.svg`}
+                      fallback={`${ASSET_URL}/${item.baseAsset}.png`}
                       alt={item.baseAsset}
+                      className="rounded-full w-8 h-8 -mr-4 z-10"
                     />
-                    <img
+                    <FallbackImage
                       className="rounded-full left-8 w-8 h-8"
                       src={`${ASSET_URL}/${item.token}.svg`}
-                      alt={item.baseAsset}
+                      fallback={`${ASSET_URL}/${item.token}.png`}
+                      alt={item.token}
                     />
                   </div>
                   <span>{`${item.baseAsset} / ${item.token}`}</span>

@@ -7,6 +7,7 @@ import VerticalSeparator from '@components/separator/vertical_separator';
 import { CircleStackIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { formatToCurrency } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
+import FallbackImage from '@components/image/fallback_image';
 
 const labelStyle =
   'text-xs text-white text-opacity-50 text-right block sm:text-sm';
@@ -38,15 +39,17 @@ export default function PairsList({
             <div className="flex flex-col space-y-6">
               <div className="flex items-center">
                 <div className="mr-2 flex flex-shrink-0 sm:mr-4">
-                  <img
-                    className="rounded-full w-12 h-12 -mr-4 z-10"
+                  <FallbackImage
                     src={`${ASSET_URL}/${pair.baseAsset}.svg`}
+                    fallback={`${ASSET_URL}/${pair.baseAsset}.png`}
                     alt={pair.baseAsset}
+                    className="rounded-full w-12 h-12 -mr-4 z-10"
                   />
-                  <img
-                    className="rounded-full left-8 w-12 h-12"
+                  <FallbackImage
                     src={`${ASSET_URL}/${pair.token}.svg`}
+                    fallback={`${ASSET_URL}/${pair.token}.png`}
                     alt={pair.baseAsset}
+                    className="rounded-full left-8 w-12 h-12"
                   />
                 </div>
                 <h4 className="text-sm font-bold text-white line-clamp-1 sm:text-lg">

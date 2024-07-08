@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { BsArrowsFullscreen, BsArrowLeftRight } from 'react-icons/bs';
 import { HeartIcon } from '@heroicons/react/24/solid';
+import FallbackImage from '@components/image/fallback_image';
 
 export default function Price({
   token,
@@ -44,9 +45,10 @@ export default function Price({
             {typeof token === 'string' ? (
               favoriteOrAllTokens()
             ) : (
-              <img
+              <FallbackImage
                 className="rounded-full w-12 h-12 mr-4"
                 src={`${ASSET_URL}/${token.token}.svg`}
+                fallback={`${ASSET_URL}/${token.token}.png`}
                 alt={token.fullName}
               />
             )}

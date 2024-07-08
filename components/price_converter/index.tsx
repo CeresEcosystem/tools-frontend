@@ -9,6 +9,7 @@ import { useFormatter } from 'next-intl';
 import { NumericFormat, OnValueChange } from 'react-number-format';
 import classNames from 'classnames';
 import Spinner from '@components/spinner';
+import FallbackImage from '@components/image/fallback_image';
 
 function TokenSelect({
   id,
@@ -41,9 +42,10 @@ function TokenSelect({
           >
             {token ? (
               <>
-                <img
+                <FallbackImage
                   className="rounded-full w-6 h-6 sm:w-8 sm:h-8"
                   src={`${ASSET_URL}/${token.token}.svg`}
+                  fallback={`${ASSET_URL}/${token.token}.png`}
                   alt={token.token}
                 />
                 <span className="flex gap-x-1 items-center text-white text-sm font-semibold">

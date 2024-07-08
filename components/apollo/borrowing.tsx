@@ -1,4 +1,5 @@
 import FarmingHeading from '@components/farming/farming_heading';
+import FallbackImage from '@components/image/fallback_image';
 import Table from '@components/table/table';
 import { APOLLO_URL, ASSET_URL } from '@constants/index';
 import { ChevronRightIcon } from '@heroicons/react/24/outline';
@@ -58,8 +59,9 @@ function Collaterals({
                   )}
                 >
                   <div className="flex-shrink-0 h-8 w-8 rounded-full">
-                    <img
+                    <FallbackImage
                       src={`${ASSET_URL}/${collateral.collateralAssetSymbol}.svg`}
+                      fallback={`${ASSET_URL}/${collateral.collateralAssetSymbol}.png`}
                       alt={collateral.collateralAssetSymbol}
                     />
                   </div>
@@ -192,11 +194,13 @@ export default function ApolloBorrowing({
                             query: { token: item.poolAssetSymbol },
                           }}
                         >
-                          <img
+                          <FallbackImage
                             src={`${ASSET_URL}/${item.poolAssetSymbol}.svg`}
-                            alt=""
+                            fallback={`${ASSET_URL}/${item.poolAssetSymbol}.png`}
+                            alt={item.poolAssetSymbol}
                             className="w-8 h-8 mr-4 inline-block"
                           />
+
                           <span>{item.poolAssetSymbol}</span>
                         </Link>
                       </td>

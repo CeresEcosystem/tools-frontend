@@ -8,6 +8,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { HeartIcon, StarIcon as StarFavorite } from '@heroicons/react/24/solid';
 import { useSelector } from 'react-redux';
 import { RootState } from '@store/index';
+import FallbackImage from '@components/image/fallback_image';
 
 export default function PricesModal({
   showModal,
@@ -128,9 +129,10 @@ export default function PricesModal({
               className="bg-backgroundItem cursor-pointer p-3 rounded-xl overflow-hidden flex items-center justify-between"
             >
               <div className="flex items-center">
-                <img
+                <FallbackImage
                   className="rounded-full w-6 h-6 mr-2"
                   src={`${ASSET_URL}/${token.token}.svg`}
+                  fallback={`${ASSET_URL}/${token.token}.png`}
                   alt={token.fullName}
                 />
                 <span className="text-xs text-white font-bold sm:text-sm">

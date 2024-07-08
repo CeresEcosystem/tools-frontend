@@ -9,6 +9,7 @@ import { ClipboardIcon } from '@heroicons/react/24/outline';
 import { formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import ListPagination from '@components/pagination/list_pagination';
+import FallbackImage from '@components/image/fallback_image';
 
 const tableHeadStyle = 'text-white p-4 text-center text-xs font-bold';
 const cellStyle =
@@ -125,15 +126,17 @@ export default function PairsLiquidityProvidersModal({
       <div>
         <div className="flex items-center">
           <div className="mr-4 flex flex-shrink-0">
-            <img
+            <FallbackImage
               className="rounded-full w-12 h-12 -mr-4 z-10"
               src={`${ASSET_URL}/${pair?.baseAsset}.svg`}
-              alt={pair?.baseAsset}
+              alt={pair?.baseAsset ?? ''}
+              fallback={`${ASSET_URL}/${pair?.baseAsset}.png`}
             />
-            <img
+            <FallbackImage
               className="rounded-full left-8 w-12 h-12"
               src={`${ASSET_URL}/${pair?.token}.svg`}
-              alt={pair?.baseAsset}
+              alt={pair?.token ?? ''}
+              fallback={`${ASSET_URL}/${pair?.token}.png`}
             />
           </div>
           <h4 className="text-base font-bold text-white line-clamp-1 sm:text-lg">

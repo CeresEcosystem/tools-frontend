@@ -1,4 +1,5 @@
 import FarmingHeading from '@components/farming/farming_heading';
+import FallbackImage from '@components/image/fallback_image';
 import Table from '@components/table/table';
 import { APOLLO_URL, ASSET_URL } from '@constants/index';
 import { LendingInfo } from '@interfaces/index';
@@ -72,9 +73,10 @@ export default function ApolloLending({
                         query: { token: item.poolAssetSymbol },
                       }}
                     >
-                      <img
+                      <FallbackImage
                         src={`${ASSET_URL}/${item.poolAssetSymbol}.svg`}
-                        alt=""
+                        fallback={`${ASSET_URL}/${item.poolAssetSymbol}.png`}
+                        alt={item.poolAssetSymbol}
                         className="w-8 h-8 mr-4 inline-block"
                       />
                       <span>{item.poolAssetSymbol}</span>
