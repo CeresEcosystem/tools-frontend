@@ -575,3 +575,13 @@ export interface ApolloDashboardData {
   borrowingInfo: BorrowingInfo[];
   userData: StatsData;
 }
+
+export interface KensetsuPortfolioData {
+  collateralAssetId: string;
+  collateralToken: Token | undefined;
+  stablecoinAssetId: string;
+  stablecoinToken: Token | undefined;
+  interest: number;
+  collateralAmount: number;
+  debt: number;
+}

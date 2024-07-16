@@ -36,6 +36,7 @@ import ApolloDashboard from '@components/apollo';
 import Table from './table';
 import PriceCell from './price_sell';
 import FallbackImage from '@components/image/fallback_image';
+import KensetsuPortfolio from '@components/kensetsu/kensetsu_portfolio';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -451,6 +452,10 @@ function TabRenderer({
     return <ApolloDashboard selectedWallet={selectedWallet} />;
   }
 
+  if (selectedTab === 'kensetsu') {
+    return <KensetsuPortfolio selectedWallet={selectedWallet} />;
+  }
+
   return (
     <PortfolioLiquidityTab
       portfolioItems={portfolioItems as PortfolioLiquidityItem[]}
@@ -518,7 +523,9 @@ export default function PortfolioTable() {
         <span className="font-medium text-center block text-opacity-50 mx-auto w-fit text-lg text-white">
           To many requests. Please, try again in one minute.
         </span>
-      ) : portfolioItems.length === 0 && selectedTab !== 'apollo' ? (
+      ) : portfolioItems.length === 0 &&
+        selectedTab !== 'apollo' &&
+        selectedTab !== 'kensetsu' ? (
         <span className="font-medium block text-opacity-50 mx-auto w-fit text-lg text-white">
           {`No items in ${selectedTab}.`}
         </span>

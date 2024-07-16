@@ -16,7 +16,7 @@ export default function PortfolioTabs({
 }) {
   return (
     <>
-      <div className="hidden max-w-2xl mb-10 px-2 py-2 mx-auto w-full bg-backgroundItem rounded-xl xs:flex sm:px-5">
+      <div className="hidden max-w-3xl mb-10 px-2 py-2 mx-auto w-full bg-backgroundItem rounded-xl sm:flex sm:px-5">
         {tabs.map((tab) => {
           const selected = tab.tab.toLowerCase() === selectedTab;
 
@@ -46,7 +46,7 @@ export default function PortfolioTabs({
           );
         })}
       </div>
-      <div className="block mb-10 relative after:content-['▼'] after:top-2.5 after:text-white after:text-opacity-50 after:text-xs after:right-4 after:absolute xs:hidden">
+      <div className="block mb-10 relative after:content-['▼'] after:top-2.5 after:text-white after:text-opacity-50 after:text-xs after:right-4 after:absolute sm:hidden">
         <label htmlFor="portfolio-tab" className="sr-only">
           Select a tab
         </label>
