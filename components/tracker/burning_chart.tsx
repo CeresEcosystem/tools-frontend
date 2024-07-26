@@ -4,6 +4,7 @@ import { Burning } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
 
 import { useFormatter } from 'next-intl';
+import { useCallback } from 'react';
 
 export default function BurningChart({
   burning,
@@ -13,6 +14,41 @@ export default function BurningChart({
   selectedToken: string;
 }) {
   const format = useFormatter();
+
+  const getCallbackLabels = useCallback(
+    (
+      y: number,
+      spent: number,
+      lp: number,
+      parl: number,
+      net: number,
+      back: number
+    ) => {
+      switch (selectedToken) {
+        case 'PSWAP':
+          return [
+            `Gross Burn: ${formatNumber(format, y)}`,
+            `XOR spent: ${formatNumber(format, spent)}`,
+            `Reminted LP: ${formatNumber(format, lp)}`,
+            `Reminted Parliament: ${formatNumber(format, parl)}`,
+            `Total Reminted: ${formatNumber(format, lp + parl)}`,
+            `Net Burn: ${formatNumber(format, net)}`,
+          ];
+        case 'VAL':
+          return [
+            `Gross Burn: ${formatNumber(format, y)}`,
+            `XOR fees: ${formatNumber(format, spent)}`,
+            `XOR for buyback: ${formatNumber(format, back)}`,
+            `Reminted Parliament: ${formatNumber(format, parl)}`,
+            `Total Reminted: ${formatNumber(format, lp + parl)}`,
+            `Net Burn: ${formatNumber(format, net)}`,
+          ];
+        case 'XOR':
+          return [`Gross Burn: ${formatNumber(format, y)}`];
+      }
+    },
+    [format, selectedToken]
+  );
 
   return (
     <>
@@ -39,18 +75,7 @@ export default function BurningChart({
               const { dataIndex }: { dataIndex: number } = context;
               const { y, spent, lp, parl, net, back }: Burning =
                 burning![dataIndex];
-              return [
-                `Gross Burn: ${formatNumber(format, y)}`,
-                `XOR ${
-                  selectedToken === 'PSWAP' ? 'spent' : 'fees'
-                }: ${formatNumber(format, spent)}`,
-                selectedToken === 'PSWAP'
-                  ? `Reminted LP: ${formatNumber(format, lp)}`
-                  : `XOR for buyback: ${formatNumber(format, back)}`,
-                `Reminted Parliament: ${formatNumber(format, parl)}`,
-                `Total Reminted: ${formatNumber(format, lp + parl)}`,
-                `Net Burn: ${formatNumber(format, net)}`,
-              ];
+              return getCallbackLabels(y, spent, lp, parl, net, back);
             }}
           />
         ) : (

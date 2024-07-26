@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-const tokens = ['PSWAP', 'VAL'];
+const tokens = ['PSWAP', 'VAL', 'XOR'];
 
 export default function TokenTab({
   selectedToken,

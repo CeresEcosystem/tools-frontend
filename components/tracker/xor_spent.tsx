@@ -1,9 +1,10 @@
-import { BlockData } from '@interfaces/index';
+import { Block, BlockData } from '@interfaces/index';
 import { formatNumber } from '@utils/helpers';
 import { useFormatter } from 'next-intl';
 import useXORSpent from '@hooks/use_xor_spent';
 import ListPagination from '@components/pagination/list_pagination';
 import Spinner from '@components/spinner';
+import { useCallback } from 'react';
 
 export default function XorSpent({
   blocksFees,
@@ -26,11 +27,36 @@ export default function XorSpent({
 
   const format = useFormatter();
 
+  const getTokenTitle = useCallback(() => {
+    switch (selectedToken) {
+      case 'PSWAP':
+        return 'XOR spent';
+      case 'VAL':
+        return 'TBC burns';
+      case 'XOR':
+        return 'XOR burnt';
+    }
+  }, [selectedToken]);
+
+  const getTokenBurn = useCallback(
+    (block: Block) => {
+      switch (selectedToken) {
+        case 'PSWAP':
+          return `${formatNumber(format, block.xorSpent, 4)} XOR`;
+        case 'VAL':
+          return `${formatNumber(format, block.grossBurn, 4)} VAL`;
+        case 'XOR':
+          return `${formatNumber(format, block.grossBurn, 4)} XOR`;
+      }
+    },
+    [selectedToken, format]
+  );
+
   return (
     <div className="px-4 py-8 rounded-xl w-full bg-backgroundItem relative">
       <div className="flex flex-col space-y-4">
         <span className="text-white px-2 text-opacity-50 text-base">
-          {selectedToken === 'PSWAP' ? 'XOR spent' : 'TBC burns'}
+          {getTokenTitle()}
         </span>
         <table>
           <tbody>
@@ -42,9 +68,7 @@ export default function XorSpent({
                   0
                 )}`}</td>
                 <td className="text-right text-white text-sm p-2">
-                  {selectedToken === 'VAL'
-                    ? `${formatNumber(format, block.grossBurn, 4)} VAL`
-                    : `${formatNumber(format, block.xorSpent, 4)} XOR`}
+                  {getTokenBurn(block)}
                 </td>
               </tr>
             ))}
