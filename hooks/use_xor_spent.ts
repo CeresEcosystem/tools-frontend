@@ -10,15 +10,15 @@ const useXORSpent = (
   const [loading, setLoading] = useState(false);
 
   const blocks = useRef<Block[]>(
-    selectedToken === 'PSWAP' ? blocksFees?.data ?? [] : blocksTbc?.data ?? []
+    selectedToken === 'VAL' ? blocksTbc?.data ?? [] : blocksFees?.data ?? []
   );
   const pageMeta = useRef<PageMeta | undefined>(
-    selectedToken === 'PSWAP' ? blocksFees?.meta : blocksTbc?.meta
+    selectedToken === 'VAL' ? blocksTbc?.meta : blocksFees?.meta
   );
 
   const fetchBlocks = useCallback(
     async (page: number) => {
-      const type = selectedToken === 'PSWAP' ? 'FEES' : 'TBC';
+      const type = selectedToken === 'VAL' ? 'TBC' : 'FEES';
 
       await fetch(
         `${NEW_API_URL}/tracker/${selectedToken}/blocks/${type}?page=${page}&size=5`

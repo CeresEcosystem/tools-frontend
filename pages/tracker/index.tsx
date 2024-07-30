@@ -36,10 +36,12 @@ export default function Tracker() {
                 selectedToken={selectedToken}
               />
             </div>
-            <GrossTable
-              blocksFees={trackerData?.blocksFees}
-              selectedToken={selectedToken}
-            />
+            {selectedToken !== 'XOR' && (
+              <GrossTable
+                blocksFees={trackerData?.blocksFees}
+                selectedToken={selectedToken}
+              />
+            )}
           </TableGrid>
           <BurningChart
             burning={trackerData?.graphBurning}
