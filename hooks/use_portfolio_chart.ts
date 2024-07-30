@@ -1,5 +1,4 @@
 import { NEW_API_URL } from '@constants/index';
-import { WalletAddress } from '@interfaces/index';
 import { UTCTimestamp } from 'lightweight-charts';
 import { useEffect, useRef, useState } from 'react';
 
@@ -34,7 +33,7 @@ function getFromResolution(now: number, timeInterval: string) {
   }
 }
 
-const usePortfolioChart = (selectedWallet: WalletAddress) => {
+const usePortfolioChart = (walletAddress: string) => {
   const [timeInterval, setTimeInterval] = useState(timeIntervals[0]);
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState<ChartData[]>([]);
@@ -50,7 +49,7 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
     async function fetchChartData() {
       const now = Math.floor(Date.now() / 1000);
       const timeData = getFromResolution(now, timeInterval);
-      const cacheKey = `${selectedWallet.address}-${timeInterval}`;
+      const cacheKey = `${walletAddress}-${timeInterval}`;
       const cached = cacheRef.current[cacheKey];
 
       if (cached && now - cached.timestamp < CACHE_DURATION) {
@@ -60,7 +59,7 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
       }
 
       const response = await fetch(
-        `${NEW_API_URL}/portfolio/${selectedWallet.address}/history?resolution=${timeData.resolution}&from=${timeData.from}&to=${now}`
+        `${NEW_API_URL}/portfolio/${walletAddress}/history?resolution=${timeData.resolution}&from=${timeData.from}&to=${now}`
       );
 
       if (response.ok) {
@@ -90,7 +89,7 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [timeInterval, selectedWallet]);
+  }, [timeInterval, walletAddress]);
 
   return { timeInterval, timeIntervals, setTimeInterval, loading, chartData };
 };

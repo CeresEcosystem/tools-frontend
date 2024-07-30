@@ -154,7 +154,7 @@ function PortfolioTabTable({
 
   return (
     <div>
-      <PortfolioChart selectedWallet={selectedWallet} />
+      <PortfolioChart walletAddress={selectedWallet.address} />
       <Table
         totalValue={totalValue}
         footerColSpan={7}

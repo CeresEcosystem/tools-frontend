@@ -10,7 +10,7 @@ function SideBarLayout({ children }: { children: React.ReactNode }) {
 
   const { pathname } = useRouter();
 
-  if (pathname.includes('trading')) {
+  if (pathname.includes('trading') || pathname.includes('portfolio-chart')) {
     return <div className="backgroundContent">{children}</div>;
   }
 

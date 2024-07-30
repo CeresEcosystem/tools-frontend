@@ -1,6 +1,5 @@
 import Spinner from '@components/spinner';
 import usePortfolioChart from '@hooks/use_portfolio_chart';
-import { WalletAddress } from '@interfaces/index';
 import { convertToLocalDate } from '@utils/helpers';
 import { createChart, ColorType, ISeriesApi, Time } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
@@ -14,12 +13,12 @@ const colors = {
 };
 
 export default function PortfolioChart({
-  selectedWallet,
+  walletAddress,
 }: {
-  selectedWallet: WalletAddress;
+  walletAddress: string;
 }) {
   const { loading, timeIntervals, timeInterval, setTimeInterval, chartData } =
-    usePortfolioChart(selectedWallet);
+    usePortfolioChart(walletAddress);
 
   const chartContainerRef =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
