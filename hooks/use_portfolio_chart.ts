@@ -42,6 +42,7 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
   const cacheRef = useRef<{
     [key: string]: { data: ChartData[]; timestamp: number };
   }>({});
+  const intervalRef = useRef<ReturnType<typeof setInterval> | undefined>();
 
   useEffect(() => {
     setLoading(true);
@@ -59,7 +60,7 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
       }
 
       const response = await fetch(
-        `${NEW_API_URL}/portfolio/${selectedWallet.address}/history?resolution=5&from=${timeData.from}&to=${now}`
+        `${NEW_API_URL}/portfolio/${selectedWallet.address}/history?resolution=${timeData.resolution}&from=${timeData.from}&to=${now}`
       );
 
       if (response.ok) {
@@ -74,6 +75,21 @@ const usePortfolioChart = (selectedWallet: WalletAddress) => {
     }
 
     fetchChartData();
+
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(() => {
+      fetchChartData();
+      cacheRef.current = {};
+    }, CACHE_DURATION * 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [timeInterval, selectedWallet]);
 
   return { timeInterval, timeIntervals, setTimeInterval, loading, chartData };

@@ -1,6 +1,7 @@
 import Spinner from '@components/spinner';
 import usePortfolioChart from '@hooks/use_portfolio_chart';
 import { WalletAddress } from '@interfaces/index';
+import { convertToLocalDate } from '@utils/helpers';
 import { createChart, ColorType, ISeriesApi, Time } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 
@@ -49,7 +50,14 @@ export default function PortfolioChart({
       },
       rightPriceScale: { visible: false },
       leftPriceScale: { visible: true },
-      timeScale: { timeVisible: true },
+      timeScale: {
+        timeVisible: true,
+        tickMarkFormatter: (time: number) => convertToLocalDate(time),
+        tickMarkMaxCharacterLength: 20,
+      },
+      localization: {
+        timeFormatter: (time: number) => convertToLocalDate(time),
+      },
       width: chartContainerRef.current.clientWidth,
       height: 300,
     });

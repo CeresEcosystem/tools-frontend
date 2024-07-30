@@ -227,3 +227,9 @@ export function sortTokens(
     return 0;
   }
 }
+
+export function convertToLocalDate(timestamp: number) {
+  const date = new Date(timestamp * 1000);
+
+  return date.toLocaleString();
+}
