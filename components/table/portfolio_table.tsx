@@ -37,6 +37,7 @@ import Table from './table';
 import PriceCell from './price_sell';
 import FallbackImage from '@components/image/fallback_image';
 import KensetsuPortfolio from '@components/kensetsu/kensetsu_portfolio';
+import PortfolioChart from '@components/charts/portfolio_chart';
 
 const tableHeadStyle = 'text-white p-4 text-center text-sm font-bold';
 const cellStyle = 'text-center text-white px-4 py-6 text-sm font-medium';
@@ -143,89 +144,96 @@ function PortfolioInput({
 function PortfolioTabTable({
   totalValue,
   portfolioItems,
+  selectedWallet,
 }: {
   totalValue: number;
   portfolioItems: PortfolioItem[];
+  selectedWallet: WalletAddress;
 }) {
   const format = useFormatter();
 
   return (
-    <Table
-      totalValue={totalValue}
-      footerColSpan={7}
-      renderHeader={
-        <>
-          <th className={classNames(tableHeadStyle, 'text-start')}>Coin</th>
-          <th className={tableHeadStyle}>Price</th>
-          <th className={tableHeadStyle}>1h</th>
-          <th className={tableHeadStyle}>24h</th>
-          <th className={tableHeadStyle}>7d</th>
-          <th className={tableHeadStyle}>30d</th>
-          <th className={tableHeadStyle}>Balance</th>
-          <th className={tableHeadStyle}>Value</th>
-        </>
-      }
-      renderBody={
-        <>
-          {portfolioItems.map((item) => (
-            <tr
-              key={item.token}
-              className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10"
-            >
-              <td className={classNames(cellStyle, 'text-start min-w-[250px]')}>
-                <Link
-                  href={{
-                    pathname: '/charts',
-                    query: { token: item.token },
-                  }}
+    <div>
+      <PortfolioChart selectedWallet={selectedWallet} />
+      <Table
+        totalValue={totalValue}
+        footerColSpan={7}
+        renderHeader={
+          <>
+            <th className={classNames(tableHeadStyle, 'text-start')}>Coin</th>
+            <th className={tableHeadStyle}>Price</th>
+            <th className={tableHeadStyle}>1h</th>
+            <th className={tableHeadStyle}>24h</th>
+            <th className={tableHeadStyle}>7d</th>
+            <th className={tableHeadStyle}>30d</th>
+            <th className={tableHeadStyle}>Balance</th>
+            <th className={tableHeadStyle}>Value</th>
+          </>
+        }
+        renderBody={
+          <>
+            {portfolioItems.map((item) => (
+              <tr
+                key={item.token}
+                className="[&>td]:border-2 [&>td]:border-collapse [&>td]:border-white [&>td]:border-opacity-10"
+              >
+                <td
+                  className={classNames(cellStyle, 'text-start min-w-[250px]')}
                 >
-                  <FallbackImage
-                    src={`${ASSET_URL}/${item.token}.svg`}
-                    fallback={`${ASSET_URL}/${item.token}.png`}
-                    alt={item.token}
-                    className="w-8 h-8 mr-4 inline-block"
+                  <Link
+                    href={{
+                      pathname: '/charts',
+                      query: { token: item.token },
+                    }}
+                  >
+                    <FallbackImage
+                      src={`${ASSET_URL}/${item.token}.svg`}
+                      fallback={`${ASSET_URL}/${item.token}.png`}
+                      alt={item.token}
+                      className="w-8 h-8 mr-4 inline-block"
+                    />
+                    <span>{item.fullName}</span>
+                  </Link>
+                </td>
+                <td className={cellStyle}>
+                  {formatToCurrency(format, item.price)}
+                </td>
+                <td className={cellStyle}>
+                  <PriceCell
+                    valuePercentage={item.oneHour}
+                    value={item.oneHourValueDifference}
                   />
-                  <span>{item.fullName}</span>
-                </Link>
-              </td>
-              <td className={cellStyle}>
-                {formatToCurrency(format, item.price)}
-              </td>
-              <td className={cellStyle}>
-                <PriceCell
-                  valuePercentage={item.oneHour}
-                  value={item.oneHourValueDifference}
-                />
-              </td>
-              <td className={cellStyle}>
-                <PriceCell
-                  valuePercentage={item.oneDay}
-                  value={item.oneDayValueDifference}
-                />
-              </td>
-              <td className={cellStyle}>
-                <PriceCell
-                  valuePercentage={item.oneWeek}
-                  value={item.oneWeekValueDifference}
-                />
-              </td>
-              <td className={cellStyle}>
-                <PriceCell
-                  valuePercentage={item.oneMonth}
-                  value={item.oneMonthValueDifference}
-                />
-              </td>
-              <td className={cellStyle}>
-                {formatNumber(format, item.balance, 3, true)}
-              </td>
-              <td className={cellStyle}>
-                {formatCurrencyWithDecimals(format, item.value, 3, true)}
-              </td>
-            </tr>
-          ))}
-        </>
-      }
-    />
+                </td>
+                <td className={cellStyle}>
+                  <PriceCell
+                    valuePercentage={item.oneDay}
+                    value={item.oneDayValueDifference}
+                  />
+                </td>
+                <td className={cellStyle}>
+                  <PriceCell
+                    valuePercentage={item.oneWeek}
+                    value={item.oneWeekValueDifference}
+                  />
+                </td>
+                <td className={cellStyle}>
+                  <PriceCell
+                    valuePercentage={item.oneMonth}
+                    value={item.oneMonthValueDifference}
+                  />
+                </td>
+                <td className={cellStyle}>
+                  {formatNumber(format, item.balance, 3, true)}
+                </td>
+                <td className={cellStyle}>
+                  {formatCurrencyWithDecimals(format, item.value, 3, true)}
+                </td>
+              </tr>
+            ))}
+          </>
+        }
+      />
+    </div>
   );
 }
 
@@ -392,6 +400,7 @@ function TabRenderer({
       <PortfolioTabTable
         portfolioItems={portfolioItems as PortfolioItem[]}
         totalValue={totalValue}
+        selectedWallet={selectedWallet}
       />
     );
   }
