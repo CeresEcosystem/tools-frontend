@@ -4,5 +4,9 @@ import { useRouter } from 'next/router';
 export default function PortfolioChartPage() {
   const { query } = useRouter();
 
-  return <PortfolioChart walletAddress={(query?.address as string) ?? ''} />;
+  if (!query?.address) {
+    return null;
+  }
+
+  return <PortfolioChart walletAddress={(query.address as string) ?? ''} />;
 }
