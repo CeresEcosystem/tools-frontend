@@ -17,11 +17,11 @@ const useTracker = () => {
 
   const changeToken = useCallback(
     (token: string) => {
-      if (token !== selectedToken) {
+      if (!loading && token !== selectedToken) {
         setSelectedToken(token);
       }
     },
-    [selectedToken]
+    [loading, selectedToken]
   );
 
   useEffect(() => {
