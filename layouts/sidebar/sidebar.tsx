@@ -146,10 +146,7 @@ export default function SideBar({
         </ul>
         <span className="text-xs mt-4 text-center text-white text-opacity-50 font-medium">
           Crypto charts by{' '}
-          <Link
-            href="https://www.tradingview.com/markets/cryptocurrencies/"
-            target="_blank"
-          >
+          <Link href="https://www.tradingview.com" target="_blank">
             TradingView
           </Link>
         </span>
