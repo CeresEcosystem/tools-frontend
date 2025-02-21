@@ -144,6 +144,15 @@ export default function SideBar({
             </div>
           </li>
         </ul>
+        <span className="text-xs mt-4 text-center text-white text-opacity-50 font-medium">
+          Crypto charts by{' '}
+          <Link
+            href="https://www.tradingview.com/markets/cryptocurrencies/"
+            target="_blank"
+          >
+            TradingView
+          </Link>
+        </span>
         <span className="text-xs mt-4 mb-1 text-center text-white text-opacity-50 font-medium">
           Copyright © 2023{' '}
           <Link href="https://cerestoken.io" target="_blank">
