@@ -70,7 +70,7 @@ export default function PairsList({
                 </div>
                 <div className="flex sm:items-center flex-col sm:flex-row gap-2 text-sm font-medium text-white text-opacity-50 sm:text-base">
                   {`${pair.token}: `}
-                  <div className="max-w-[200px] overflow-hidden break-all">
+                  <div className="max-w-[150px] md:max-w-[300px] overflow-hidden break-all">
                     <span className=" text-white text-opacity-100 ">
                       {pair.tokenLiquidityFormatted}
                     </span>
