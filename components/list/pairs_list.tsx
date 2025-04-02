@@ -60,18 +60,22 @@ export default function PairsList({
                 <span className="text-sm text-white font-bold pb-1 sm:text-base">
                   Pool details
                 </span>
-                <span className="text-sm font-medium text-white text-opacity-50 sm:text-base">
+                <div className="flex sm:items-center flex-col sm:flex-row gap-2 text-sm font-medium text-white text-opacity-50 sm:text-base">
                   {`${pair.baseAsset}: `}
-                  <span className="block text-white text-opacity-100 sm:inline-block">
-                    {pair.baseLiquidityFormatted}
-                  </span>
-                </span>
-                <span className="text-sm font-medium text-white text-opacity-50 sm:text-base">
+                  <div className="max-w-[150px] md:max-w-[300px] overflow-hidden break-all">
+                    <span className="text-white text-opacity-100 ">
+                      {pair.baseLiquidityFormatted}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex sm:items-center flex-col sm:flex-row gap-2 text-sm font-medium text-white text-opacity-50 sm:text-base">
                   {`${pair.token}: `}
-                  <span className="block text-white text-opacity-100 sm:inline-block">
-                    {pair.tokenLiquidityFormatted}
-                  </span>
-                </span>
+                  <div className="max-w-[200px] overflow-hidden break-all">
+                    <span className=" text-white text-opacity-100 ">
+                      {pair.tokenLiquidityFormatted}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex flex-col items-end space-y-1">

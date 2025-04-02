@@ -97,11 +97,13 @@ export default function TokensList({
                         {formatToCurrency(format, token.marketCap)}
                       </span>
                     </span>
-                    <span className="text-lg text-pink font-bold xs:hidden">
-                      {priceFilter === '$'
-                        ? token.priceFormatted
-                        : token.priceInXor}
-                    </span>
+                    <div className="max-w-[200px] mt-2 overflow-hidden break-all">
+                      <span className="text-lg text-pink font-bold xs:hidden">
+                        {priceFilter === '$'
+                          ? token.priceFormatted
+                          : token.priceInXor}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex-shrink-0 justify-end items-center xs:hidden">
@@ -119,11 +121,13 @@ export default function TokensList({
                 </div>
               </div>
               <div className="hidden flex-shrink-0 justify-end items-center xs:flex">
-                <span className="text-lg text-pink font-bold sm:text-xl">
-                  {priceFilter === '$'
-                    ? token.priceFormatted
-                    : token.priceInXor}
-                </span>
+                <div className="max-w-[150px] md:max-w-[200px] overflow-hidden break-all">
+                  <span className="text-base text-pink font-bold sm:text-lg">
+                    {priceFilter === '$'
+                      ? token.priceFormatted
+                      : token.priceInXor}
+                  </span>
+                </div>
                 {isFavorite ? (
                   <StarFavorite
                     className="h-6 w-6 cursor-pointer ml-3 mr-1 text-yellow"
